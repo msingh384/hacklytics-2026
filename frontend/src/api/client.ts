@@ -127,6 +127,12 @@ export const api = {
 
   leaderboard: () => request<{ items: LeaderboardItem[] }>('/explore/leaderboard'),
 
+  clusterTaglines: (clusters: Array<{ summary: string }>) =>
+    request<{ taglines: string[] }>('/clusters/taglines', {
+      method: 'POST',
+      body: JSON.stringify({ clusters }),
+    }),
+
   generateTTS: async (text: string): Promise<string> => {
     const response = await fetch(`${API_BASE}/tts/generate`, {
       method: 'POST',

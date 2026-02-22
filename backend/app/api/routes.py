@@ -406,6 +406,16 @@ def leaderboard(request: Request, limit: int = Query(default=50, ge=1, le=100)) 
     return LeaderboardResponse(items=items)
 
 
+@router.post("/clusters/taglines")
+async def cluster_taglines(request: Request, payload: dict) -> dict:
+    services = _services(request)
+    clusters = payload.get("clusters", [])
+    if not clusters:
+        return {"taglines": []}
+    taglines = await asyncio.to_thread(services.gemini.generate_cluster_taglines, clusters)
+    return {"taglines": taglines}
+
+
 @router.post("/tts/generate")
 async def generate_tts(request: Request, payload: TTSRequest) -> Response:
     services = _services(request)
