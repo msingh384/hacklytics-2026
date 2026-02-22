@@ -251,3 +251,23 @@ class SearchResponse(BaseModel):
 
 class TTSRequest(BaseModel):
     text: str = Field(min_length=1, max_length=5000)
+
+
+class IngestScriptResponse(BaseModel):
+    chunks: int
+    entities: int
+    relations: int
+    error: Optional[str] = None
+
+
+class GraphNode(BaseModel):
+    data: dict[str, Any]
+
+
+class GraphEdge(BaseModel):
+    data: dict[str, Any]
+
+
+class GraphResponse(BaseModel):
+    nodes: list[GraphNode]
+    edges: list[GraphEdge]

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { api } from '../api/client';
+import { KnowledgeGraphPanel } from '../components/KnowledgeGraphPanel';
 import { MovieScores } from '../components/MovieScores';
 import { useToast } from '../contexts/ToastContext';
 import type { JobStatus, MovieAnalysisResponse } from '../types/api';
@@ -22,6 +23,7 @@ export function AnalysisPage() {
   const [expandedClusters, setExpandedClusters] = useState<Set<string>>(new Set());
   const [expandedBeats, setExpandedBeats] = useState<Set<number>>(new Set());
   const [refreshingPlot, setRefreshingPlot] = useState(false);
+  const [showGraphPanel, setShowGraphPanel] = useState(false);
 
   const toggleCluster = useCallback((clusterId: string) => {
     setExpandedClusters((prev) => {
@@ -225,8 +227,25 @@ export function AnalysisPage() {
                 rotten_tomatoes={analysis.movie.rotten_tomatoes}
                 audience_score={analysis.movie.audience_score}
               />
+              <div className="row-actions" style={{ marginTop: '0.75rem' }}>
+                <button
+                  className="secondary-btn"
+                  onClick={() => setShowGraphPanel(true)}
+                  type="button"
+                >
+                  View Knowledge Graph
+                </button>
+              </div>
             </div>
           </section>
+
+          {showGraphPanel && movieId && analysis && (
+            <KnowledgeGraphPanel
+              movieId={movieId}
+              movieTitle={analysis.movie.title}
+              onClose={() => setShowGraphPanel(false)}
+            />
+          )}
 
           <section className="analysis-layout">
             <section>

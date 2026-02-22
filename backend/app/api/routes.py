@@ -8,6 +8,9 @@ from fastapi import APIRouter, HTTPException, Query, Request
 from fastapi.responses import Response
 
 from app.schemas import (
+    GraphEdge,
+    GraphNode,
+    GraphResponse,
     EmbeddingRequest,
     EmbeddingResponse,
     GenerationDetailResponse,
@@ -38,6 +41,7 @@ from app.schemas import (
     WhatIfSuggestion,
     TTSRequest,
 )
+from app.services.cluster_graph import build_cluster_graph
 from app.services.container import ServiceContainer
 from app.utils.text import extract_omdb_scores
 
@@ -66,11 +70,13 @@ def _to_candidate(row: dict[str, Any], has_analysis: bool | None = None) -> Movi
 @router.get("/health")
 def health(request: Request) -> dict[str, Any]:
     services = _services(request)
+    neo4j_ok = services.neo4j_graph.verify_connectivity() if services.neo4j_graph.enabled else False
     return {
         "status": "ok",
         "store_mode": services.store.mode,
         "vector_mode": services.vector_store.mode,
         "embedding_mode": services.embedder.mode,
+        "neo4j": "connected" if neo4j_ok else ("disabled" if not services.neo4j_graph.enabled else "disconnected"),
         "time": datetime.now(timezone.utc).isoformat(),
     }
 
@@ -147,6 +153,19 @@ async def refresh_plot_beats(request: Request, movie_id: str) -> dict:
         return {"status": "ok", "message": "Plot beats refreshed"}
     except RuntimeError as e:
         raise HTTPException(status_code=404, detail=str(e))
+
+
+@router.get("/movies/{movie_id}/graph", response_model=GraphResponse)
+def get_graph(request: Request, movie_id: str) -> GraphResponse:
+    """Return cluster-centric knowledge graph (movie, clusters, genre, ratings) for Cytoscape.js."""
+    services = _services(request)
+    movie = services.store.get_movie(movie_id)
+    if not movie:
+        raise HTTPException(status_code=404, detail="Movie not found")
+    data = build_cluster_graph(services.store, movie_id)
+    nodes = [GraphNode(data=n["data"]) for n in data["nodes"]]
+    edges = [GraphEdge(data=e["data"]) for e in data["edges"]]
+    return GraphResponse(nodes=nodes, edges=edges)
 
 
 @router.get("/movies/{movie_id}/analysis", response_model=MovieAnalysisResponse)

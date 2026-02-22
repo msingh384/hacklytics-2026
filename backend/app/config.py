@@ -23,6 +23,10 @@ class Settings(BaseSettings):
     actian_collection: str = "review_chunks"
     enable_actian: bool = False
 
+    neo4j_uri: str = "bolt://localhost:7687"
+    neo4j_user: str = "neo4j"
+    neo4j_password: str = ""
+
     wikipedia_user_agent: str = "DirectorsCut/1.0 (contact@example.com)"
     request_timeout_seconds: int = 20
 
