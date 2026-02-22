@@ -97,6 +97,32 @@ class GeminiClient:
             return fallback["labels"]
         return [str(label) for label in labels]
 
+    def generate_cluster_taglines(self, clusters: list[dict[str, Any]]) -> list[str]:
+        """Generate a 1-3 word tagline for each cluster from its keywords/summary."""
+        descriptions = []
+        for c in clusters:
+            summary = c.get("summary", "")
+            keywords = summary.replace("Recurring concerns:", "").strip() if "Recurring concerns:" in summary else summary
+            descriptions.append(keywords)
+        fallback = {"taglines": [f"Theme {i+1}" for i in range(len(clusters))]}
+
+        system_prompt = "You are a movie critic. You interpret keyword groups and create concise, meaningful labels."
+        user_prompt = (
+            "Below are keyword groups extracted from movie review complaint clusters.\n"
+            "For EACH group, infer what the audience complaint is about and give a 1-3 word label.\n"
+            "Examples: \"Weak Villain\", \"Rushed Ending\", \"Plot Holes\", \"Bad CGI\", \"Slow Pacing\", \"Flat Characters\", \"Forced Romance\"\n"
+            "Do NOT use generic labels like \"Recurring Concerns\" or \"General Issues\".\n"
+            "Each label must be UNIQUE and SPECIFIC.\n"
+            f"Return exactly {len(descriptions)} labels.\n"
+            "Schema: {\"taglines\": [string, ...]}\n\n"
+            + "\n".join(f"Cluster {i+1} keywords: {d}" for i, d in enumerate(descriptions))
+        )
+        payload = self._generate_json(system_prompt, user_prompt, fallback)
+        taglines = payload.get("taglines", [])
+        if not isinstance(taglines, list) or len(taglines) != len(clusters):
+            return fallback["taglines"]
+        return [str(t) for t in taglines]
+
     def generate_what_if(self, movie_title: str, cluster_labels: list[str], plot_context: str) -> list[str]:
         fallback = [
             f"What if the ending directly resolved '{cluster_labels[0]}'?" if cluster_labels else "What if the ending slowed down for emotional closure?",

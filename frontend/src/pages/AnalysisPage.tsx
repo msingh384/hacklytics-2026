@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { api } from '../api/client';
 import { LoadingProgress } from '../components/LoadingProgress';
@@ -15,6 +15,27 @@ export function AnalysisPage() {
   const [error, setError] = useState<string | null>(null);
   const [job, setJob] = useState<JobStatus | null>(null);
   const [activeJobId, setActiveJobId] = useState<string | null>(null);
+  const [expandedClusters, setExpandedClusters] = useState<Set<string>>(new Set());
+  const [expandedBeats, setExpandedBeats] = useState<Set<number>>(new Set());
+  const [taglines, setTaglines] = useState<string[]>([]);
+
+  const toggleCluster = useCallback((clusterId: string) => {
+    setExpandedClusters((prev) => {
+      const next = new Set(prev);
+      if (next.has(clusterId)) next.delete(clusterId);
+      else next.add(clusterId);
+      return next;
+    });
+  }, []);
+
+  const toggleBeat = useCallback((beatOrder: number) => {
+    setExpandedBeats((prev) => {
+      const next = new Set(prev);
+      if (next.has(beatOrder)) next.delete(beatOrder);
+      else next.add(beatOrder);
+      return next;
+    });
+  }, []);
 
   const examplesByCluster = useMemo(() => {
     const map = new Map<string, string[]>();
@@ -50,6 +71,20 @@ export function AnalysisPage() {
       active = false;
     };
   }, [movieId]);
+
+  useEffect(() => {
+    if (!analysis || !analysis.clusters.length) return;
+    let active = true;
+    api
+      .clusterTaglines(analysis.clusters.map((c) => ({ summary: c.summary })))
+      .then((res) => {
+        if (active) setTaglines(res.taglines);
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, [analysis]);
 
   useEffect(() => {
     if (!activeJobId) return;
@@ -140,16 +175,47 @@ export function AnalysisPage() {
               <h2>Complaint Clusters</h2>
               <div className="cluster-list">
                 {analysis.clusters.length ? (
-                  analysis.clusters.map((cluster) => (
-                    <article className="cluster-item" key={cluster.cluster_id}>
-                      <h3>{cluster.label}</h3>
-                      <p>{cluster.summary}</p>
-                      <small>{cluster.review_count} reviews represented</small>
-                      {(examplesByCluster.get(cluster.cluster_id) ?? []).slice(0, 2).map((quote, index) => (
-                        <p key={`${cluster.cluster_id}-${index}`}>"{quote}"</p>
-                      ))}
-                    </article>
-                  ))
+                  analysis.clusters.map((cluster, idx) => {
+                    const isOpen = expandedClusters.has(cluster.cluster_id);
+                    const tagline = taglines[idx];
+                    return (
+                      <article className="cluster-item cluster-collapsible" key={cluster.cluster_id}>
+                        <button
+                          className="cluster-toggle"
+                          onClick={() => toggleCluster(cluster.cluster_id)}
+                          aria-expanded={isOpen}
+                        >
+                          <div className="cluster-header">
+                            <h3 className="cluster-theme">
+                              Theme {idx + 1}{tagline ? `: ${tagline}` : ''}
+                            </h3>
+                          </div>
+                          <svg
+                            className={`cluster-chevron${isOpen ? ' cluster-chevron--open' : ''}`}
+                            width="18"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <polyline points="6 9 12 15 18 9" />
+                          </svg>
+                        </button>
+                        {isOpen && (
+                          <div className="cluster-details">
+                            <p>{cluster.summary}</p>
+                            <small>{cluster.review_count} reviews represented</small>
+                            {(examplesByCluster.get(cluster.cluster_id) ?? []).slice(0, 2).map((quote, index) => (
+                              <p className="cluster-quote" key={`${cluster.cluster_id}-${index}`}>"{quote}"</p>
+                            ))}
+                          </div>
+                        )}
+                      </article>
+                    );
+                  })
                 ) : (
                   <p>No clusters generated yet.</p>
                 )}
@@ -158,20 +224,38 @@ export function AnalysisPage() {
 
             <section>
               <h2>Plot Beats</h2>
-              <div className="beat-list">
-                {analysis.plot_beats.length ? (
-                  analysis.plot_beats.map((beat) => (
-                    <article className="beat-item" key={`${beat.movie_id}-${beat.beat_order}`}>
-                      <h3>
-                        {beat.beat_order}. {beat.label}
-                      </h3>
-                      <p>{beat.beat_text}</p>
-                    </article>
-                  ))
-                ) : (
-                  <p>Plot beats are not generated yet.</p>
-                )}
-              </div>
+              {analysis.plot_beats.length ? (
+                <div className="timeline">
+                  {analysis.plot_beats.map((beat, idx) => {
+                    const isOpen = expandedBeats.has(beat.beat_order);
+                    const isLast = idx === analysis.plot_beats.length - 1;
+                    return (
+                      <div className={`timeline-node${isLast ? ' timeline-node--last' : ''}`} key={`${beat.movie_id}-${beat.beat_order}`}>
+                        <div className="timeline-marker">
+                          <div className="timeline-dot" />
+                          {!isLast && <div className="timeline-line" />}
+                        </div>
+                        <div className="timeline-content">
+                          <button className="timeline-toggle" onClick={() => toggleBeat(beat.beat_order)} aria-expanded={isOpen}>
+                            <span className="timeline-label">{beat.label}</span>
+                            <svg
+                              className={`timeline-chevron${isOpen ? ' timeline-chevron--open' : ''}`}
+                              width="16" height="16" viewBox="0 0 24 24"
+                              fill="none" stroke="currentColor" strokeWidth="2"
+                              strokeLinecap="round" strokeLinejoin="round"
+                            >
+                              <polyline points="6 9 12 15 18 9" />
+                            </svg>
+                          </button>
+                          {isOpen && <p className="timeline-text">{beat.beat_text}</p>}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p>Plot beats are not generated yet.</p>
+              )}
             </section>
           </section>
 
