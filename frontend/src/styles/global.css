@@ -188,7 +188,7 @@ button {
   min-height: 380px;
   overflow: hidden;
   flex-shrink: 0;
-  background: linear-gradient(135deg, #0f1a2a 0%, #1a2a3f 50%, #0d1520 100%);
+  background: var(--bg);
 }
 
 .hero-carousel::after {
@@ -737,7 +737,7 @@ button {
 }
 
 .skeleton-hero-carousel {
-  background: linear-gradient(135deg, #0f1a2a 0%, #1a2a3f 50%, #0d1520 100%);
+  background: var(--bg);
   min-height: 380px;
   padding: 1.8rem 2rem 3.5rem;
 }
@@ -1426,6 +1426,22 @@ button {
 .typing-panel--loading p {
   color: var(--surface);
   font-style: italic;
+}
+
+.rewrite-crafting-panel {
+  min-height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rewrite-crafting-panel p {
+  animation: crafting-pulse 2s ease-in-out infinite;
+}
+
+@keyframes crafting-pulse {
+  0%, 100% { opacity: 0.85; }
+  50% { opacity: 1; }
 }
 
 .typing-cursor {

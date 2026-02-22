@@ -5,6 +5,15 @@ import { TypingNarrative } from '../components/TypingNarrative';
 import { useSessionId } from '../hooks/useSessionId';
 import type { MovieAnalysisResponse, StoryOption } from '../types/api';
 
+const CRAFTING_MESSAGES = [
+  'Crafting your story…',
+  'Thinking deeply…',
+  'Gathering your plot…',
+  'Weaving the narrative…',
+];
+
+type LocationState = { customWhatIf?: string; whatIfText?: string } | null;
+
 export function RewritePage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -13,7 +22,6 @@ export function RewritePage() {
   const sessionId = useSessionId();
 
   const [analysis, setAnalysis] = useState<MovieAnalysisResponse | null>(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const [storySessionId, setStorySessionId] = useState<string | null>(null);
@@ -25,6 +33,7 @@ export function RewritePage() {
   const [history, setHistory] = useState<Array<{ step: number; narrative: string; choice?: string }>>([]);
   const [ttsPlaying, setTtsPlaying] = useState(false);
   const [ttsLoading, setTtsLoading] = useState(false);
+  const [craftingIndex, setCraftingIndex] = useState(0);
   const ttsAudioRef = useRef<HTMLAudioElement | null>(null);
   const ttsUrlRef = useRef<string | null>(null);
 
@@ -69,6 +78,10 @@ export function RewritePage() {
   }, [narrative, stopTts]);
 
   const whatIfId = searchParams.get('whatIf');
+  const state = location.state as LocationState;
+  const customWhatIf = state?.customWhatIf;
+  const whatIfTextFromState = state?.whatIfText;
+
   const pickedSuggestion = useMemo(() => {
     if (!analysis) return null;
     if (whatIfId) {
@@ -77,12 +90,14 @@ export function RewritePage() {
     return analysis.what_if_suggestions[0] ?? null;
   }, [analysis, whatIfId]);
 
+  const subtitle = whatIfTextFromState ?? customWhatIf ?? pickedSuggestion?.text ?? null;
+  const canStartImmediately = !!(whatIfId || customWhatIf);
+  const isCrafting = !storySessionId;
+
   useEffect(() => {
     if (!movieId) return;
     let active = true;
-    setLoading(true);
     setError(null);
-
     api
       .getMovieAnalysis(movieId)
       .then((data) => {
@@ -92,32 +107,20 @@ export function RewritePage() {
       .catch((err: unknown) => {
         if (!active) return;
         setError(err instanceof Error ? err.message : 'Failed to load movie context');
-      })
-      .finally(() => {
-        if (active) setLoading(false);
       });
-
     return () => {
       active = false;
     };
   }, [movieId]);
 
   useEffect(() => {
-    if (!analysis || !movieId || storySessionId) return;
-    if (!pickedSuggestion && !location.state) {
-      setError('No what-if selected. Go back and choose one from analysis.');
-      return;
-    }
-
-    const customWhatIf =
-      typeof location.state === 'object' && location.state && 'customWhatIf' in location.state
-        ? (location.state as { customWhatIf?: string }).customWhatIf
-        : undefined;
-
+    if (!movieId || storySessionId || !canStartImmediately) return;
+    let cancelled = false;
     setRunningStep(true);
     api
-      .startStory(movieId, sessionId, pickedSuggestion?.suggestion_id, customWhatIf)
+      .startStory(movieId, sessionId, whatIfId ?? undefined, customWhatIf)
       .then((story) => {
+        if (cancelled) return;
         setStorySessionId(story.story_session_id);
         setNarrative(story.narrative);
         setOptions(story.options);
@@ -126,10 +129,51 @@ export function RewritePage() {
         setHistory([{ step: story.step_number, narrative: story.narrative }]);
       })
       .catch((err: unknown) => {
-        setError(err instanceof Error ? err.message : 'Could not start rewrite story');
+        if (!cancelled) setError(err instanceof Error ? err.message : 'Could not start rewrite story');
       })
-      .finally(() => setRunningStep(false));
-  }, [analysis, movieId, pickedSuggestion, sessionId, storySessionId, location.state]);
+      .finally(() => {
+        if (!cancelled) setRunningStep(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [movieId, sessionId, whatIfId, customWhatIf, canStartImmediately, storySessionId]);
+
+  useEffect(() => {
+    if (!movieId || storySessionId || canStartImmediately) return;
+    if (!analysis?.what_if_suggestions?.length) return;
+    let cancelled = false;
+    const first = analysis.what_if_suggestions[0];
+    setRunningStep(true);
+    api
+      .startStory(movieId, sessionId, first.suggestion_id, undefined)
+      .then((story) => {
+        if (cancelled) return;
+        setStorySessionId(story.story_session_id);
+        setNarrative(story.narrative);
+        setOptions(story.options);
+        setStepNumber(story.step_number);
+        setTypingComplete(false);
+        setHistory([{ step: story.step_number, narrative: story.narrative }]);
+      })
+      .catch((err: unknown) => {
+        if (!cancelled) setError(err instanceof Error ? err.message : 'No what-if selected. Go back and choose one from analysis.');
+      })
+      .finally(() => {
+        if (!cancelled) setRunningStep(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [analysis, movieId, sessionId, canStartImmediately, storySessionId]);
+
+  useEffect(() => {
+    if (!isCrafting) return;
+    const id = setInterval(() => {
+      setCraftingIndex((i) => (i + 1) % CRAFTING_MESSAGES.length);
+    }, 2500);
+    return () => clearInterval(id);
+  }, [isCrafting]);
 
   async function chooseOption(option: StoryOption) {
     if (!storySessionId || !movieId || runningStep) return;
@@ -166,7 +210,7 @@ export function RewritePage() {
             storySessionId,
             history: updatedHistory,
             movie: analysis?.movie,
-            whatIf: pickedSuggestion?.text ?? customWhatIf,
+            whatIf: whatIfTextFromState ?? pickedSuggestion?.text ?? customWhatIf,
           },
         });
       }
@@ -185,22 +229,30 @@ export function RewritePage() {
     );
   }
 
+  const noWhatIfAvailable = !canStartImmediately && analysis && !analysis.what_if_suggestions?.length;
+  const showNoWhatIfError = noWhatIfAvailable && !storySessionId;
+
   return (
     <div className="page-container">
       <div className="story-layout">
       <h1 className="section-title">Rewrite Flow</h1>
-      {(pickedSuggestion?.text ?? (location.state as { customWhatIf?: string } | null)?.customWhatIf) ? (
-        <p className="section-subtitle">{pickedSuggestion?.text ?? (location.state as { customWhatIf?: string }).customWhatIf}</p>
+      {subtitle ? <p className="section-subtitle">{subtitle}</p> : null}
+      {error || showNoWhatIfError ? (
+        <p className="error">{error ?? 'No what-if selected. Go back and choose one from analysis.'}</p>
       ) : null}
-      {loading ? <p>Loading rewrite context...</p> : null}
-      {error ? <p className="error">{error}</p> : null}
 
-      {!loading && storySessionId ? (
+      {isCrafting && !error && !showNoWhatIfError ? (
+        <div className="typing-panel typing-panel--loading rewrite-crafting-panel">
+          <p>{CRAFTING_MESSAGES[craftingIndex]}</p>
+        </div>
+      ) : null}
+
+      {storySessionId ? (
         <>
           <div className="story-progress">
             <span>Choice {Math.min(stepNumber, 3)} of 3</span>
             <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              {runningStep ? 'Generating next scene...' : 'Your story is live'}
+              {runningStep ? 'Crafting the next scene…' : 'Your story is live'}
               {!runningStep && narrative && (
                 <button
                   onClick={playTts}
@@ -236,7 +288,7 @@ export function RewritePage() {
 
           {runningStep ? (
             <div className="typing-panel typing-panel--loading">
-              <p>Generating next scene...</p>
+              <p>Crafting the next scene…</p>
             </div>
           ) : (
             <TypingNarrative

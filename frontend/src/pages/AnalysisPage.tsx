@@ -369,7 +369,11 @@ export function AnalysisPage() {
                   title={!analysis.what_if_suggestions?.length ? 'Prepare the movie first to get data-backed suggestions' : undefined}
                   onClick={() => {
                     const first = analysis.what_if_suggestions?.[0];
-                    if (first) navigate(`/rewrite/${movieId}?whatIf=${encodeURIComponent(first.suggestion_id)}`);
+                    if (first) {
+                      navigate(`/rewrite/${movieId}?whatIf=${encodeURIComponent(first.suggestion_id)}`, {
+                        state: { whatIfText: first.text },
+                      });
+                    }
                   }}
                 >
                   Explore Data-backed alternative
@@ -656,7 +660,11 @@ export function AnalysisPage() {
                     <p>{item.text}</p>
                     <button
                       className="primary-btn"
-                      onClick={() => navigate(`/rewrite/${movieId}?whatIf=${item.suggestion_id}`)}
+                      onClick={() =>
+                        navigate(`/rewrite/${movieId}?whatIf=${item.suggestion_id}`, {
+                          state: { whatIfText: item.text },
+                        })
+                      }
                       style={{ marginTop: '0.5rem' }}
                     >
                       Start Rewrite
