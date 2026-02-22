@@ -1,0 +1,155 @@
+{
+  "count": 136,
+  "samples": [
+    {
+      "chunk_id": "55070b3d8ac9c8e8",
+      "text_len": 158,
+      "source": "user"
+    },
+    {
+      "chunk_id": "f0df5027b1dedf5d",
+      "text_len": 183,
+      "source": "user"
+    },
+    {
+      "chunk_id": "aa495acfcb86d00a",
+      "text_len": 214,
+      "source": "user"
+    },
+    {
+      "chunk_id": "d3e3dc6c1fe8e6cf",
+      "text_len": 110,
+      "source": "user"
+    },
+    {
+      "chunk_id": "32b6773f9cce420f",
+      "text_len": 263,
+      "source": "user"
+    },
+    {
+      "chunk_id": "bf745b081c6b9bcb",
+      "text_len": 114,
+      "source": "user"
+    },
+    {
+      "chunk_id": "5a8f8f4ef608b490",
+      "text_len": 219,
+      "source": "user"
+    },
+    {
+      "chunk_id": "802a846634d55424",
+      "text_len": 14,
+      "source": "user"
+    },
+    {
+      "chunk_id": "b58d5031e3b1ecac",
+      "text_len": 290,
+      "source": "user"
+    },
+    {
+      "chunk_id": "d49178cca98eac4c",
+      "text_len": 240,
+      "source": "user"
+    },
+    {
+      "chunk_id": "62714efdd5f1f191",
+      "text_len": 286,
+      "source": "user"
+    },
+    {
+      "chunk_id": "ebd36848138ccf97",
+      "text_len": 258,
+      "source": "user"
+    },
+    {
+      "chunk_id": "5acff827ec4f7d14",
+      "text_len": 225,
+      "source": "user"
+    },
+    {
+      "chunk_id": "4406fe473ce4af58",
+      "text_len": 232,
+      "source": "user"
+    },
+    {
+      "chunk_id": "1a4b07e3cd9b7b4c",
+      "text_len": 281,
+      "source": "user"
+    },
+    {
+      "chunk_id": "f17caf564a016547",
+      "text_len": 421,
+      "source": "user"
+    },
+    {
+      "chunk_id": "fd0b2782bfcf0077",
+      "text_len": 143,
+      "source": "user"
+    },
+    {
+      "chunk_id": "5aa10cfe6a339cd6",
+      "text_len": 104,
+      "source": "user"
+    },
+    {
+      "chunk_id": "0fa15d06c5e57109",
+      "text_len": 709,
+      "source": "user"
+    },
+    {
+      "chunk_id": "1592fe4085fc2e36",
+      "text_len": 398,
+      "source": "user"
+    },
+    {
+      "chunk_id": "d029099fdc79ee77",
+      "text_len": 273,
+      "source": "user"
+    },
+    {
+      "chunk_id": "b4d8047ac6ba502b",
+      "text_len": 186,
+      "source": "user"
+    },
+    {
+      "chunk_id": "ed66a0788a6e40b4",
+      "text_len": 308,
+      "source": "user"
+    },
+    {
+      "chunk_id": "411956197df44468",
+      "text_len": 139,
+      "source": "user"
+    },
+    {
+      "chunk_id": "a3c994abe8e3872a",
+      "text_len": 161,
+      "source": "user"
+    },
+    {
+      "chunk_id": "a408b9868af1f8d3",
+      "text_len": 155,
+      "source": "user"
+    },
+    {
+      "chunk_id": "12921d4055c52e8a",
+      "text_len": 184,
+      "source": "user"
+    },
+    {
+      "chunk_id": "1b9d149add3f6e1e",
+      "text_len": 93,
+      "source": "user"
+    },
+    {
+      "chunk_id": "5caa2982576cf01c",
+      "text_len": 1351,
+      "source": "user"
+    },
+    {
+      "chunk_id": "30da2f43d3cbf93e",
+      "text_len": 282,
+      "source": "user"
+    }
+  ]
+}

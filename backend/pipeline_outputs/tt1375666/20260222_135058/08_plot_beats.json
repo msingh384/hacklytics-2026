@@ -1,0 +1,82 @@
+{
+  "expanded_plot": "Dom Cobb, a highly skilled extractor, and his partner Arthur, specialize in corporate espionage, infiltrating the subconscious minds of their targets through a shared dream-space technology to steal valuable information. Their latest mission for the powerful businessman Saito, however, ends in failure. Impressed by Cobb's unique ability to construct complex, layered dreams, Saito offers him an unprecedented and ostensibly impossible task: instead of extracting an idea, he wants Cobb to perform \"inception\" \u2013 implanting a novel idea into the subconscious of Robert Fischer, the heir to a rival energy conglomerate. The idea to be implanted is to dissolve his father Maurice Fischer's vast empire. In return for this perilous endeavor, Saito promises to use his immense influence to clear Cobb's fugitive status, allowing him to finally return home to his beloved children. Driven by this desperate hope for redemption and reunion, Cobb accepts the formidable challenge and meticulously assembles a specialized team. This includes Eames, a versatile forger adept at impersonation; Yusuf, a master chemist capable of formulating potent dream-inducing sedatives; and Ariadne, a brilliant architecture student tasked with designing the intricate and immersive dreamscapes required for the deep layers of inception. Cobb, however, cannot design the dream architecture himself, haunted by the specter of his deceased wife, Mal, whose powerful projection frequently sabotages his subconscious. As Maurice Fischer's health deteriorates, the team boards a transatlantic flight, a private jet purchased by Saito, where they sedate Robert Fischer into a three-layered shared dream. Each successive dream layer experiences a significantly slower passage of time, requiring synchronized \"kicks\" \u2013 jarring physical sensations \u2013 initiated by team members staying behind on each level, to collectively awaken everyone. The first layer is a rainy city, where the team abducts Robert, only to be ambushed by his subconscious projections, which have been rigorously trained to defend against such intrusions. Saito is critically wounded, and Cobb reveals the dire consequence of death in this deeply sedated state: instead of awakening, they will be trapped in \"Limbo,\" an infinite, unconstructed dream world. Eames, disguised as Robert's godfather, Peter Browning, subtly introduces the concept of an alternate will, setting the stage for the inception. Cobb confides in Ariadne, explaining how he and Mal once spent fifty subjective years in Limbo, causing Mal to lose touch with reality upon awakening, tragically leading to her suicide and Cobb's subsequent framing for her murder. As Yusuf drives them through the first layer, the team is sedated into the second, a luxurious hotel designed by Arthur. Cobb cleverly manipulates Robert, convincing him that Browning is behind his abduction and that Cobb is a defensive projection, drawing Robert deeper into a third layer. This deepest layer manifests as an alpine fortress, a symbolic representation of Maurice Fischer's secure inner sanctum, where the inception is meant to take place. However, Yusuf's premature kick, caused by driving off a bridge, forces Arthur and Eames to improvise new, synchronized kicks: Arthur engineers an explosive elevator drop in the hotel, while Eames prepares to detonate the fortress. At the critical moment, Mal's projection intervenes, killing Robert before the inception can be completed. Robert and Saito are lost to Limbo, compelling Cobb and Ariadne to venture into the abyss to retrieve them. In Limbo, Cobb confronts Mal, confessing that he inadvertently incepted in her the idea that her waking life was still a dream during their time there, causing her psychological break. He finally makes peace with his guilt. Ariadne, witnessing this catharsis, kills Mal's projection and performs a kick, awakening Robert back into the third dream layer. There, Robert discovers the successfully planted idea: his dying father's final wish for him to create something of his own, rather than simply inheriting. While Cobb searches for an aged Saito in Limbo, the rest of the team executes their synchronized kicks, riding the chain of awakenings back to reality. Cobb finds Saito, reminding him of their agreement, and they too awaken on the plane. Saito makes a decisive phone call, fulfilling his promise. Cobb arrives in Los Angeles, passes through immigration, and is greeted by his father-in-law. At home, he spins Mal's totem \u2013 a top \u2013 to ascertain if he is in reality, but chooses to ignore its perpetual spin and instead rushes to embrace his waiting children, leaving the final nature of his reality ambiguous.",
+  "beats": [
+    {
+      "order": 1,
+      "label": "The Extraction & The Impossible Offer",
+      "text": "Dom Cobb and Arthur fail an extraction for Saito, who then offers Cobb the impossible task of inception on Robert Fischer in exchange for clearing Cobb's criminal status so he can return to his children."
+    },
+    {
+      "order": 2,
+      "label": "Assembling the Team & The Threat of Mal",
+      "text": "Cobb recruits Eames, Yusuf, and Ariadne for the inception mission. Ariadne discovers Cobb's mind is compromised by his late wife Mal's projection, preventing him from designing dreams."
+    },
+    {
+      "order": 3,
+      "label": "Entering Dream Layers & First Layer Ambush",
+      "text": "The team sedates Robert Fischer on a plane and enters the first dream layer, a city. They abduct Robert but are attacked by his trained subconscious projections, and Saito is wounded, introducing the peril of Limbo."
+    },
+    {
+      "order": 4,
+      "label": "Deeper Infiltration & Mal's Tragic Past",
+      "text": "The team progresses into the second (hotel) and third (alpine fortress) dream layers. Cobb reveals to Ariadne his past with Mal, including their time in Limbo and his accidental inception of her belief that reality was a dream."
+    },
+    {
+      "order": 5,
+      "label": "Inception Sabotage & Limbo Descent",
+      "text": "Mal's projection sabotages the inception by killing Robert in the third layer, sending both Robert and Saito into Limbo. Cobb and Ariadne must pursue them to save the mission."
+    },
+    {
+      "order": 6,
+      "label": "Reconciliation & Inception Achieved",
+      "text": "In Limbo, Cobb confronts Mal's projection, making peace with his role in her death. Ariadne kills Mal and kicks Robert, allowing him to awaken and discover the implanted idea in the third layer."
+    },
+    {
+      "order": 7,
+      "label": "Return to Reality & Ambiguous Home",
+      "text": "The team executes synchronized kicks across the dream layers to return to the plane. Cobb finds Saito in Limbo, and after they awaken, Saito clears Cobb's name. Cobb returns home to his children, opting not to fully observe his totem's spin."
+    }
+  ],
+  "characters": [
+    {
+      "name": "Dom Cobb",
+      "role": "protagonist",
+      "analysis": "A brilliant but haunted extractor, Cobb is tormented by guilt over his wife Mal's death and yearns to return to his children. His persona is a blend of determined professionalism and profound internal struggle, making him vulnerable to Mal's projections. His primary motivation is to complete Saito's inception job, believing it's his only path to absolution and reuniting with his family. Throughout the mission, he grapples with his past, confronting the truth about Mal and his role in her psychological undoing. His arc culminates in making peace with his guilt and choosing to embrace his present reality, regardless of its ultimate nature."
+    },
+    {
+      "name": "Mal Cobb",
+      "role": "internal antagonist",
+      "analysis": "Mal is Cobb's deceased wife, who primarily appears as a powerful, vengeful projection within his subconscious dreams. Once a loving partner, her persona shifted after their prolonged stay in Limbo, leading her to believe reality itself was a dream. Her motivation as a projection is to keep Cobb trapped in a dream world with her, subconsciously trying to force him to join her in what she perceives as 'waking up.' She serves as both a tragic memory and the primary internal antagonist, constantly sabotaging Cobb's missions and threatening the team. Her arc is defined by Cobb's acceptance and release of her memory, transforming her from a destructive force into a source of bittersweet closure."
+    },
+    {
+      "name": "Arthur",
+      "role": "supporting",
+      "analysis": "Cobb's loyal and meticulous point man, Arthur is pragmatic, organized, and deeply focused on the operational details of their missions. He embodies a professional persona, often clashing with Cobb's emotional vulnerabilities and Eames's reckless charm. His primary motivation is the successful execution of extractions, ensuring the team's safety and adherence to protocols. Arthur frequently provides crucial exposition and demonstrates ingenious problem-solving under pressure. His arc solidifies his role as a reliable anchor for the team, maintaining order amidst chaos and adapting brilliantly to unforeseen challenges."
+    },
+    {
+      "name": "Saito",
+      "role": "supporting",
+      "analysis": "A ruthless and influential businessman, Saito initially appears as a target but quickly becomes Cobb's enigmatic client and moral compass. His persona is one of quiet authority and unwavering determination, often pushing Cobb to confront his personal demons for the sake of the mission. His motivation is to dissolve a rival corporate empire through inception, securing his dominance in the energy market. Saito respects Cobb's unique abilities and offers him a seemingly impossible path to redemption. His arc involves entering Limbo with Cobb and fulfilling their agreement, solidifying his role as the orchestrator of Cobb's return."
+    },
+    {
+      "name": "Ariadne",
+      "role": "supporting",
+      "analysis": "A brilliant and intuitive architecture student, Ariadne is recruited by Cobb to design the intricate dreamscapes for the inception mission. Her persona is initially one of curious intelligence, which evolves into courageous resolve as she delves deeper into the subconscious world. Her primary motivation is a fascination with the dream technology and a desire to understand Cobb's tormented mind. Ariadne serves as Cobb's moral compass and guide, helping him navigate his internal landscape and confront Mal's projection. Her arc sees her transform from a curious novice into an essential member of the team, instrumental in both the mission's success and Cobb's emotional breakthrough."
+    },
+    {
+      "name": "Eames",
+      "role": "supporting",
+      "analysis": "A charming and resourceful forger, Eames specializes in impersonating individuals within dreams, using his wit and combat skills to manipulate targets. His persona is characterized by a roguish sense of humor, confidence, and a touch of arrogance, often providing levity amidst tension. His motivation is largely professional and financial, enjoying the thrill of the elaborate con and the prestige of the 'impossible' job. Eames is crucial for his ability to assume the identity of Peter Browning and manipulate Robert Fischer. His arc demonstrates his versatility and critical role in the mission's tactical execution, combining bravado with strategic insight."
+    },
+    {
+      "name": "Yusuf",
+      "role": "supporting",
+      "analysis": "The team's quiet and skilled chemist, Yusuf develops the potent sedatives necessary for deep, multi-layered dream sharing. His persona is initially mysterious and understated, but he proves to be surprisingly resourceful and committed to the mission's success. His motivation is rooted in his technical expertise and a fascination with the boundaries of dream technology. Yusuf's knowledge of sedatives is vital for entering multiple dream layers, yet his powerful concoction also creates the perilous risk of Limbo. His arc showcases his critical technical role, as his actions, both intentional and accidental, profoundly impact the team's journey through the dreamscape."
+    },
+    {
+      "name": "Robert Fischer",
+      "role": "target",
+      "analysis": "The unwitting target of inception, Robert is a wealthy heir poised to inherit his ailing father's corporate empire. His persona is initially that of a somewhat detached and emotionally conflicted individual, burdened by his father's legacy. His primary motivation, as uncovered through inception, is to forge his own path and seek his father's approval and affection, even if it means dissolving the company. Robert's journey through the dream layers forces him to confront his complicated relationship with his father, culminating in a powerful emotional realization. His arc transforms him from a passive heir to someone ready to act on his own convictions."
+    }
+  ]
+}

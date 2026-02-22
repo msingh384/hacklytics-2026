@@ -1,0 +1,72 @@
+{
+  "expanded_plot": "Following the cataclysmic decimation orchestrated by Thanos, which wiped out half of all life across the universe, the remaining Avengers and their allies grapple with profound loss and an unprecedented sense of failure. The Mad Titan's victory has left the cosmos fractured and devoid of hope, with Earth's heroes struggling to cope with their devastating defeat and the silence left in its wake. Driven by an unyielding desire to reverse the Snap and restore what was lost, the fractured team must find a way to unite once more. They embark on a perilous, desperate quest to confront the architects of universal ruin and retrieve what was taken, understanding that the stakes are higher than ever before and that their sacrifices may be ultimate.",
+  "beats": [
+    {
+      "order": 1,
+      "label": "Universal Devastation",
+      "text": "The universe grapples with the catastrophic aftermath of Thanos's actions, which have left half of all life annihilated and societies in disarray."
+    },
+    {
+      "order": 2,
+      "label": "Heroes' Despair",
+      "text": "The surviving Avengers are emotionally fractured and overwhelmed by the immense loss and their inability to prevent the Snap."
+    },
+    {
+      "order": 3,
+      "label": "A New Resolve",
+      "text": "Despite their despair, a renewed determination begins to emerge among some heroes to find a way to reverse Thanos's victory."
+    },
+    {
+      "order": 4,
+      "label": "Gathering Allies",
+      "text": "Remaining allies from across the cosmos and Earth are sought out to join forces in a collective effort against the universal devastation."
+    },
+    {
+      "order": 5,
+      "label": "The Ultimate Plan",
+      "text": "The fragmented team devises a bold and incredibly risky strategy to confront Thanos's legacy and restore balance to the universe."
+    },
+    {
+      "order": 6,
+      "label": "Unwavering Commitment",
+      "text": "Each hero commits to the perilous mission, fully aware of the potential consequences and sacrifices required to achieve their goal."
+    }
+  ],
+  "characters": [
+    {
+      "name": "Tony Stark / Iron Man",
+      "role": "Protagonist, Leader",
+      "analysis": "Tony Stark is a genius, billionaire, playboy, philanthropist burdened by immense responsibility. He carries the weight of past failures, particularly failing to prevent the Snap, which fuels his initial despair. His brilliance is matched only by his deep emotional connections, especially to his newfound family. He struggles with the desire for a normal life versus his inherent need to protect the world. Tony's arc in Endgame focuses on confronting his ultimate fears and making an unparalleled sacrifice."
+    },
+    {
+      "name": "Steve Rogers / Captain America",
+      "role": "Protagonist, Leader",
+      "analysis": "Steve Rogers embodies unwavering moral fortitude, a selfless hero dedicated to justice and the greater good. He carries the burden of leadership and the trauma of losing his friends and half the universe. His determination to undo the Snap stems from his deep-seated belief that they never give up. Steve's personal sense of duty often outweighs his own desires for peace or happiness. He stands as a symbol of hope and perseverance against impossible odds."
+    },
+    {
+      "name": "Thor",
+      "role": "Protagonist",
+      "analysis": "Thor is a mighty Asgardian god, now profoundly broken by repeated personal and universal losses. He grapples with deep self-blame and a sense of inadequacy after his failure to stop Thanos in Infinity War. His once vibrant personality is overshadowed by profound grief and a loss of purpose. Thor initially struggles to reconnect with his heroic identity and the responsibilities that come with it. His journey in Endgame is one of confronting his past trauma and rediscovering his true worth."
+    },
+    {
+      "name": "Bruce Banner / Hulk",
+      "role": "Protagonist, Supporting",
+      "analysis": "Bruce Banner has finally achieved a unique synthesis of his two identities, merging his intelligence with the Hulk's strength. He strives to use his abilities for positive change and to help heal the broken world. Despite his new persona, Banner still carries the pain of past events and the weight of scientific responsibility. His compassionate nature drives him to find a solution to Thanos's devastation. He acts as a scientific and emotional anchor for the team."
+    },
+    {
+      "name": "Natasha Romanoff / Black Widow",
+      "role": "Protagonist, Supporting",
+      "analysis": "Natasha Romanoff is a highly skilled spy and a fiercely loyal Avenger, profoundly affected by the decimation. She internalizes her grief, channeling it into a tireless effort to maintain communication and hope among the survivors. Her strength lies in her resolve and her deep commitment to her chosen family, the Avengers. Natasha seeks to find redemption for her past through her dedication to undoing Thanos's actions. She serves as a crucial emotional and strategic pillar for the fractured team."
+    },
+    {
+      "name": "Thanos",
+      "role": "Antagonist",
+      "analysis": "Thanos is a formidable cosmic warlord driven by a singular, twisted philosophy for universal salvation. He believes his actions, though brutal, were a necessary \"mercy\" to prevent overpopulation and resource depletion. His immense power is matched by his unwavering conviction and ruthless execution of his vision. Thanos sees himself as a savior, not a villain, embodying a calm, unyielding resolve. His existence looms large over the Avengers, representing the ultimate threat they must overcome."
+    },
+    {
+      "name": "Scott Lang / Ant-Man",
+      "role": "Supporting, Catalyst",
+      "analysis": "Scott Lang is a resourceful, optimistic, and often comedic hero who offers a critical new perspective to the grim situation. Having been trapped in the Quantum Realm, he re-emerges with a unique understanding of possibilities. He embodies the glimmer of hope that the Avengers desperately need to reignite their mission. Scott's unexpected return and ideas provide the scientific spark for the team's seemingly impossible plan. His primary motivation is to reunite with his daughter and restore the world for his loved ones."
+    }
+  ]
+}

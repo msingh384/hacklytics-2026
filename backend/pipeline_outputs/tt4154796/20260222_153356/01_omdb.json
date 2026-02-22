@@ -1,0 +1,54 @@
+{
+  "movie_id": "tt4154796",
+  "title": "Avengers: Endgame",
+  "year": "2019",
+  "genre": "Action, Adventure, Sci-Fi",
+  "poster": "https://m.media-amazon.com/images/M/MV5BMTc5MDE2ODcwNV5BMl5BanBnXkFtZTgwMzI2NzQ2NzM@._V1_SX300.jpg",
+  "imdb_rating": 8.4,
+  "rotten_tomatoes": "94%",
+  "audience_score": "78/100",
+  "plot": "After the devastating events of Avengers: Infinity War (2018), the universe is in ruins due to the efforts of the Mad Titan, Thanos. With the help of remaining allies, the Avengers must assemble once more in order to undo Thanos's actions and undo the chaos to the universe, no matter what consequences may be in store, and no matter who they face...",
+  "expanded_plot": "After the devastating events of Avengers: Infinity War (2018), the universe is in ruins due to the efforts of the Mad Titan, Thanos. With the help of remaining allies, the Avengers must assemble once more in order to undo Thanos's actions and undo the chaos to the universe, no matter what consequences may be in store, and no matter who they face...",
+  "omdb_payload": {
+    "DVD": "N/A",
+    "Plot": "After the devastating events of Avengers: Infinity War (2018), the universe is in ruins due to the efforts of the Mad Titan, Thanos. With the help of remaining allies, the Avengers must assemble once more in order to undo Thanos's actions and undo the chaos to the universe, no matter what consequences may be in store, and no matter who they face...",
+    "Type": "movie",
+    "Year": "2019",
+    "Genre": "Action, Adventure, Sci-Fi",
+    "Rated": "PG-13",
+    "Title": "Avengers: Endgame",
+    "Actors": "Robert Downey Jr., Chris Evans, Mark Ruffalo",
+    "Awards": "Nominated for 1 Oscar. 70 wins & 132 nominations total",
+    "Poster": "https://m.media-amazon.com/images/M/MV5BMTc5MDE2ODcwNV5BMl5BanBnXkFtZTgwMzI2NzQ2NzM@._V1_SX300.jpg",
+    "Writer": "Christopher Markus, Stephen McFeely, Stan Lee",
+    "imdbID": "tt4154796",
+    "Country": "United States",
+    "Ratings": [
+      {
+        "Value": "8.4/10",
+        "Source": "Internet Movie Database"
+      },
+      {
+        "Value": "94%",
+        "Source": "Rotten Tomatoes"
+      },
+      {
+        "Value": "78/100",
+        "Source": "Metacritic"
+      }
+    ],
+    "Runtime": "181 min",
+    "Website": "N/A",
+    "Director": "Anthony Russo, Joe Russo",
+    "Language": "English, Japanese, Xhosa, German",
+    "Released": "26 Apr 2019",
+    "Response": "True",
+    "BoxOffice": "$858,373,000",
+    "Metascore": "78",
+    "imdbVotes": "1,426,944",
+    "Production": "N/A",
+    "imdbRating": "8.4"
+  },
+  "created_at": "2026-02-21T23:36:35.207493+00:00",
+  "updated_at": "2026-02-22T01:26:39.790222+00:00"
+}

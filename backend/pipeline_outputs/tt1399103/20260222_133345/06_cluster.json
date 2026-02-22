@@ -1,0 +1,101 @@
+{
+  "clusters": [
+    {
+      "cluster_id": "93970e82ea802d99",
+      "label": "Repetitive Action Overload",
+      "review_count": 54
+    },
+    {
+      "cluster_id": "63a2ce797d077ac0",
+      "label": "Weak Plot Development",
+      "review_count": 52
+    },
+    {
+      "cluster_id": "35897110724a660a",
+      "label": "Weak Acting Performances",
+      "review_count": 48
+    },
+    {
+      "cluster_id": "51e9b158b0c57f44",
+      "label": "Unsuccessful Comic Relief",
+      "review_count": 39
+    },
+    {
+      "cluster_id": "7192389d7d00ac33",
+      "label": "Lack of Emotional Engagement",
+      "review_count": 24
+    },
+    {
+      "cluster_id": "9286b506aa0d8e7e",
+      "label": "Poorly Written Human Characters",
+      "review_count": 16
+    },
+    {
+      "cluster_id": "938ce6ac144db10e",
+      "label": "Disregard for Narrative Substance",
+      "review_count": 14
+    }
+  ],
+  "examples_sample": [
+    {
+      "example_id": "b1906f1a6ab5b465",
+      "review_text_snippet": "It's 'Bayhem' time again - and this time around demolition king Michael Bay presents his trademark 'Six-C's' in glorious"
+    },
+    {
+      "example_id": "8966395cba2fca5b",
+      "review_text_snippet": "It's 'Bayhem' time again - and this time around demolition king Michael Bay presents his trademark 'Six-C's' in glorious"
+    },
+    {
+      "example_id": "69f4f856b8599b6c",
+      "review_text_snippet": "It's 'Bayhem' time again - and this time around demolition king Michael Bay presents his trademark 'Six-C's' in glorious"
+    },
+    {
+      "example_id": "1b7e4a69ca8b0b2d",
+      "review_text_snippet": "I have to say I enjoyed watching Transformers 3. If you take it for what it is, a Michael Bay movie with awesome, epic v"
+    },
+    {
+      "example_id": "db4c6f464292e5e4",
+      "review_text_snippet": "I have to say I enjoyed watching Transformers 3. If you take it for what it is, a Michael Bay movie with awesome, epic v"
+    },
+    {
+      "example_id": "a9a6b909a8da3ab3",
+      "review_text_snippet": "I was highly disappointed with Revenge of The Fallen and I thought the script for Dark Of The Moon would be similar to t"
+    },
+    {
+      "example_id": "7a17ccf38559087d",
+      "review_text_snippet": "I have to say I enjoyed watching Transformers 3. If you take it for what it is, a Michael Bay movie with awesome, epic v"
+    },
+    {
+      "example_id": "2f3769e6d89d1f83",
+      "review_text_snippet": "I have to say I enjoyed watching Transformers 3. If you take it for what it is, a Michael Bay movie with awesome, epic v"
+    },
+    {
+      "example_id": "9f1a86753bf899fc",
+      "review_text_snippet": "I have to say I enjoyed watching Transformers 3. If you take it for what it is, a Michael Bay movie with awesome, epic v"
+    },
+    {
+      "example_id": "45f6dee2182f893f",
+      "review_text_snippet": "I have to say I enjoyed watching Transformers 3. If you take it for what it is, a Michael Bay movie with awesome, epic v"
+    },
+    {
+      "example_id": "80069ecfc9dcc9cd",
+      "review_text_snippet": "It's 'Bayhem' time again - and this time around demolition king Michael Bay presents his trademark 'Six-C's' in glorious"
+    },
+    {
+      "example_id": "df716887d33476ca",
+      "review_text_snippet": "I was highly disappointed with Revenge of The Fallen and I thought the script for Dark Of The Moon would be similar to t"
+    },
+    {
+      "example_id": "f79a160b0ab1b5bf",
+      "review_text_snippet": "It's 'Bayhem' time again - and this time around demolition king Michael Bay presents his trademark 'Six-C's' in glorious"
+    },
+    {
+      "example_id": "04d9e758cff30b34",
+      "review_text_snippet": "It's 'Bayhem' time again - and this time around demolition king Michael Bay presents his trademark 'Six-C's' in glorious"
+    },
+    {
+      "example_id": "2f443d6cad1a3360",
+      "review_text_snippet": "It's 'Bayhem' time again - and this time around demolition king Michael Bay presents his trademark 'Six-C's' in glorious"
+    }
+  ]
+}

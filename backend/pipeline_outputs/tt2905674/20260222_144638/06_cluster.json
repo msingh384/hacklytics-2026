@@ -1,0 +1,101 @@
+{
+  "clusters": [
+    {
+      "cluster_id": "3ce1d006b23f74ce",
+      "label": "Illogical Plot",
+      "review_count": 37
+    },
+    {
+      "cluster_id": "ac0ce2e43479a60c",
+      "label": "Low Production Values",
+      "review_count": 22
+    },
+    {
+      "cluster_id": "48e620a8e72c77d1",
+      "label": "Unfair Critical Reception",
+      "review_count": 21
+    },
+    {
+      "cluster_id": "b8c0614a1f7b0efc",
+      "label": "Unimpressive Quality",
+      "review_count": 9
+    },
+    {
+      "cluster_id": "a61a5c11dd86b2e2",
+      "label": "Poor Acting & Visual Effects",
+      "review_count": 9
+    },
+    {
+      "cluster_id": "b7eaba4e687a714c",
+      "label": "Complete Waste of Time/Money",
+      "review_count": 9
+    },
+    {
+      "cluster_id": "16e9d475d0d4d1a0",
+      "label": "Not Genuinely Entertaining",
+      "review_count": 8
+    }
+  ],
+  "examples_sample": [
+    {
+      "example_id": "fa2597cdc8ac2820",
+      "review_text_snippet": "Everyone&#39;s been too harsh on this poor movie. It&#39;s a B movie, they deserve a different kind of respect. Do peopl"
+    },
+    {
+      "example_id": "458452ea02b7bde5",
+      "review_text_snippet": "So, this movie has been through the grinder with not so many fans out there. It seems clear to me that you should not ex"
+    },
+    {
+      "example_id": "3c20830e9c16c6ff",
+      "review_text_snippet": "Either this writer has no idea how the prison system works, or he just doesn't care. The movie didn't make a lick of sen"
+    },
+    {
+      "example_id": "8506c207782c1f35",
+      "review_text_snippet": "Everyone&#39;s been too harsh on this poor movie. It&#39;s a B movie, they deserve a different kind of respect. Do peopl"
+    },
+    {
+      "example_id": "cc86a98dc4aa6841",
+      "review_text_snippet": "Everyone&#39;s been too harsh on this poor movie. It&#39;s a B movie, they deserve a different kind of respect. Do peopl"
+    },
+    {
+      "example_id": "959eee8d66e3c765",
+      "review_text_snippet": "So, this movie has been through the grinder with not so many fans out there. It seems clear to me that you should not ex"
+    },
+    {
+      "example_id": "e0febe8f6a6df412",
+      "review_text_snippet": "Everyone&#39;s been too harsh on this poor movie. It&#39;s a B movie, they deserve a different kind of respect. Do peopl"
+    },
+    {
+      "example_id": "7c502daf3f27134a",
+      "review_text_snippet": "Everyone&#39;s been too harsh on this poor movie. It&#39;s a B movie, they deserve a different kind of respect. Do peopl"
+    },
+    {
+      "example_id": "609abab001629391",
+      "review_text_snippet": "Everyone&#39;s been too harsh on this poor movie. It&#39;s a B movie, they deserve a different kind of respect. Do peopl"
+    },
+    {
+      "example_id": "081d34cbedf0a191",
+      "review_text_snippet": "Everyone&#39;s been too harsh on this poor movie. It&#39;s a B movie, they deserve a different kind of respect. Do peopl"
+    },
+    {
+      "example_id": "4d265db928781757",
+      "review_text_snippet": "So, this movie has been through the grinder with not so many fans out there. It seems clear to me that you should not ex"
+    },
+    {
+      "example_id": "7bad0f12c1d9696f",
+      "review_text_snippet": "Its a dinosaur low budget movie what you expect to see .. the Lost World ?<br/><br/>it wasnt bad .. dinosaurs in a jail "
+    },
+    {
+      "example_id": "be1fedad6a165a6b",
+      "review_text_snippet": "Either this writer has no idea how the prison system works, or he just doesn&#39;t care. The movie didn&#39;t make a lic"
+    },
+    {
+      "example_id": "5c880ada84720730",
+      "review_text_snippet": "Horrible acting, even worse animation. A high school crew would have made a better movie. A movie about dinosaurs gettin"
+    },
+    {
+      "example_id": "04737532978dfaa8",
+      "review_text_snippet": "The idea is OK, some dinosaurs escape captivity and run wild.<br/><br/>But...<br/><br/>The acting is terrible. Some of t"
+    }
+  ]
+}

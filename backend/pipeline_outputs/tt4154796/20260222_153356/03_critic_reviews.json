@@ -1,0 +1,85 @@
+{
+  "count": 528,
+  "samples": [
+    {
+      "movie_review_len": 251,
+      "title": "Avengers: Endgame"
+    },
+    {
+      "movie_review_len": 112,
+      "title": "Avengers: Endgame"
+    },
+    {
+      "movie_review_len": 170,
+      "title": "Avengers: Endgame"
+    },
+    {
+      "movie_review_len": 105,
+      "title": "Avengers: Endgame"
+    },
+    {
+      "movie_review_len": 212,
+      "title": "Avengers: Endgame"
+    },
+    {
+      "movie_review_len": 136,
+      "title": "Avengers: Endgame"
+    },
+    {
+      "movie_review_len": 52,
+      "title": "Avengers: Endgame"
+    },
+    {
+      "movie_review_len": 145,
+      "title": "Avengers: Endgame"
+    },
+    {
+      "movie_review_len": 94,
+      "title": "Avengers: Endgame"
+    },
+    {
+      "movie_review_len": 117,
+      "title": "Avengers: Endgame"
+    },
+    {
+      "movie_review_len": 170,
+      "title": "Avengers: Endgame"
+    },
+    {
+      "movie_review_len": 57,
+      "title": "Avengers: Endgame"
+    },
+    {
+      "movie_review_len": 65,
+      "title": "Avengers: Endgame"
+    },
+    {
+      "movie_review_len": 171,
+      "title": "Avengers: Endgame"
+    },
+    {
+      "movie_review_len": 175,
+      "title": "Avengers: Endgame"
+    },
+    {
+      "movie_review_len": 169,
+      "title": "Avengers: Endgame"
+    },
+    {
+      "movie_review_len": 175,
+      "title": "Avengers: Endgame"
+    },
+    {
+      "movie_review_len": 193,
+      "title": "Avengers: Endgame"
+    },
+    {
+      "movie_review_len": 111,
+      "title": "Avengers: Endgame"
+    },
+    {
+      "movie_review_len": 96,
+      "title": "Avengers: Endgame"
+    }
+  ]
+}

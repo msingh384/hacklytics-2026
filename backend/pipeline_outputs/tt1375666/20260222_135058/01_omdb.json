@@ -1,0 +1,54 @@
+{
+  "movie_id": "tt1375666",
+  "title": "Inception",
+  "year": "2010",
+  "genre": "Action, Adventure, Sci-Fi",
+  "poster": "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg",
+  "imdb_rating": 8.8,
+  "rotten_tomatoes": "87%",
+  "audience_score": "74/100",
+  "plot": "Dom Cobb is a skilled thief, the absolute best in the dangerous art of extraction, stealing valuable secrets from deep within the subconscious during the dream state, when the mind is at its most vulnerable. Cobb's rare ability has made him a coveted player in this treacherous new world of corporate espionage, but it has also made him an international fugitive and cost him everything he has ever loved. Now Cobb is being offered a chance at redemption. One last job could give him his life back but only if he can accomplish the impossible, inception. Instead of the perfect heist, Cobb and his team of specialists have to pull off the reverse: their task is not to steal an idea, but to plant one. If they succeed, it could be the perfect crime. But no amount of careful planning or expertise can prepare the team for the dangerous enemy that seems to predict their every move. An enemy that only Cobb could have seen coming.",
+  "expanded_plot": "Dom Cobb, a master of corporate espionage, and his associate Arthur operate as 'extractors,' infiltrating targets' subconscious minds through shared dreaming technology to steal valuable information. Their latest high-stakes mission targeting the powerful businessman Saito exposes Cobb's unique ability to navigate multiple dream layers, deeply impressing their mark. Instead of extraction, Saito presents Cobb with an unprecedented and seemingly impossible task: to perform 'inception,' the delicate act of planting an idea into a person's subconscious. The target is Robert Fischer, heir to a formidable corporate empire, with the specific directive to subtly implant the idea that he should dissolve his father Maurice Fischer's company. In return, Saito offers Cobb a coveted prize: the clearing of his criminal record, which would allow him to finally return home to his beloved children, a driving motivation for Cobb. Accepting the audacious proposal, Cobb meticulously assembles a specialized team for the mission. This includes Eames, a versatile forger adept at impersonation; Yusuf, a brilliant chemist responsible for the potent sedatives; and Ariadne, a talented architecture student tasked with designing the intricate and stable dreamscapes. Cobb himself cannot undertake the architectural duties due to his pervasive guilt and the dangerous, intrusive projection of his late wife, Mal, which constantly threatens to sabotage his work. The critical window for inception opens when Maurice Fischer passes away, prompting the team to sedate Robert Fischer aboard a transatlantic flight to America, a journey orchestrated and financed by Saito. The team then plunges into a meticulously constructed three-layer shared dream, where time dilates significantly with each successive layer. A synchronized 'kick,' often accompanied by the French song 'Non, je ne regrette rien,' is planned for each level, ensuring simultaneous awakening across all dream strata. Yusuf remains in the first layer to execute the initial kick. In the first dream layer, a bustling city, the team attempts to abduct Robert. However, they are unexpectedly ambushed by Robert's highly trained subconscious projections, prepared for such an intrusion. When Saito is gravely wounded, Cobb reveals the dire consequence of dying in this heavily sedated state: instead of awakening, they would fall into 'Limbo,' an infinite and dangerous realm of unconstructed subconsciousness. Eames assumes the guise of Peter Browning, Robert's godfather, to subtly introduce the concept of an alternate will suggesting the company's dissolution. Cobb confides in Ariadne about his tragic past with Mal; their experimental journey into Limbo led them to experience fifty subjective years in a single night. Upon awakening, Mal remained convinced she was still dreaming, ultimately committing suicide and framing Cobb to compel him to 'wake up' with her. This tragedy forced Cobb to flee the U.S., abandoning his children. Yusuf drives the team's van through the first layer as they descend into the second level, a luxurious hotel designed by Arthur. Cobb cleverly manipulates Robert, convincing him that Browning is behind his abduction and that Cobb himself is a defensive projection, a ruse to guide Robert even deeper into a third dream layer. This deeper level is an alpine fortress where a projection of Maurice resides, the ideal location for the actual inception. However, Yusuf's kick is prematurely triggered when his van plunges off a bridge, forcing Arthur and Eames to hastily improvise new synchronized kicks: Arthur rigging an elevator in the hotel, and Eames preparing explosives in the fortress. Just as the inception is within reach, Mal's projection reappears, fatally shooting Robert and sending both him and Saito into the depths of Limbo. This forces Cobb and Ariadne to undertake a perilous rescue mission to retrieve them before Eames's kick. In Limbo, Cobb finally confronts his painful truth, admitting to Ariadne that he accidentally incepted Mal with the idea that her reality was a dream during their time there, leading to her tragic end. Making peace with his devastating role in Mal's death, Cobb allows Ariadne to dispatch Mal's projection. Ariadne then administers a kick, reviving Robert into the third level, where he encounters the successfully implanted idea: a final, poignant message from his dying father encouraging him to forge his own path. While Cobb remains in Limbo to find an aged Saito, reminding him of their agreement, the rest of the team rides the series of synchronized kicks back to reality. The dreamers all awaken on the airplane, and Saito, fulfilling his promise, makes a crucial phone call. Arriving in Los Angeles, Cobb passes through immigration, his father-in-law awaiting him. At home, Cobb spins Mal's totem, a top meant to test reality, but chooses not to observe its fate, instead embracing his children, leaving his true reality ambiguous.",
+  "omdb_payload": {
+    "DVD": "N/A",
+    "Plot": "Dom Cobb is a skilled thief, the absolute best in the dangerous art of extraction, stealing valuable secrets from deep within the subconscious during the dream state, when the mind is at its most vulnerable. Cobb's rare ability has made him a coveted player in this treacherous new world of corporate espionage, but it has also made him an international fugitive and cost him everything he has ever loved. Now Cobb is being offered a chance at redemption. One last job could give him his life back but only if he can accomplish the impossible, inception. Instead of the perfect heist, Cobb and his team of specialists have to pull off the reverse: their task is not to steal an idea, but to plant one. If they succeed, it could be the perfect crime. But no amount of careful planning or expertise can prepare the team for the dangerous enemy that seems to predict their every move. An enemy that only Cobb could have seen coming.",
+    "Type": "movie",
+    "Year": "2010",
+    "Genre": "Action, Adventure, Sci-Fi",
+    "Rated": "PG-13",
+    "Title": "Inception",
+    "Actors": "Leonardo DiCaprio, Joseph Gordon-Levitt, Elliot Page",
+    "Awards": "Won 4 Oscars. 160 wins & 220 nominations total",
+    "Poster": "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg",
+    "Writer": "Christopher Nolan",
+    "imdbID": "tt1375666",
+    "Country": "United States, United Kingdom",
+    "Ratings": [
+      {
+        "Value": "8.8/10",
+        "Source": "Internet Movie Database"
+      },
+      {
+        "Value": "87%",
+        "Source": "Rotten Tomatoes"
+      },
+      {
+        "Value": "74/100",
+        "Source": "Metacritic"
+      }
+    ],
+    "Runtime": "148 min",
+    "Website": "N/A",
+    "Director": "Christopher Nolan",
+    "Language": "English, Japanese, French",
+    "Released": "16 Jul 2010",
+    "Response": "True",
+    "BoxOffice": "$292,587,330",
+    "Metascore": "74",
+    "imdbVotes": "2,781,889",
+    "Production": "N/A",
+    "imdbRating": "8.8"
+  },
+  "created_at": "2026-02-21T23:36:33.745038+00:00",
+  "updated_at": "2026-02-22T10:32:21.414837+00:00"
+}

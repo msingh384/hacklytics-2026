@@ -1,0 +1,101 @@
+{
+  "clusters": [
+    {
+      "cluster_id": "1ffe08fb6d0b7f90",
+      "label": "Poorly Lit Final Battle",
+      "review_count": 534
+    },
+    {
+      "cluster_id": "4cac52539f71991d",
+      "label": "Uneven Character Screen Time",
+      "review_count": 528
+    },
+    {
+      "cluster_id": "84cc6c2eb3211c18",
+      "label": "Divisive Character Design Changes",
+      "review_count": 340
+    },
+    {
+      "cluster_id": "58b324fc3e36e374",
+      "label": "Excessive Runtime & Pacing",
+      "review_count": 313
+    },
+    {
+      "cluster_id": "afb3ac1ad8978e8d",
+      "label": "Confusing Narrative Structure",
+      "review_count": 234
+    },
+    {
+      "cluster_id": "1bd574def7b901fa",
+      "label": "Excessive Fan Service",
+      "review_count": 231
+    },
+    {
+      "cluster_id": "3ba971376dc234d8",
+      "label": "Plot Inconsistencies",
+      "review_count": 162
+    }
+  ],
+  "examples_sample": [
+    {
+      "example_id": "258a3f00681fa251",
+      "review_text_snippet": "from a marvel comic book reader point of view"
+    },
+    {
+      "example_id": "f14ef8be233899c0",
+      "review_text_snippet": "Overall this was a good movie. Character screen time was definitely not split as well as the last outing. Just seemed li"
+    },
+    {
+      "example_id": "41899289e80e6447",
+      "review_text_snippet": "My mom is very critical about movies she's not interested in most of them unless if one her favorite so called 'good loo"
+    },
+    {
+      "example_id": "5a8ace70b391e4b4",
+      "review_text_snippet": "Will tug on the old heart strings and will be one of the best movies you will ever see."
+    },
+    {
+      "example_id": "77afa85be48f03ae",
+      "review_text_snippet": "Great story, phenomenal actors, amazing cgi and cinematography, awesome battles."
+    },
+    {
+      "example_id": "f1c8c1f58dc1796b",
+      "review_text_snippet": "Overall this was a good movie. Character screen time was definitely not split as well as the last outing. Just seemed li"
+    },
+    {
+      "example_id": "bca2abcfef18aa6a",
+      "review_text_snippet": "Had some really good twists, overall awesome 3 hours!"
+    },
+    {
+      "example_id": "0e1c38e5b7871fb0",
+      "review_text_snippet": "When I saw Endgame and Carol came on screen with her new haircut the gay in me actually moaned in the theater so loud my"
+    },
+    {
+      "example_id": "fa5ac3bfea4f17f8",
+      "review_text_snippet": "Having lost someone close to me with the simultaneous mixture of long and drawn out and extremely quickly as certain dis"
+    },
+    {
+      "example_id": "93ece98f8532d8e0",
+      "review_text_snippet": "Hello everyone, I'm Mr. C Reviewer, tonight we are discussing the Movie, Avengers: Endgame. I watched it on Disney plus "
+    },
+    {
+      "example_id": "db46faf40bc97d14",
+      "review_text_snippet": "First off, a great applause to the members (Director, Writers, Crews, Cast etc..) behind the extraordinary movie. Avenge"
+    },
+    {
+      "example_id": "4205845c99f96338",
+      "review_text_snippet": "First off, a great applause to the members (Director, Writers, Crews, Cast etc..) behind the extraordinary movie. Avenge"
+    },
+    {
+      "example_id": "5091aca1f455da00",
+      "review_text_snippet": "There is a lot of spam 1 star ratings on here. Not sure why. Perfect ending to a great storyline. It had a bit of everyt"
+    },
+    {
+      "example_id": "cc13fb1687abcb08",
+      "review_text_snippet": "There is a lot of spam 1 star ratings on here. Not sure why. Perfect ending to a great storyline. It had a bit of everyt"
+    },
+    {
+      "example_id": "07c19032608f7c43",
+      "review_text_snippet": "Honestly: at the 2 hour mark i was checking my watch to try and figure out how much more I had to put up with before it "
+    }
+  ]
+}

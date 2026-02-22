@@ -1,0 +1,85 @@
+{
+  "count": 41,
+  "samples": [
+    {
+      "movie_review_len": 69,
+      "title": "Dune"
+    },
+    {
+      "movie_review_len": 177,
+      "title": "Dune"
+    },
+    {
+      "movie_review_len": 99,
+      "title": "Dune"
+    },
+    {
+      "movie_review_len": 124,
+      "title": "Dune"
+    },
+    {
+      "movie_review_len": 152,
+      "title": "Dune"
+    },
+    {
+      "movie_review_len": 41,
+      "title": "Dune"
+    },
+    {
+      "movie_review_len": 41,
+      "title": "Dune"
+    },
+    {
+      "movie_review_len": 136,
+      "title": "Dune"
+    },
+    {
+      "movie_review_len": 58,
+      "title": "Dune"
+    },
+    {
+      "movie_review_len": 202,
+      "title": "Dune"
+    },
+    {
+      "movie_review_len": 233,
+      "title": "Dune"
+    },
+    {
+      "movie_review_len": 171,
+      "title": "Dune"
+    },
+    {
+      "movie_review_len": 94,
+      "title": "Dune"
+    },
+    {
+      "movie_review_len": 34,
+      "title": "Dune"
+    },
+    {
+      "movie_review_len": 61,
+      "title": "Dune"
+    },
+    {
+      "movie_review_len": 84,
+      "title": "Dune"
+    },
+    {
+      "movie_review_len": 186,
+      "title": "Dune"
+    },
+    {
+      "movie_review_len": 165,
+      "title": "Dune"
+    },
+    {
+      "movie_review_len": 157,
+      "title": "Dune"
+    },
+    {
+      "movie_review_len": 247,
+      "title": "Dune"
+    }
+  ]
+}

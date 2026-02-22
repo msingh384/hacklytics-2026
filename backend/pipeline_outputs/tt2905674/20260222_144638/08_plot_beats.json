@@ -1,0 +1,72 @@
+{
+  "expanded_plot": "A clandestine genetics research facility, Project Chimera, operating deep beneath downtown Los Angeles, suffers a catastrophic containment breach. This isn't an accident; Dr. Aris Thorne, a disillusioned lead geneticist, orchestrates the breach to expose the unethical weaponization of prehistoric apex predators \u2013 specifically, a new, highly aggressive strain of Velociraptors. Thousands of these genetically engineered creatures flood into the urban sprawl, turning the city into a primeval hunting ground. As panic erupts, the Pentagon dispatches a hardened Black-Ops unit, led by Captain Sarah \"Specter\" Vance, tasked with containing the outbreak and retrieving key assets before the truth gets out. Simultaneously, a separate transport convoy, unbeknownst to Vance, carrying a dozen 'problematic' raptors deemed too dangerous for the lab, is rerouted through the city's overflowing traffic to a maximum-security penitentiary. When the convoy is inevitably compromised by the city-wide chaos, these raptors escape within the prison walls, trapping both death-row inmates and corrections officers in a brutal fight for survival. The military, realizing the scale of the threat, struggles to coordinate across multiple fronts \u2013 protecting strategic locations, rescuing pockets of civilians including a group of sorority sisters sheltering in a university building, and confronting the rapidly evolving raptor threat which shows disturbing signs of coordinated pack behavior. Captain Vance must navigate the urban jungle, the prison, and the political machinations of the secretive organization behind Project Chimera, all while battling the most ferocious predators the world has ever seen in a race against time before LA becomes truly Jurassic.",
+  "beats": [
+    {
+      "order": 1,
+      "label": "Lab Breach & Escape",
+      "text": "A top-secret genetic research facility in Los Angeles is catastrophically breached, unleashing thousands of genetically engineered raptors into the city."
+    },
+    {
+      "order": 2,
+      "label": "City Under Siege",
+      "text": "Rampaging raptors cause immediate widespread chaos, attacking civilians and initiating a city-wide panic as authorities struggle to understand the threat."
+    },
+    {
+      "order": 3,
+      "label": "Black-Ops Mobilization",
+      "text": "A specialized black-ops unit is deployed with urgent orders to contain the raptor outbreak and secure critical assets."
+    },
+    {
+      "order": 4,
+      "label": "Prison Reroute",
+      "text": "A separate transport of highly dangerous raptors, rerouted due to city gridlock, heads towards a maximum-security prison."
+    },
+    {
+      "order": 5,
+      "label": "Prison Breakout",
+      "text": "The raptor transport is compromised within the prison, allowing the creatures to escape and terrorize inmates and staff."
+    },
+    {
+      "order": 6,
+      "label": "Multiple Fronts",
+      "text": "The military unit faces escalating challenges, including protecting key locations, aiding trapped civilians, and dealing with the rapidly multiplying and adapting raptor threat."
+    },
+    {
+      "order": 7,
+      "label": "Desperate Containment",
+      "text": "Both the city and prison scenarios escalate into desperate fights for survival as containment efforts prove increasingly difficult against the ferocious predators."
+    }
+  ],
+  "characters": [
+    {
+      "name": "Captain Sarah \"Specter\" Vance",
+      "role": "Protagonist, Black-Ops Unit Leader",
+      "analysis": "Captain Vance is a seasoned and highly capable leader, known for her strategic mind and unwavering resolve under pressure. She commands respect through her calm demeanor and decisive actions, always prioritizing her unit's mission and the safety of innocents. Haunted by a past mission failure, she carries a burden of responsibility that fuels her determination to succeed. Vance is deeply ethical, often clashing with the more ruthless aspects of her superiors' directives regarding the containment of the breach. Her arc involves confronting not only the prehistoric threat but also the moral ambiguities of her assignment."
+    },
+    {
+      "name": "Dr. Aris Thorne",
+      "role": "Antagonist / Catalyst",
+      "analysis": "Dr. Thorne is a brilliant but morally conflicted geneticist, once passionate about scientific advancement but now disillusioned by its weaponization. He orchestrated the lab breach as a desperate, albeit catastrophic, act of defiance to expose Project Chimera's unethical practices. Thorne is driven by a deep-seated guilt and a twisted sense of justice, believing the public deserves to know the monstrous truth his research uncovered. While intelligent, his methods are reckless, showing a disregard for the immediate human cost of his actions in favor of a greater ideological struggle. His arc explores the consequences of playing God and the blurred lines between hero and villain."
+    },
+    {
+      "name": "Warden Marcus Thorne",
+      "role": "Supporting Character, Prison Authority",
+      "analysis": "Warden Thorne is a hardened and by-the-book administrator, dedicated to maintaining order within his maximum-security penitentiary. He prides himself on his impenetrable facility and his ability to control even the most dangerous inmates. Initially dismissive of the city-wide panic, he is ill-prepared for a threat that defies all conventional security protocols. His motivations are centered on protecting his facility and its personnel, even if it means making impossible choices under extreme duress. His arc involves adapting to an unprecedented threat that shatters his sense of control and forces him to question everything he believes about containment."
+    },
+    {
+      "name": "Sgt. 'Hammer' Jenkins",
+      "role": "Supporting Character, Black-Ops Unit Member",
+      "analysis": "Sgt. Jenkins is Captain Vance's loyal and immensely strong second-in-command, a highly trained soldier with an unflappable presence in combat. He is the muscle-bound military archetype, deeply committed to his comrades and fiercely protective of civilians caught in the crossfire. His primary motivation is to follow orders and protect his unit, often acting as Vance's strong arm and moral compass. Despite his imposing physique, Jenkins possesses a surprisingly strategic mind and a dry wit that provides levity in grim situations. His arc sees him pushed to his physical and mental limits, proving that brute strength combined with loyalty is essential for survival."
+    },
+    {
+      "name": "Amber Hayes",
+      "role": "Supporting Character, Civilian Survivor",
+      "analysis": "Amber Hayes initially appears as the quintessential sorority girl, seemingly preoccupied with social status and shallow concerns. However, beneath her initial facade lies a resourceful and surprisingly resilient young woman, quick to adapt to terrifying circumstances. Her primary motivation shifts from self-preservation to protecting her friends and finding a way out of the besieged city. Faced with unimaginable horror, Amber discovers an inner strength and leadership capability she never knew she possessed. Her arc transforms her from a privileged student into a hardened survivor, challenging stereotypes and demonstrating unexpected courage."
+    },
+    {
+      "name": "\"Ghost\" Rodriguez",
+      "role": "Supporting Character, Inmate Survivor",
+      "analysis": "\"Ghost\" Rodriguez is a notorious death-row inmate, serving time for a crime whose details are shrouded in ambiguity. He is a man of few words, possessing a formidable physical presence and an air of quiet danger. His primary motivation is survival, a primal drive that kicks in immediately when the raptors breach the prison. Despite his past, Ghost harbors a hidden code of honor, subtly protecting weaker inmates or even guards when circumstances demand it. His arc explores themes of redemption and unlikely alliances, as he finds an opportunity to prove his worth in the face of an even greater evil."
+    }
+  ]
+}

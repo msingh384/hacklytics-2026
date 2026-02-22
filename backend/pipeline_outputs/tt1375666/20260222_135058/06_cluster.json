@@ -1,0 +1,101 @@
+{
+  "clusters": [
+    {
+      "cluster_id": "43f616e01f642dc0",
+      "label": "Mentally Demanding",
+      "review_count": 756
+    },
+    {
+      "cluster_id": "e6ba24db24075db0",
+      "label": "Lack of Emotional Depth",
+      "review_count": 592
+    },
+    {
+      "cluster_id": "586736cad41b33f4",
+      "label": "Overly Complex Plot",
+      "review_count": 498
+    },
+    {
+      "cluster_id": "8f1cf1114f8eb71c",
+      "label": "Confusing Plot",
+      "review_count": 275
+    },
+    {
+      "cluster_id": "670f9afa3896333a",
+      "label": "Manipulative Plot",
+      "review_count": 271
+    },
+    {
+      "cluster_id": "e318c5ddb9bcaf18",
+      "label": "Ambiguous Ending",
+      "review_count": 253
+    },
+    {
+      "cluster_id": "281602058753bb66",
+      "label": "Generic Action Sequences",
+      "review_count": 198
+    }
+  ],
+  "examples_sample": [
+    {
+      "example_id": "52ffd64f215289c0",
+      "review_text_snippet": "There was a Film Named \"M\" (1931)(german) ,it was not just an ordinary film ,it made such an impact on people Mind ,tat "
+    },
+    {
+      "example_id": "f312e1bead3fcc5b",
+      "review_text_snippet": "There was a Film Named \"M\" (1931)(german) ,it was not just an ordinary film ,it made such an impact on people Mind ,tat "
+    },
+    {
+      "example_id": "fe3be5286075cfe6",
+      "review_text_snippet": "There was a Film Named \"M\" (1931)(german) ,it was not just an ordinary film ,it made such an impact on people Mind ,tat "
+    },
+    {
+      "example_id": "7eff8e937a146d30",
+      "review_text_snippet": "I went into Inception with considerable expectation, in regards to the talent and concept involved. I was expecting some"
+    },
+    {
+      "example_id": "6da348544f28c659",
+      "review_text_snippet": "I went into Inception with considerable expectation, in regards to the talent and concept involved. I was expecting some"
+    },
+    {
+      "example_id": "f3fd6acbba566a5a",
+      "review_text_snippet": "I went into Inception with considerable expectation, in regards to the talent and concept involved. I was expecting some"
+    },
+    {
+      "example_id": "86e590b86ea8e02c",
+      "review_text_snippet": "I've watch this movie about 5 times and still you see details you didn't see before.I was young when this movie came out"
+    },
+    {
+      "example_id": "54e8ed59337c98a8",
+      "review_text_snippet": "I went into Inception with considerable expectation, in regards to the talent and concept involved. I was expecting some"
+    },
+    {
+      "example_id": "6287a60768c8285b",
+      "review_text_snippet": "I went into Inception with considerable expectation, in regards to the talent and concept involved. I was expecting some"
+    },
+    {
+      "example_id": "4c31a83249d3f05c",
+      "review_text_snippet": "I've watch this movie about 5 times and still you see details you didn't see before.I was young when this movie came out"
+    },
+    {
+      "example_id": "b56fad2c294be496",
+      "review_text_snippet": "Just when I thought I was stuck in a dream(nightmare), I find some realistic reviews of this tosh!"
+    },
+    {
+      "example_id": "dcc517d7630cccb4",
+      "review_text_snippet": "Inception: A Mind-Bending Masterpiece of Dreams and Reality"
+    },
+    {
+      "example_id": "8d0da93bfbbacf6c",
+      "review_text_snippet": "Super !!"
+    },
+    {
+      "example_id": "291dbccb48ca195d",
+      "review_text_snippet": "What a dream."
+    },
+    {
+      "example_id": "b12e82d24567ece0",
+      "review_text_snippet": "Jedi Mind Trick"
+    }
+  ]
+}

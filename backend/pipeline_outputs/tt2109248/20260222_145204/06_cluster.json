@@ -1,0 +1,101 @@
+{
+  "clusters": [
+    {
+      "cluster_id": "1920575f3a11e7ac",
+      "label": "Overlong & Pacing Issues",
+      "review_count": 48
+    },
+    {
+      "cluster_id": "575401b63d38bb5d",
+      "label": "Repetitive Action, Shallow Characters",
+      "review_count": 39
+    },
+    {
+      "cluster_id": "339604fed16e32d6",
+      "label": "Draining Action, Absent Plot",
+      "review_count": 27
+    },
+    {
+      "cluster_id": "65a8766513f62c3f",
+      "label": "Plot Holes & Narrative Incoherence",
+      "review_count": 27
+    },
+    {
+      "cluster_id": "c33246d18819d825",
+      "label": "Weak Narrative & Character Depth",
+      "review_count": 26
+    },
+    {
+      "cluster_id": "9b24a0d39471f74a",
+      "label": "Annoying Human Characters & Dialogue",
+      "review_count": 24
+    },
+    {
+      "cluster_id": "c861f76ed3355605",
+      "label": "Excessive Product Placement",
+      "review_count": 13
+    }
+  ],
+  "examples_sample": [
+    {
+      "example_id": "a625573a7afe3a36",
+      "review_text_snippet": "Transformers: Age of Extinction attempts to breathe new life into the franchise with a new cast led by Mark Wahlberg and"
+    },
+    {
+      "example_id": "089fa50eed457f5b",
+      "review_text_snippet": "I&#39;ve been playing with Transformer toys since the beginning, loved the cartoon series and animated movie, but have m"
+    },
+    {
+      "example_id": "b28728803f41a9e9",
+      "review_text_snippet": "I've been playing with Transformer toys since the beginning, loved the cartoon series and animated movie, but have mostl"
+    },
+    {
+      "example_id": "68751ce385d1b1de",
+      "review_text_snippet": "I've been playing with Transformer toys since the beginning, loved the cartoon series and animated movie, but have mostl"
+    },
+    {
+      "example_id": "440ef9aede56100f",
+      "review_text_snippet": "First off, I want to say that by now people should know that a Michael Bay movie is not going to be a mind-blowing story"
+    },
+    {
+      "example_id": "4d2873f0e6db8d66",
+      "review_text_snippet": "Worst of the transformers movies. Was okay until about a 3rd of the way through. Mark Wahlberg was better than Shia, but"
+    },
+    {
+      "example_id": "31179660d642b464",
+      "review_text_snippet": "Good, enjoyable action flick! Mark Wahlberg looking tough, saving his daughter and the world. Totally not necessary to b"
+    },
+    {
+      "example_id": "4cd3787783fdc5c5",
+      "review_text_snippet": "Alright, alright, this is not the best movie ever made, but it's way better than some people give it credit for.\nBut gen"
+    },
+    {
+      "example_id": "b312fdb58350c496",
+      "review_text_snippet": "This is one of the worst movies I&#39;ve ever seen. I only went to the release because some parts were filmed in Detroit"
+    },
+    {
+      "example_id": "0a2f13c75cb2f634",
+      "review_text_snippet": "The fourth entry into the franchise is a misstep that squanders the will of the preceding entries."
+    },
+    {
+      "example_id": "d4354b6e7eaf8ab3",
+      "review_text_snippet": "First off, I want to say that by now people should know that a Michael Bay movie is not going to be a mind-blowing story"
+    },
+    {
+      "example_id": "fd5ac3fdd8727aab",
+      "review_text_snippet": "Ahhh where to start. I usually don't write reviews. But yesterday's disappointment in watching this had to be expressed "
+    },
+    {
+      "example_id": "6e6e4c8bb8543f39",
+      "review_text_snippet": "Transformers: Age of Extinction attempts to breathe new life into the franchise with a new cast led by Mark Wahlberg and"
+    },
+    {
+      "example_id": "71b325768e704aec",
+      "review_text_snippet": "Transformers: Age of Extinction attempts to breathe new life into the franchise with a new cast led by Mark Wahlberg and"
+    },
+    {
+      "example_id": "7e65dde46d994f10",
+      "review_text_snippet": "This is one of the worst movies I've ever seen. I only went to the release because some parts were filmed in Detroit. Th"
+    }
+  ]
+}

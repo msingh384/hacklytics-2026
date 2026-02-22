@@ -1,0 +1,54 @@
+{
+  "movie_id": "tt1399103",
+  "title": "Transformers: Dark of the Moon",
+  "year": "2011",
+  "genre": "Action, Adventure, Comedy",
+  "poster": "https://m.media-amazon.com/images/M/MV5BMTkwOTY0MTc1NV5BMl5BanBnXkFtZTcwMDQwNjA2NQ@@._V1_SX300.jpg",
+  "imdb_rating": 6.2,
+  "rotten_tomatoes": "35%",
+  "audience_score": "42/100",
+  "plot": "Autobots Bumblebee, Ratchet, Ironhide, Mirage (aka Dino), Wheeljack (aka Que) and Sideswipe led by Optimus Prime, are back in action taking on the evil Decepticons, who are eager to avenge their recent defeat. The Autobots and Decepticons become involved in a perilous space race between the United States and Russia to reach a hidden Cybertronian spacecraft on the moon and learn its secrets, and once again Sam Witwicky has to go to the aid of his robot friends. The new villain Shockwave is on the scene while the Autobots and Decepticons continue to battle it out on Earth.",
+  "expanded_plot": "The Autobots, under the resolute leadership of Optimus Prime, are actively engaged in defending Earth against the resurgent Decepticons. These malevolent Cybertronians, including Bumblebee, Ratchet, Ironhide, Mirage (aka Dino), Wheeljack (aka Que), and Sideswipe, are driven by a thirst for vengeance following their prior defeat. A critical new conflict emerges as a perilous covert space race unfolds between the United States and Russia. Both global superpowers become embroiled in a desperate scramble to reach a long-hidden Cybertronian spacecraft discovered on the moon, hoping to unlock its ancient and powerful secrets before the other. Amidst this escalating intergalactic struggle, Sam Witwicky, humanity's unlikely hero, is once again compelled to lend his aid to his robotic friends. Adding a profound new layer of threat, the formidable new villain Shockwave makes his appearance, intensifying the already fierce battles between Autobots and Decepticons that continue to rage across Earth.",
+  "omdb_payload": {
+    "DVD": "N/A",
+    "Plot": "Autobots Bumblebee, Ratchet, Ironhide, Mirage (aka Dino), Wheeljack (aka Que) and Sideswipe led by Optimus Prime, are back in action taking on the evil Decepticons, who are eager to avenge their recent defeat. The Autobots and Decepticons become involved in a perilous space race between the United States and Russia to reach a hidden Cybertronian spacecraft on the moon and learn its secrets, and once again Sam Witwicky has to go to the aid of his robot friends. The new villain Shockwave is on the scene while the Autobots and Decepticons continue to battle it out on Earth.",
+    "Type": "movie",
+    "Year": "2011",
+    "Genre": "Action, Adventure, Comedy",
+    "Rated": "PG-13",
+    "Title": "Transformers: Dark of the Moon",
+    "Actors": "Shia LaBeouf, Rosie Huntington-Whiteley, Tyrese Gibson",
+    "Awards": "Nominated for 3 Oscars. 11 wins & 42 nominations total",
+    "Poster": "https://m.media-amazon.com/images/M/MV5BMTkwOTY0MTc1NV5BMl5BanBnXkFtZTcwMDQwNjA2NQ@@._V1_SX300.jpg",
+    "Writer": "Ehren Kruger",
+    "imdbID": "tt1399103",
+    "Country": "United States, Hong Kong, Cambodia, United Kingdom",
+    "Ratings": [
+      {
+        "Value": "6.2/10",
+        "Source": "Internet Movie Database"
+      },
+      {
+        "Value": "35%",
+        "Source": "Rotten Tomatoes"
+      },
+      {
+        "Value": "42/100",
+        "Source": "Metacritic"
+      }
+    ],
+    "Runtime": "154 min",
+    "Website": "N/A",
+    "Director": "Michael Bay",
+    "Language": "English, Russian",
+    "Released": "29 Jun 2011",
+    "Response": "True",
+    "BoxOffice": "$352,390,543",
+    "Metascore": "42",
+    "imdbVotes": "451,598",
+    "Production": "N/A",
+    "imdbRating": "6.2"
+  },
+  "created_at": "2026-02-22T05:17:58.213746+00:00",
+  "updated_at": "2026-02-22T13:34:55.916896+00:00"
+}

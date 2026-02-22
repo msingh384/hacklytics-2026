@@ -1,0 +1,101 @@
+{
+  "clusters": [
+    {
+      "cluster_id": "74e18552cbd18e83",
+      "label": "Poor Human Character & Acting",
+      "review_count": 61
+    },
+    {
+      "cluster_id": "19206ab05dfdd3f0",
+      "label": "Lengthy Pacing & Abrupt Ending",
+      "review_count": 38
+    },
+    {
+      "cluster_id": "9d420f6768fea949",
+      "label": "Lack of Story Complexity & Nuance",
+      "review_count": 37
+    },
+    {
+      "cluster_id": "322506667e199d5f",
+      "label": "Overwrought & Confusing Action",
+      "review_count": 33
+    },
+    {
+      "cluster_id": "7192389d7d00ac33",
+      "label": "Superficial Lead & Unfunny Comedy",
+      "review_count": 31
+    },
+    {
+      "cluster_id": "b12d680d93db70c2",
+      "label": "Incoherent Plot & Emotional Detachment",
+      "review_count": 31
+    },
+    {
+      "cluster_id": "60f9ba5e8fd6ec88",
+      "label": "Sensory Overload from Action",
+      "review_count": 16
+    }
+  ],
+  "examples_sample": [
+    {
+      "example_id": "85022dd897b9a741",
+      "review_text_snippet": "I have to say I enjoyed watching Transformers 3. If you take it for what it is, a Michael Bay movie with awesome, epic v"
+    },
+    {
+      "example_id": "a1ab4771ec2fece2",
+      "review_text_snippet": "This is the third of the Transformers trilogy from director Michael Bay. Even the highly publicized exit of Megan Fox ca"
+    },
+    {
+      "example_id": "24f0b48924fc06eb",
+      "review_text_snippet": "As a huge fan of the Transformers animated series, I like the first Transformers film. The visuals were spectacular and "
+    },
+    {
+      "example_id": "e638f2353d4d8a01",
+      "review_text_snippet": "I have to say I enjoyed watching Transformers 3. If you take it for what it is, a Michael Bay movie with awesome, epic v"
+    },
+    {
+      "example_id": "a3ff3897a05861c9",
+      "review_text_snippet": "This is the third of the Transformers trilogy from director Michael Bay. Even the highly publicized exit of Megan Fox ca"
+    },
+    {
+      "example_id": "a5d04ec8aa36e708",
+      "review_text_snippet": "As a huge fan of the Transformers animated series, I like the first Transformers film. The visuals were spectacular and "
+    },
+    {
+      "example_id": "a0f7fa4beca84d30",
+      "review_text_snippet": "I have to say I enjoyed watching Transformers 3. If you take it for what it is, a Michael Bay movie with awesome, epic v"
+    },
+    {
+      "example_id": "b364ba5af57e06ab",
+      "review_text_snippet": "I have to say I enjoyed watching Transformers 3. If you take it for what it is, a Michael Bay movie with awesome, epic v"
+    },
+    {
+      "example_id": "9cf151240afc6977",
+      "review_text_snippet": "I have to say I enjoyed watching Transformers 3. If you take it for what it is, a Michael Bay movie with awesome, epic v"
+    },
+    {
+      "example_id": "ee9d1fc2d10b48cd",
+      "review_text_snippet": "This is the third of the Transformers trilogy from director Michael Bay. Even the highly publicized exit of Megan Fox ca"
+    },
+    {
+      "example_id": "a82ec34e97932bc0",
+      "review_text_snippet": "It&#39;s &#39;Bayhem&#39; time again - and this time around demolition king Michael Bay presents his trademark &#39;Six-"
+    },
+    {
+      "example_id": "d28e26f4e8f79841",
+      "review_text_snippet": "It's 'Bayhem' time again - and this time around demolition king Michael Bay presents his trademark 'Six-C's' in glorious"
+    },
+    {
+      "example_id": "f5c6cbca49e788a2",
+      "review_text_snippet": "This is the third of the Transformers trilogy from director Michael Bay. Even the highly publicized exit of Megan Fox ca"
+    },
+    {
+      "example_id": "edf84002102b4cd8",
+      "review_text_snippet": "It&#39;s &#39;Bayhem&#39; time again - and this time around demolition king Michael Bay presents his trademark &#39;Six-"
+    },
+    {
+      "example_id": "a9381d1348e2cef4",
+      "review_text_snippet": "It's 'Bayhem' time again - and this time around demolition king Michael Bay presents his trademark 'Six-C's' in glorious"
+    }
+  ]
+}

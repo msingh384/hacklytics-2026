@@ -1,0 +1,101 @@
+{
+  "clusters": [
+    {
+      "cluster_id": "93970e82ea802d99",
+      "label": "Weak Narrative & Characterization",
+      "review_count": 56
+    },
+    {
+      "cluster_id": "19206ab05dfdd3f0",
+      "label": "Lack of Emotional Resonance",
+      "review_count": 47
+    },
+    {
+      "cluster_id": "36459824feeb0e80",
+      "label": "Subpar Script & Acting",
+      "review_count": 38
+    },
+    {
+      "cluster_id": "cbcbd294e5ea1c33",
+      "label": "Confusing Plot Coherence",
+      "review_count": 33
+    },
+    {
+      "cluster_id": "f86db70d6dd53897",
+      "label": "Excessive & Repetitive Action",
+      "review_count": 33
+    },
+    {
+      "cluster_id": "b12d680d93db70c2",
+      "label": "Bloated Runtime & Pacing Issues",
+      "review_count": 25
+    },
+    {
+      "cluster_id": "16b70558469c1a9b",
+      "label": "Underdeveloped Plot Potential",
+      "review_count": 15
+    }
+  ],
+  "examples_sample": [
+    {
+      "example_id": "fa3f27eb902b45eb",
+      "review_text_snippet": "I have to say I enjoyed watching Transformers 3. If you take it for what it is, a Michael Bay movie with awesome, epic v"
+    },
+    {
+      "example_id": "6faf9117096a0d28",
+      "review_text_snippet": "This is the third of the Transformers trilogy from director Michael Bay. Even the highly publicized exit of Megan Fox ca"
+    },
+    {
+      "example_id": "c113c5ef9102b4b8",
+      "review_text_snippet": "As a huge fan of the Transformers animated series, I like the first Transformers film. The visuals were spectacular and "
+    },
+    {
+      "example_id": "76a32406d4058b03",
+      "review_text_snippet": "This is the third of the Transformers trilogy from director Michael Bay. Even the highly publicized exit of Megan Fox ca"
+    },
+    {
+      "example_id": "126cde6bfe7aed22",
+      "review_text_snippet": "This is the third of the Transformers trilogy from director Michael Bay. Even the highly publicized exit of Megan Fox ca"
+    },
+    {
+      "example_id": "945bfa2c715cbd0a",
+      "review_text_snippet": "It&#39;s &#39;Bayhem&#39; time again - and this time around demolition king Michael Bay presents his trademark &#39;Six-"
+    },
+    {
+      "example_id": "8df3840bccd4403c",
+      "review_text_snippet": "I have to say I enjoyed watching Transformers 3. If you take it for what it is, a Michael Bay movie with awesome, epic v"
+    },
+    {
+      "example_id": "9d7a8f5bd8fedc4c",
+      "review_text_snippet": "I have to say I enjoyed watching Transformers 3. If you take it for what it is, a Michael Bay movie with awesome, epic v"
+    },
+    {
+      "example_id": "fd401ae96a80acf5",
+      "review_text_snippet": "I have to say I enjoyed watching Transformers 3. If you take it for what it is, a Michael Bay movie with awesome, epic v"
+    },
+    {
+      "example_id": "3ed72df8af1657de",
+      "review_text_snippet": "This is the third of the Transformers trilogy from director Michael Bay. Even the highly publicized exit of Megan Fox ca"
+    },
+    {
+      "example_id": "f70ef10dd5862850",
+      "review_text_snippet": "I have to say I enjoyed watching Transformers 3. If you take it for what it is, a Michael Bay movie with awesome, epic v"
+    },
+    {
+      "example_id": "5e77352ebba185cf",
+      "review_text_snippet": "It's 'Bayhem' time again - and this time around demolition king Michael Bay presents his trademark 'Six-C's' in glorious"
+    },
+    {
+      "example_id": "f330bee78e8232ae",
+      "review_text_snippet": "It&#39;s &#39;Bayhem&#39; time again - and this time around demolition king Michael Bay presents his trademark &#39;Six-"
+    },
+    {
+      "example_id": "b0a5097f4507a1f2",
+      "review_text_snippet": "It&#39;s &#39;Bayhem&#39; time again - and this time around demolition king Michael Bay presents his trademark &#39;Six-"
+    },
+    {
+      "example_id": "a7ff6a0eef1825c2",
+      "review_text_snippet": "It's 'Bayhem' time again - and this time around demolition king Michael Bay presents his trademark 'Six-C's' in glorious"
+    }
+  ]
+}

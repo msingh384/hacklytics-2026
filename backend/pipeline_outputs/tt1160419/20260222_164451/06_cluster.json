@@ -1,0 +1,101 @@
+{
+  "clusters": [
+    {
+      "cluster_id": "d517a0b53da87f50",
+      "label": "Lacks Thematic Depth",
+      "review_count": 498
+    },
+    {
+      "cluster_id": "8f43cde7c952ce6d",
+      "label": "Insufficient Character Development",
+      "review_count": 437
+    },
+    {
+      "cluster_id": "47cf02d29a83c883",
+      "label": "Lack of Humour",
+      "review_count": 264
+    },
+    {
+      "cluster_id": "b6b86500beb70b0b",
+      "label": "Slow Pacing",
+      "review_count": 247
+    },
+    {
+      "cluster_id": "ef37eb59a0e75ced",
+      "label": "Incomplete Narrative",
+      "review_count": 208
+    },
+    {
+      "cluster_id": "184f2b99e53111a2",
+      "label": "Abrupt Ending",
+      "review_count": 197
+    },
+    {
+      "cluster_id": "f2f5d56b026e16e6",
+      "label": "Missing Key Story Elements",
+      "review_count": 134
+    }
+  ],
+  "examples_sample": [
+    {
+      "example_id": "afcea574670999cc",
+      "review_text_snippet": "Denis has filmed the unfilmable, he achieved a monumental task yet at the same time it feels like an empty achievement. "
+    },
+    {
+      "example_id": "76193269bc4f3865",
+      "review_text_snippet": "A -BIG- Screen MINI Review ; Picture Seen Oct. 07, '21.______________________________________________________Lady Jessic"
+    },
+    {
+      "example_id": "1a2edb3caa74bf85",
+      "review_text_snippet": "A -BIG- Screen MINI Review ; Picture Seen Oct. 07, '21.______________________________________________________Lady Jessic"
+    },
+    {
+      "example_id": "173a7c66ed7f0304",
+      "review_text_snippet": "Denis has filmed the unfilmable, he achieved a monumental task yet at the same time it feels like an empty achievement. "
+    },
+    {
+      "example_id": "ce97bb3efe7254ce",
+      "review_text_snippet": "A -BIG- Screen MINI Review ; Picture Seen Oct. 07, '21.______________________________________________________Lady Jessic"
+    },
+    {
+      "example_id": "c339b5a8e39ff587",
+      "review_text_snippet": "A -BIG- Screen MINI Review ; Picture Seen Oct. 07, '21.______________________________________________________Lady Jessic"
+    },
+    {
+      "example_id": "ee835ae3879d973e",
+      "review_text_snippet": "Integration"
+    },
+    {
+      "example_id": "40671703d3152aa5",
+      "review_text_snippet": "A -BIG- Screen MINI Review ; Picture Seen Oct. 07, '21.______________________________________________________Lady Jessic"
+    },
+    {
+      "example_id": "875e50142051bb43",
+      "review_text_snippet": "A -BIG- Screen MINI Review ; Picture Seen Oct. 07, '21.______________________________________________________Lady Jessic"
+    },
+    {
+      "example_id": "c95f6c3cd2154bdd",
+      "review_text_snippet": "Denis has filmed the unfilmable, he achieved a monumental task yet at the same time it feels like an empty achievement. "
+    },
+    {
+      "example_id": "654b6014d475fd6a",
+      "review_text_snippet": "A -BIG- Screen MINI Review ; Picture Seen Oct. 07, '21.______________________________________________________Lady Jessic"
+    },
+    {
+      "example_id": "16446411e48771e0",
+      "review_text_snippet": "I honestly found the film extremely slow and uneventful. I watched it with my boyfriend and we kept looking at each othe"
+    },
+    {
+      "example_id": "25ade45885811e89",
+      "review_text_snippet": "So glad to finally be able watch the movie after waiting for so long and it was well worth it! My impression after tonig"
+    },
+    {
+      "example_id": "579fcf5c60a98f5b",
+      "review_text_snippet": "Finally, we can watch a great adaptation of the famous book. The movie is really nice in different respects. However, I "
+    },
+    {
+      "example_id": "764769915d164ba3",
+      "review_text_snippet": "I honestly found the film extremely slow and uneventful. I watched it with my boyfriend and we kept looking at each othe"
+    }
+  ]
+}

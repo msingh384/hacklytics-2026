@@ -1,0 +1,12 @@
+{
+  "what_ifs": [
+    "What if the raptor breach was confined *entirely* to a single, high-rise corporate research facility in downtown Los Angeles, turning it into a contained, vertical 'Jurassic Tower' survival horror with clearer stakes and a more manageable creature count?",
+    "What if the film leaned into an explicitly satirical, dark comedy tone, acknowledging its own B-movie tropes with self-aware characters and over-the-top gore, presented as a throwback grindhouse creature feature to set audience and critical expectations?",
+    "What if the 'truckload of raptors' rerouted to the prison was not an accident, but a deliberate tactical deployment by a shadowy organization using the inmates as bait or a live-fire training exercise for a super-soldier program, adding a conspiracy thriller layer?"
+  ],
+  "cluster_labels": [
+    "Illogical Plot",
+    "Low Production Values",
+    "Unfair Critical Reception"
+  ]
+}
