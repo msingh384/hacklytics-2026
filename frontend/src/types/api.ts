@@ -163,4 +163,5 @@ export type LeaderboardItem = {
   votes: number;
   score_total: number;
   created_at: string;
+  user_vote?: number | null; // 1 = upvoted, -1 = downvoted, null/undefined = no vote
 };

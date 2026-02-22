@@ -133,7 +133,10 @@ export const api = {
   getGeneration: (generationId: string) =>
     request<import('../types/api').GenerationDetail>(`/generations/${generationId}`),
 
-  leaderboard: () => request<{ items: LeaderboardItem[] }>('/explore/leaderboard'),
+  leaderboard: (sessionId?: string) => {
+    const params = sessionId ? `?session_id=${encodeURIComponent(sessionId)}` : '';
+    return request<{ items: LeaderboardItem[] }>(`/explore/leaderboard${params}`);
+  },
 
   generateTTS: async (text: string): Promise<string> => {
     const response = await fetch(`${API_BASE}/tts/generate`, {

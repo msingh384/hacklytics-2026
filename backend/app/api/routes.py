@@ -439,9 +439,13 @@ def vote_generation(request: Request, generation_id: str, payload: VoteRequest) 
 
 
 @router.get("/explore/leaderboard", response_model=LeaderboardResponse)
-def leaderboard(request: Request, limit: int = Query(default=50, ge=1, le=100)) -> LeaderboardResponse:
+def leaderboard(
+    request: Request,
+    limit: int = Query(default=50, ge=1, le=100),
+    session_id: str | None = Query(default=None),
+) -> LeaderboardResponse:
     services = _services(request)
-    items = services.store.leaderboard(limit=limit)
+    items = services.store.leaderboard(limit=limit, session_id=session_id)
     return LeaderboardResponse(items=items)
 
 

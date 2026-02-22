@@ -489,26 +489,36 @@ class DataStore:
                 self.generations[generation_id] = generation
 
         if self.client:
-            vote_row = {
-                "vote_id": stable_id(generation_id, session_id),
-                "generation_id": generation_id,
-                "session_id": session_id,
-                "value": value,
-            }
-            self._safe_upsert("votes", [vote_row], on_conflict="vote_id")
+            vote_id = stable_id(generation_id, session_id)
+            if value == 0:
+                self.client.table("votes").delete().eq("vote_id", vote_id).execute()
+            else:
+                vote_row = {
+                    "vote_id": vote_id,
+                    "generation_id": generation_id,
+                    "session_id": session_id,
+                    "value": value,
+                }
+                self._safe_upsert("votes", [vote_row], on_conflict="vote_id")
             all_votes = self.client.table("votes").select("value").eq("generation_id", generation_id).execute().data or []
             total_votes = sum(int(item.get("value", 0)) for item in all_votes)
             self.client.table("generations").update({"votes": total_votes}).eq("generation_id", generation_id).execute()
         else:
-            self.votes.setdefault(generation_id, {})[session_id] = value
-            total_votes = sum(self.votes[generation_id].values())
+            if value == 0:
+                if generation_id in self.votes and session_id in self.votes[generation_id]:
+                    del self.votes[generation_id][session_id]
+                    if not self.votes[generation_id]:
+                        del self.votes[generation_id]
+            else:
+                self.votes.setdefault(generation_id, {})[session_id] = value
+            total_votes = sum(self.votes.get(generation_id, {}).values())
 
         if generation_id in self.generations:
             self.generations[generation_id]["votes"] = total_votes
 
         return total_votes
 
-    def leaderboard(self, limit: int = 50) -> list[LeaderboardItem]:
+    def leaderboard(self, limit: int = 50, session_id: str | None = None) -> list[LeaderboardItem]:
         rows: list[dict[str, Any]]
         if self.client:
             rows = (
@@ -526,22 +536,45 @@ class DataStore:
             rows.sort(key=lambda item: (item.get("votes", 0), item.get("score_total", 0)), reverse=True)
             rows = rows[:limit]
 
+        user_votes: dict[str, int] = {}
+        if session_id:
+            if self.client:
+                gen_ids = [r.get("generation_id") for r in rows if r.get("generation_id")]
+                if gen_ids:
+                    vote_rows = (
+                        self.client.table("votes")
+                        .select("generation_id,value")
+                        .eq("session_id", session_id)
+                        .in_("generation_id", gen_ids)
+                        .execute()
+                        .data
+                        or []
+                    )
+                    user_votes = {r["generation_id"]: int(r["value"]) for r in vote_rows}
+            else:
+                for gen_id in [r.get("generation_id") for r in rows]:
+                    if gen_id and gen_id in self.votes and session_id in self.votes[gen_id]:
+                        user_votes[gen_id] = self.votes[gen_id][session_id]
+
         out: list[LeaderboardItem] = []
         for row in rows:
+            gen_id = row.get("generation_id")
             created = row.get("created_at")
             if isinstance(created, str):
                 created_at = datetime.fromisoformat(created.replace("Z", "+00:00"))
             else:
                 created_at = datetime.now(timezone.utc)
+            user_vote = user_votes.get(gen_id) if gen_id else None
             out.append(
                 LeaderboardItem(
-                    generation_id=row.get("generation_id"),
+                    generation_id=gen_id,
                     movie_id=row.get("movie_id"),
                     movie_title=row.get("movie_title") or "Unknown",
                     ending_text=row.get("ending_text") or "",
                     votes=int(row.get("votes", 0)),
                     score_total=int(row.get("score_total", 0)),
                     created_at=created_at,
+                    user_vote=user_vote,
                 )
             )
         return out

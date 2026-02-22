@@ -53,6 +53,10 @@ export function EndingPage() {
   const score = isFromExplore ? fetchedGeneration?.score_payload : state?.score;
   const movieTitle = isFromExplore ? fetchedGeneration?.movie_title : state?.movie?.title;
 
+  const storyPayload = isFromExplore ? (fetchedGeneration?.story_payload ?? {}) : { what_if: state?.whatIf, history: state?.history ?? [] };
+  const whatIf = (typeof storyPayload.what_if === 'string' ? storyPayload.what_if : null) ?? state?.whatIf ?? null;
+  const history = Array.isArray(storyPayload.history) ? storyPayload.history as Array<{ step: number; narrative: string; choice?: string }> : (state?.history ?? []);
+
   const scoreItems = useMemo(() => {
     if (!score) return [];
     return [
@@ -135,10 +139,35 @@ export function EndingPage() {
   return (
     <div className="page-container">
       <section className="ending-layout">
-      <h1 className="section-title">Final Alternate Ending</h1>
+      <h1 className="section-title">Alternate Ending</h1>
       <p className="section-subtitle">{movieTitle ?? movieId}</p>
 
+      {(whatIf || history.length > 0) ? (
+        <section className="panel ending-story-flow">
+          <h2>The Story</h2>
+          {whatIf ? (
+            <p className="ending-whatif">
+              <strong>What if: </strong>
+              {whatIf}
+            </p>
+          ) : null}
+          {history.length > 0 ? (
+            <div className="ending-history">
+              {history.map((entry, idx) => (
+                <div key={idx} className="ending-history-step">
+                  <p className="ending-narrative">{entry.narrative}</p>
+                  {entry.choice ? (
+                    <p className="ending-choice">&rarr; They chose: &ldquo;{entry.choice}&rdquo;</p>
+                  ) : null}
+                </div>
+              ))}
+            </div>
+          ) : null}
+        </section>
+      ) : null}
+
       <section className="panel">
+        <h2>Final Ending</h2>
         <p>{ending}</p>
       </section>
 

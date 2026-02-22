@@ -215,6 +215,7 @@ class LeaderboardItem(BaseModel):
     votes: int
     score_total: int
     created_at: datetime
+    user_vote: int | None = None  # 1 = upvoted, -1 = downvoted, None = no vote
 
 
 class LeaderboardResponse(BaseModel):

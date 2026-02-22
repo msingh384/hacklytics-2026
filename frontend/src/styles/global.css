@@ -923,10 +923,74 @@ button {
 }
 
 .leaderboard-item {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
   border-radius: var(--radius-sm);
   border: 1px solid rgba(228, 228, 222, 0.15);
   padding: 0.75rem;
   background: rgba(15, 15, 15, 0.25);
+}
+
+.vote-widget {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 0.15rem;
+}
+
+.vote-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 28px;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 4px;
+  color: rgba(228, 228, 222, 0.5);
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+}
+
+.vote-btn:hover:not(:disabled) {
+  background: rgba(228, 228, 222, 0.06);
+}
+
+.vote-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.vote-btn--up:hover,
+.vote-btn--up.vote-btn--active {
+  color: #ff6b35;
+}
+
+.vote-btn--down:hover,
+.vote-btn--down.vote-btn--active {
+  color: #7193ff;
+}
+
+.vote-count {
+  font-size: 0.85rem;
+  font-weight: 700;
+  min-width: 1.5rem;
+  text-align: center;
+  color: var(--text, #e4e4de);
+}
+
+.leaderboard-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.leaderboard-meta {
+  font-size: 0.8rem;
+  opacity: 0.65;
+  margin-top: 0.25rem;
 }
 
 .cluster-item p,
@@ -1151,6 +1215,46 @@ button {
 .ending-layout {
   display: grid;
   gap: 0.8rem;
+}
+
+.ending-story-flow h2 {
+  margin-bottom: 0.5rem;
+}
+
+.ending-whatif {
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-sm);
+  background: rgba(200, 169, 110, 0.08);
+  border-left: 3px solid var(--accent, #c8a96e);
+  margin-bottom: 0.75rem;
+}
+
+.ending-history {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.ending-history-step {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(228, 228, 222, 0.08);
+}
+
+.ending-history-step:last-child {
+  border-bottom: none;
+}
+
+.ending-narrative {
+  margin: 0 0 0.35rem;
+  line-height: 1.55;
+}
+
+.ending-choice {
+  margin: 0;
+  font-size: 0.9rem;
+  font-style: italic;
+  opacity: 0.85;
+  color: var(--accent-soft, #c8a96e);
 }
 
 .score-grid {
