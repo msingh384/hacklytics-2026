@@ -16,6 +16,7 @@ export function AnalysisPage() {
   const [job, setJob] = useState<JobStatus | null>(null);
   const [activeJobId, setActiveJobId] = useState<string | null>(null);
   const [expandedClusters, setExpandedClusters] = useState<Set<string>>(new Set());
+  const [expandedBeats, setExpandedBeats] = useState<Set<number>>(new Set());
   const [taglines, setTaglines] = useState<string[]>([]);
 
   const toggleCluster = useCallback((clusterId: string) => {
@@ -23,6 +24,15 @@ export function AnalysisPage() {
       const next = new Set(prev);
       if (next.has(clusterId)) next.delete(clusterId);
       else next.add(clusterId);
+      return next;
+    });
+  }, []);
+
+  const toggleBeat = useCallback((beatOrder: number) => {
+    setExpandedBeats((prev) => {
+      const next = new Set(prev);
+      if (next.has(beatOrder)) next.delete(beatOrder);
+      else next.add(beatOrder);
       return next;
     });
   }, []);
@@ -214,20 +224,38 @@ export function AnalysisPage() {
 
             <section>
               <h2>Plot Beats</h2>
-              <div className="beat-list">
-                {analysis.plot_beats.length ? (
-                  analysis.plot_beats.map((beat) => (
-                    <article className="beat-item" key={`${beat.movie_id}-${beat.beat_order}`}>
-                      <h3>
-                        {beat.beat_order}. {beat.label}
-                      </h3>
-                      <p>{beat.beat_text}</p>
-                    </article>
-                  ))
-                ) : (
-                  <p>Plot beats are not generated yet.</p>
-                )}
-              </div>
+              {analysis.plot_beats.length ? (
+                <div className="timeline">
+                  {analysis.plot_beats.map((beat, idx) => {
+                    const isOpen = expandedBeats.has(beat.beat_order);
+                    const isLast = idx === analysis.plot_beats.length - 1;
+                    return (
+                      <div className={`timeline-node${isLast ? ' timeline-node--last' : ''}`} key={`${beat.movie_id}-${beat.beat_order}`}>
+                        <div className="timeline-marker">
+                          <div className="timeline-dot" />
+                          {!isLast && <div className="timeline-line" />}
+                        </div>
+                        <div className="timeline-content">
+                          <button className="timeline-toggle" onClick={() => toggleBeat(beat.beat_order)} aria-expanded={isOpen}>
+                            <span className="timeline-label">{beat.label}</span>
+                            <svg
+                              className={`timeline-chevron${isOpen ? ' timeline-chevron--open' : ''}`}
+                              width="16" height="16" viewBox="0 0 24 24"
+                              fill="none" stroke="currentColor" strokeWidth="2"
+                              strokeLinecap="round" strokeLinejoin="round"
+                            >
+                              <polyline points="6 9 12 15 18 9" />
+                            </svg>
+                          </button>
+                          {isOpen && <p className="timeline-text">{beat.beat_text}</p>}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p>Plot beats are not generated yet.</p>
+              )}
             </section>
           </section>
 
