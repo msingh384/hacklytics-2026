@@ -22,7 +22,7 @@ export function MoviePosterCard({ movie, onSelect, onPosterClick, actionLabel = 
   }
 
   return (
-    <article className="poster-card">
+    <article className={`poster-card${!analyzed ? ' poster-card--unanalyzed' : ''}`}>
       <img src={poster} alt="" loading="lazy" />
       <button
         type="button"
@@ -43,16 +43,18 @@ export function MoviePosterCard({ movie, onSelect, onPosterClick, actionLabel = 
         />
       </div>
       {!analyzed && onSelect ? (
-        <button
-          type="button"
-          className="action-btn"
-          onClick={(e) => {
-            e.stopPropagation();
-            onSelect(movie);
-          }}
-        >
-          {actionLabel}
-        </button>
+        <div className="action-btn-wrap">
+          <button
+            type="button"
+            className="action-btn"
+            onClick={(e) => {
+              e.stopPropagation();
+              onSelect(movie);
+            }}
+          >
+            {actionLabel}
+          </button>
+        </div>
       ) : null}
     </article>
   );

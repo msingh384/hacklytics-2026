@@ -10,6 +10,7 @@ export function AppShell({ children }: PropsWithChildren) {
       <header className="top-nav top-nav--netflix">
         <div className="top-nav__left">
           <Link className="top-nav__brand" to="/">
+            <img src="/DirectorsCutLogo.png" alt="" className="top-nav__logo" />
             DirectorsCut
           </Link>
           <nav className="top-nav__nav">

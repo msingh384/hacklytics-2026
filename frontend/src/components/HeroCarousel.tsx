@@ -79,7 +79,7 @@ export function HeroCarousel({ movies, onAnalyze }: Props) {
         aria-hidden
       />
 
-      <div className="hero-carousel__inner">
+      <div className="hero-carousel__inner" key={activeIndex}>
         <div className="hero-carousel__poster-wrap">
           <img
             src={poster}

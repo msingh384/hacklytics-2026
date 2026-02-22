@@ -153,19 +153,27 @@ export function HomePage() {
     }
   }
 
-  const grouped = useMemo(() => {
+  const groupByGenre = useCallback((list: MovieCandidate[]) => {
     const map = new Map<string, MovieCandidate[]>();
-    for (const movie of movies) {
-      const rawGenre = movie.genre ?? 'Featured';
-      const genre = rawGenre.split(',')[0].trim() || 'Featured';
-      const bucket = map.get(genre) ?? [];
-      bucket.push(movie);
-      map.set(genre, bucket);
+    for (const movie of list) {
+      const rawGenre = movie.genre ?? 'Other';
+      const genres = rawGenre.split(',').map((g) => g.trim()).filter(Boolean) || ['Other'];
+      for (const genre of genres) {
+        const key = genre || 'Other';
+        const bucket = map.get(key) ?? [];
+        bucket.push(movie);
+        map.set(key, bucket);
+      }
     }
-    return Array.from(map.entries());
-  }, [movies]);
+    return Array.from(map.entries()).sort(([a], [b]) => a.localeCompare(b));
+  }, []);
 
-  const displayMovies = searchResults !== null ? searchResults : movies;
+  const grouped = useMemo(() => groupByGenre(movies), [movies, groupByGenre]);
+  const groupedSearch = useMemo(
+    () => (searchResults ? groupByGenre(searchResults) : []),
+    [searchResults, groupByGenre]
+  );
+
   const isFiltering = searchQuery.trim().length > 0;
 
   return (
@@ -227,26 +235,37 @@ export function HomePage() {
             {error ? <p className="error">{error}</p> : null}
             {searchError ? <p className="error">{searchError}</p> : null}
 
-            {isFiltering && displayMovies.length > 0 ? (
-              <div className="poster-grid">
-                {displayMovies.map((movie) => (
-                  <MoviePosterCard
-                    key={movie.movie_id}
-                    movie={movie}
-                    onSelect={() => analyzeMovie(movie)}
-                    onPosterClick={(m) => {
-                      if (m.has_analysis) {
-                        navigate(`/movie/${m.movie_id}`);
-                      } else {
-                        toast.addToast({
-                          message: 'Analysis required first.',
-                          type: 'info',
-                        });
-                      }
-                    }}
-                    actionLabel="Analyze"
-                  />
-                ))}
+            {isFiltering && groupedSearch.length > 0
+              ? groupedSearch.map(([genre, items]) => (
+                  <section key={genre} className="genre-block">
+                    <h2>{genre}</h2>
+                    <div className="poster-grid">
+                      {items.map((movie) => (
+                        <MoviePosterCard
+                          key={movie.movie_id}
+                          movie={movie}
+                          onSelect={() => analyzeMovie(movie)}
+                          onPosterClick={(m) => {
+                            if (m.has_analysis) {
+                              navigate(`/movie/${m.movie_id}`);
+                            } else {
+                              toast.addToast({
+                                message: 'Analysis required first.',
+                                type: 'info',
+                              });
+                            }
+                          }}
+                          actionLabel="Analyze"
+                        />
+                      ))}
+                    </div>
+                  </section>
+                ))
+              : null}
+
+            {isFiltering && searchResults?.length === 0 && !searchError ? (
+              <div className="empty-state">
+                <p>No movies found for &ldquo;{searchQuery}&rdquo;. Try another search.</p>
               </div>
             ) : null}
 
