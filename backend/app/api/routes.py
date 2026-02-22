@@ -78,8 +78,10 @@ def health(request: Request) -> dict[str, Any]:
 def featured_movies(request: Request, limit: int = Query(default=25, ge=1, le=100)) -> list[MovieCandidate]:
     services = _services(request)
     rows = services.store.get_featured_movies(limit=limit)
+    movie_ids = [row.get("movie_id") or "" for row in rows]
+    has_analysis_map = services.store.movies_have_analysis(movie_ids)
     return [
-        _to_candidate(row, has_analysis=services.store.movie_has_analysis(row.get("movie_id") or ""))
+        _to_candidate(row, has_analysis=has_analysis_map.get(row.get("movie_id") or "", False))
         for row in rows
     ]
 
@@ -88,10 +90,12 @@ def featured_movies(request: Request, limit: int = Query(default=25, ge=1, le=10
 async def search_movies(request: Request, q: str = Query(min_length=1), year: str | None = None) -> list[MovieCandidate]:
     services = _services(request)
     local_rows = services.store.search_movies(q, limit=25)
+    local_ids = [row.get("movie_id") or "" for row in local_rows]
+    has_analysis_map = services.store.movies_have_analysis(local_ids)
     local: dict[str, MovieCandidate] = {}
     for row in local_rows:
         movie_id = row.get("movie_id") or ""
-        candidate = _to_candidate(row, has_analysis=services.store.movie_has_analysis(movie_id))
+        candidate = _to_candidate(row, has_analysis=has_analysis_map.get(movie_id, False))
         local[candidate.movie_id] = candidate
 
     remote_candidates: list[MovieCandidate] = []

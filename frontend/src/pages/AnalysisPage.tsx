@@ -157,7 +157,48 @@ export function AnalysisPage() {
 
   return (
     <div>
-      {loading ? <p>Loading analysis...</p> : null}
+      {loading ? (
+        <div className="skeleton-analysis" aria-busy="true" aria-label="Loading analysis">
+          <section className="analysis-hero panel">
+            <div className="skeleton skeleton-hero-poster" />
+            <div>
+              <div className="skeleton skeleton-title" style={{ width: '70%', height: '1.8rem', marginBottom: '0.5rem' }} />
+              <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+                <div className="skeleton skeleton-score" />
+                <div className="skeleton skeleton-score" />
+                <div className="skeleton skeleton-score" />
+              </div>
+              <div style={{ display: 'flex', gap: '0.4rem', marginTop: '0.8rem', flexWrap: 'wrap' }}>
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="skeleton" style={{ width: 60, height: 24, borderRadius: 999 }} />
+                ))}
+              </div>
+              <div style={{ marginTop: '0.8rem' }}>
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <div key={i} className="skeleton skeleton-plot-line" />
+                ))}
+              </div>
+            </div>
+          </section>
+          <section className="analysis-layout">
+            <section className="panel">
+              <div className="skeleton" style={{ width: 160, height: 24, marginBottom: '0.8rem' }} />
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="skeleton skeleton-cluster-item" />
+              ))}
+            </section>
+            <section className="panel">
+              <div className="skeleton" style={{ width: 100, height: 24, marginBottom: '0.8rem' }} />
+              {[1, 2, 3, 4, 5].map((i) => (
+                <div key={i} className="skeleton-timeline-node">
+                  <div className="skeleton skeleton-timeline-dot" />
+                  <div className="skeleton skeleton-timeline-line" />
+                </div>
+              ))}
+            </section>
+          </section>
+        </div>
+      ) : null}
       {error ? <p className="error">{error}</p> : null}
 
       {!loading && !analysis ? (

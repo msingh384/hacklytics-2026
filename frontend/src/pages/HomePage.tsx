@@ -128,7 +128,24 @@ export function HomePage() {
         Browse all available movies by genre, then launch data-grounded rewrites from real review complaints.
       </p>
 
-      {loading ? <p>Loading featured catalog...</p> : null}
+      {loading ? (
+        <div className="skeleton-home">
+          <div className="skeleton-genre-block">
+            <h2 className="skeleton" aria-hidden />
+            <div className="poster-grid">
+              {Array.from({ length: 12 }).map((_, i) => (
+                <div key={i} className="poster-card skeleton-poster-card" aria-hidden>
+                  <div className="skeleton skeleton-poster" />
+                  <div className="poster-overlay">
+                    <div className="skeleton skeleton-title" style={{ marginBottom: '0.3rem' }} />
+                    <div className="skeleton skeleton-text skeleton-text--sm" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      ) : null}
       {error ? <p className="error">{error}</p> : null}
 
       {!loading && !movies.length ? (

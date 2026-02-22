@@ -369,6 +369,73 @@ class DataStore:
         what_ifs = self.get_what_ifs(movie_id)
         return bool(clusters and beats and what_ifs)
 
+    def movies_have_analysis(self, movie_ids: list[str]) -> dict[str, bool]:
+        """Batch check: returns dict of movie_id -> has_analysis. Uses 3 queries instead of 3*N."""
+        if not movie_ids:
+            return {}
+        result: dict[str, bool] = {mid: False for mid in movie_ids}
+        if not self.client:
+            for mid in movie_ids:
+                result[mid] = self.movie_has_analysis(mid)
+            return result
+
+        ids = [m for m in movie_ids if m]
+        if not ids:
+            return result
+
+        clusters_by_movie: dict[str, list] = {mid: [] for mid in ids}
+        beats_by_movie: dict[str, list] = {mid: [] for mid in ids}
+        what_ifs_by_movie: dict[str, list] = {mid: [] for mid in ids}
+
+        try:
+            clusters_data = (
+                self.client.table("complaint_clusters")
+                .select("movie_id")
+                .in_("movie_id", ids)
+                .execute()
+                .data
+                or []
+            )
+            for row in clusters_data:
+                mid = row.get("movie_id")
+                if mid and mid in clusters_by_movie:
+                    clusters_by_movie[mid].append(row)
+
+            beats_data = (
+                self.client.table("plot_beats")
+                .select("movie_id")
+                .in_("movie_id", ids)
+                .execute()
+                .data
+                or []
+            )
+            for row in beats_data:
+                mid = row.get("movie_id")
+                if mid and mid in beats_by_movie:
+                    beats_by_movie[mid].append(row)
+
+            what_ifs_data = (
+                self.client.table("what_if_suggestions")
+                .select("movie_id")
+                .in_("movie_id", ids)
+                .execute()
+                .data
+                or []
+            )
+            for row in what_ifs_data:
+                mid = row.get("movie_id")
+                if mid and mid in what_ifs_by_movie:
+                    what_ifs_by_movie[mid].append(row)
+
+            for mid in ids:
+                result[mid] = bool(
+                    clusters_by_movie[mid] and beats_by_movie[mid] and what_ifs_by_movie[mid]
+                )
+        except Exception:
+            for mid in ids:
+                result[mid] = self.movie_has_analysis(mid)
+        return result
+
     def save_generation(
         self,
         *,
