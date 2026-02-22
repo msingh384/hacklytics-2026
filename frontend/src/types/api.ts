@@ -77,6 +77,7 @@ export type MovieDetails = {
   rotten_tomatoes?: string | null;
   audience_score?: string | null;
   plot?: string | null;
+  full_omdb?: Record<string, unknown>;
 };
 
 export type MovieAnalysisResponse = {

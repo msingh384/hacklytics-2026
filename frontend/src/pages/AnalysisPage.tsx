@@ -160,12 +160,30 @@ export function AnalysisPage() {
             <img src={analysis.movie.poster ?? PLACEHOLDER} alt={`${analysis.movie.title} poster`} />
             <div>
               <h1 className="section-title">{analysis.movie.title}</h1>
-              <p className="section-subtitle">{analysis.movie.genre ?? 'Genre unavailable'}</p>
+              <div className="movie-meta">
+                {analysis.movie.year && <span className="meta-tag">{analysis.movie.year}</span>}
+                {analysis.movie.full_omdb?.Rated && <span className="meta-tag meta-tag--rated">{String(analysis.movie.full_omdb.Rated)}</span>}
+                {analysis.movie.full_omdb?.Runtime && <span className="meta-tag">{String(analysis.movie.full_omdb.Runtime)}</span>}
+              </div>
+              <div className="genre-tags">
+                {(analysis.movie.genre ?? 'Genre unavailable').split(',').map((g) => (
+                  <span className="genre-pill" key={g.trim()}>{g.trim()}</span>
+                ))}
+              </div>
               <p>{analysis.expanded_plot ?? analysis.plot_summary ?? analysis.movie.plot ?? 'No plot available yet.'}</p>
               <div className="analysis-stats">
-                <span className="stat-pill">IMDb {analysis.movie.imdb_rating ?? '--'}</span>
-                <span className="stat-pill">RT {analysis.movie.rotten_tomatoes ?? '--'}</span>
-                <span className="stat-pill">Audience {analysis.movie.audience_score ?? '--'}</span>
+                <div className="score-card score-card--imdb">
+                  <span className="score-label">IMDb</span>
+                  <span className="score-value">{analysis.movie.imdb_rating ?? '--'}</span>
+                </div>
+                <div className="score-card score-card--rt">
+                  <span className="score-label">🍅</span>
+                  <span className="score-value">{analysis.movie.rotten_tomatoes ?? '--'}</span>
+                </div>
+                <div className="score-card score-card--audience">
+                  <span className="score-label">Meta</span>
+                  <span className="score-value">{analysis.movie.audience_score ?? '--'}</span>
+                </div>
               </div>
             </div>
           </section>

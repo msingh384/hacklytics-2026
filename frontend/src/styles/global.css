@@ -262,18 +262,100 @@ button {
   border-radius: var(--radius-sm);
 }
 
+.movie-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.3rem;
+}
+
+.meta-tag {
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 0.2rem 0.55rem;
+  border-radius: 4px;
+  background: rgba(228, 228, 222, 0.08);
+  border: 1px solid rgba(228, 228, 222, 0.15);
+  letter-spacing: 0.02em;
+  font-family: 'Inter', 'SF Pro Display', -apple-system, system-ui, sans-serif;
+}
+
+.meta-tag--rated {
+  background: rgba(200, 169, 110, 0.15);
+  border-color: rgba(200, 169, 110, 0.4);
+  color: #c8a96e;
+  font-weight: 700;
+}
+
+.genre-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.6rem;
+}
+
+.genre-pill {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: rgba(228, 228, 222, 0.06);
+  border: 1px solid rgba(228, 228, 222, 0.18);
+  font-family: 'Inter', 'SF Pro Display', -apple-system, system-ui, sans-serif;
+}
+
 .analysis-stats {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 0.6rem;
+  gap: 0.75rem;
+  margin-top: 0.8rem;
 }
 
-.stat-pill {
-  border-radius: 999px;
-  padding: 0.3rem 0.66rem;
-  border: 1px solid rgba(228, 228, 222, 0.2);
-  font-size: 0.85rem;
+.score-card {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.9rem;
+  border-radius: var(--radius-sm, 8px);
+  border: 1px solid rgba(228, 228, 222, 0.15);
+  background: rgba(30, 30, 30, 0.6);
+  min-width: 88px;
+}
+
+.score-card--imdb {
+  border-color: rgba(200, 169, 110, 0.5);
+  background: rgba(200, 169, 110, 0.1);
+}
+
+.score-card--rt {
+  border-color: rgba(228, 228, 222, 0.2);
+}
+
+.score-card--audience {
+  border-color: rgba(100, 100, 100, 0.4);
+}
+
+.score-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  opacity: 0.85;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-family: 'Inter', 'SF Pro Display', -apple-system, system-ui, sans-serif;
+}
+
+.score-card--imdb .score-label {
+  color: #f5c518;
+}
+
+.score-value {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  font-family: 'Inter', 'SF Pro Display', -apple-system, system-ui, sans-serif;
 }
 
 .analysis-layout {
