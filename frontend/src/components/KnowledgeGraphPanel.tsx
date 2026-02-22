@@ -3,12 +3,13 @@ import cytoscape from 'cytoscape';
 import { api } from '../api/client';
 import type { GraphResponse } from '../types/api';
 
+/* Match app palette: accent-soft #78824b, accent #595f39, gold #c8a96e */
 const NODE_COLORS: Record<string, string> = {
-  MOVIE: '#e07a5f',
-  CLUSTER: '#81b29a',
-  GENRE: '#f2cc8f',
-  RATING: '#3d405b',
-  default: '#888',
+  MOVIE: '#78824b',
+  CLUSTER: '#5a7a6a',
+  GENRE: '#b8a060',
+  RATING: '#4a5a6a',
+  default: '#5a5a5a',
 };
 
 type Props = {
@@ -88,13 +89,13 @@ export function KnowledgeGraphPanel({ movieId, movieTitle, onClose }: Props) {
           selector: 'edge',
           style: {
             'curve-style': 'bezier',
-            'target-arrow-color': '#555',
+            'target-arrow-color': 'rgba(228, 228, 222, 0.35)',
             'target-arrow-shape': 'triangle',
-            'line-color': '#444',
+            'line-color': 'rgba(228, 228, 222, 0.25)',
             width: 1.2,
             label: 'data(label)',
             'font-size': '9px',
-            color: '#888',
+            color: 'rgba(228, 228, 222, 0.5)',
           },
         },
       ],
