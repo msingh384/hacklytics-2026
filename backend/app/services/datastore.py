@@ -186,6 +186,20 @@ class DataStore:
             return data.count or 0
         return len(self.user_reviews.get(movie_id, []))
 
+    def count_critic_reviews(self, movie_id: str, movie_title: str | None = None) -> int:
+        """Count critic reviews for a movie (by imdb_id; may undercount if matched by title only)."""
+        if self.client:
+            norm_id = normalize_imdb_id(movie_id)
+            data = (
+                self.client.table("critic_reviews")
+                .select("id", count="exact")
+                .eq("imdb_id", norm_id)
+                .limit(1)
+                .execute()
+            )
+            return data.count or 0
+        return len(self.critic_reviews.get(movie_id, []))
+
     def insert_user_reviews(self, movie_id: str, movie_title: str, reviews: list[dict[str, Any]]) -> int:
         deduped: dict[str, dict[str, Any]] = {}
         for review in reviews:
@@ -310,15 +324,17 @@ class DataStore:
         return self.plot_summaries.get(movie_id)
 
     def replace_plot_beats(self, movie_id: str, beats: list[dict[str, Any]], expanded_plot: str | None) -> None:
-        rows = [
-            {
+        rows = []
+        for beat in beats:
+            text = beat.get("text")
+            if text is None or (isinstance(text, str) and not text.strip()):
+                text = beat.get("label") or "(No description)"
+            rows.append({
                 "movie_id": movie_id,
                 "beat_order": beat.get("order"),
-                "label": beat.get("label"),
-                "beat_text": beat.get("text"),
-            }
-            for beat in beats
-        ]
+                "label": beat.get("label") or "",
+                "beat_text": text,
+            })
 
         if self.client:
             self.client.table("plot_beats").delete().eq("movie_id", movie_id).execute()

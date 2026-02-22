@@ -67,7 +67,15 @@ export const api = {
       method: 'POST',
     }),
 
+  rerunPipeline: (movieId: string) =>
+    request<PipelineStartResponse>(`/movies/${movieId}/rerun-pipeline`, {
+      method: 'POST',
+    }),
+
   getMovieAnalysis: (movieId: string) => request<MovieAnalysisResponse>(`/movies/${movieId}/analysis`),
+
+  getBeatComplaintDensity: (movieId: string) =>
+    request<import('../types/api').BeatComplaintDensity>(`/movies/${movieId}/beat-complaint-density`),
 
   refreshPlotBeats: (movieId: string) =>
     request<{ status: string; message: string }>(`/movies/${movieId}/refresh-plot`, {

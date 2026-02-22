@@ -14,7 +14,7 @@ const PLACEHOLDER =
 export function AnalysisPage() {
   const navigate = useNavigate();
   const { movieId } = useParams();
-  const toast = useToast();
+  const { addToast, removeToast, updateToast } = useToast();
   const [analysis, setAnalysis] = useState<MovieAnalysisResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -25,9 +25,11 @@ export function AnalysisPage() {
   const [expandedCharacters, setExpandedCharacters] = useState<Set<string>>(new Set());
   const [plotExpanded, setPlotExpanded] = useState(false);
   const [refreshingPlot, setRefreshingPlot] = useState(false);
+  const [rerunningPipeline, setRerunningPipeline] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [customWhatIfInput, setCustomWhatIfInput] = useState('');
   const [showGraphPanel, setShowGraphPanel] = useState(false);
+  const [beatDensity, setBeatDensity] = useState<Record<string, number> | null>(null);
 
   const PLOT_PREVIEW_LENGTH = 350;
 
@@ -107,49 +109,81 @@ export function AnalysisPage() {
   }, [movieId]);
 
   useEffect(() => {
-    if (!activeJobId) return;
-    toast.addToast({
+    if (!movieId || !analysis?.plot_beats?.length) return;
+    let cancelled = false;
+    setBeatDensity(null);
+    api
+      .getBeatComplaintDensity(movieId)
+      .then((d) => {
+        if (!cancelled) setBeatDensity(d);
+      })
+      .catch(() => {
+        if (!cancelled) setBeatDensity({});
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [movieId, analysis]);
+
+  useEffect(() => {
+    if (!activeJobId || !movieId) return;
+    let cancelled = false;
+    let timer: ReturnType<typeof setInterval> | null = null;
+    addToast({
       id: ANALYSIS_LOADING_ID,
       message: 'Preparing analysis…',
       type: 'loading',
     });
-    const timer = window.setInterval(async () => {
+
+    async function poll(): Promise<boolean> {
+      if (cancelled) return true;
       try {
         const status = await api.getPipelineJob(activeJobId);
+        if (cancelled) return true;
         setJob(status);
-        toast.updateToast(ANALYSIS_LOADING_ID, {
+        updateToast(ANALYSIS_LOADING_ID, {
           stage: status.stage,
           progress: status.progress,
         });
         if (status.status === 'ready') {
-          window.clearInterval(timer);
+          removeToast(ANALYSIS_LOADING_ID);
+          addToast({ message: 'Analysis ready', type: 'success' });
+          const refreshed = await api.getMovieAnalysis(movieId);
+          if (!cancelled) setAnalysis(refreshed);
           setActiveJobId(null);
-          toast.removeToast(ANALYSIS_LOADING_ID);
-          toast.addToast({ message: 'Analysis ready', type: 'success' });
-          if (movieId) {
-            const refreshed = await api.getMovieAnalysis(movieId);
-            setAnalysis(refreshed);
-          }
+          return true;
         }
         if (status.status === 'failed') {
-          window.clearInterval(timer);
-          setActiveJobId(null);
-          toast.removeToast(ANALYSIS_LOADING_ID);
+          removeToast(ANALYSIS_LOADING_ID);
           setError(status.error ?? 'Pipeline failed');
+          setActiveJobId(null);
+          return true;
         }
       } catch (err) {
-        window.clearInterval(timer);
-        setActiveJobId(null);
-        toast.removeToast(ANALYSIS_LOADING_ID);
-        setError(err instanceof Error ? err.message : 'Could not poll pipeline status');
+        if (!cancelled) {
+          removeToast(ANALYSIS_LOADING_ID);
+          setError(err instanceof Error ? err.message : 'Could not poll pipeline status');
+          setActiveJobId(null);
+        }
+        return true;
       }
-    }, 1800);
+      return false;
+    }
+
+    void poll().then((done) => {
+      if (done || cancelled) return;
+      timer = window.setInterval(async () => {
+        const finished = await poll();
+        if (finished && timer) window.clearInterval(timer);
+      }, 2500);
+    });
 
     return () => {
-      window.clearInterval(timer);
-      toast.removeToast(ANALYSIS_LOADING_ID);
+      cancelled = true;
+      if (timer) window.clearInterval(timer);
+      removeToast(ANALYSIS_LOADING_ID);
     };
-  }, [activeJobId, movieId, toast]);
+  }, [activeJobId, movieId, addToast, removeToast, updateToast]);
 
   async function prepareMovie() {
     if (!movieId) return;
@@ -157,7 +191,7 @@ export function AnalysisPage() {
     try {
       const result = await api.prepareMovie(movieId);
       if (result.status === 'ready') {
-        toast.addToast({ message: 'Analysis ready', type: 'success' });
+        addToast({ message: 'Analysis ready', type: 'success' });
         const refreshed = await api.getMovieAnalysis(movieId);
         setAnalysis(refreshed);
         return;
@@ -167,6 +201,35 @@ export function AnalysisPage() {
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Could not prepare movie');
+    }
+  }
+
+  async function rerunPipeline() {
+    if (!movieId || activeJobId) return;
+    setError(null);
+    setRerunningPipeline(true);
+    try {
+      const result = await api.rerunPipeline(movieId);
+      if (result.status === 'ready') {
+        addToast({ message: 'Pipeline complete. Output saved.', type: 'success' });
+        const refreshed = await api.getMovieAnalysis(movieId);
+        setAnalysis(refreshed);
+        return;
+      }
+      if (result.status === 'queued' && result.job_id) {
+        setActiveJobId(result.job_id);
+        addToast({
+          id: ANALYSIS_LOADING_ID,
+          message: 'Re-running pipeline…',
+          type: 'loading',
+        });
+      } else {
+        setError(result.message ?? 'Could not start pipeline');
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Could not re-run pipeline');
+    } finally {
+      setRerunningPipeline(false);
     }
   }
 
@@ -235,6 +298,29 @@ export function AnalysisPage() {
 
       {analysis ? (
         <>
+          <div className="analysis-page-header">
+            <button
+              type="button"
+              className="secondary-btn"
+              onClick={() => navigate('/')}
+              title="Back to home"
+            >
+              ← Back
+            </button>
+            <button
+              type="button"
+              className="secondary-btn"
+              disabled={rerunningPipeline || activeJobId != null}
+              onClick={rerunPipeline}
+              title="Re-run the full pipeline (reviews, clustering, plot beats, what-ifs) and save output to backend/pipeline_outputs"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={rerunningPipeline || activeJobId ? 'spin' : ''}>
+                <path d="M21 12a9 9 0 1 1-2.636-6.364" />
+                <path d="M21 3v6h-6" />
+              </svg>
+              Re-run pipeline
+            </button>
+          </div>
           <section className="analysis-hero panel">
             <img src={analysis.movie.poster ?? PLACEHOLDER} alt={`${analysis.movie.title} poster`} />
             <div>
@@ -352,7 +438,20 @@ export function AnalysisPage() {
 
           <section className="analysis-layout">
             <section>
-              <h2>Complaint Clusters</h2>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.6rem' }}>
+                <h2 style={{ margin: 0 }}>Complaint Clusters</h2>
+                {(analysis.user_review_count != null || analysis.critic_review_count != null) && (
+                  <span className="cluster-review-totals">
+                    {analysis.user_review_count != null && (
+                      <span title="User reviews (IMDb) used to form clusters">{analysis.user_review_count.toLocaleString()} user</span>
+                    )}
+                    {analysis.user_review_count != null && analysis.critic_review_count != null && ' · '}
+                    {analysis.critic_review_count != null && (
+                      <span title="Critic reviews used to form clusters">{analysis.critic_review_count.toLocaleString()} critic</span>
+                    )}
+                  </span>
+                )}
+              </div>
               <div className="cluster-list">
                 {analysis.clusters.length ? (
                   analysis.clusters.map((cluster, idx) => {
@@ -402,21 +501,28 @@ export function AnalysisPage() {
             </section>
 
             <section>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem' }}>
-                <h2 style={{ margin: 0 }}>Plot Beats</h2>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.6rem', gap: '0.5rem' }}>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <h2 style={{ margin: 0 }}>Plot Beats</h2>
+                  {beatDensity && Object.keys(beatDensity).length > 0 && (
+                    <p className="heat-legend" style={{ margin: '0.25rem 0 0', fontSize: '0.8rem', opacity: 0.7 }}>
+                      Heat = complaint density (darker = more complaints aligned to this beat)
+                    </p>
+                  )}
+                </div>
                 <button
-                  className="secondary-btn"
+                  className="icon-btn"
                   disabled={refreshingPlot}
                   onClick={async () => {
                     if (!movieId) return;
                     setRefreshingPlot(true);
                     try {
                       await api.refreshPlotBeats(movieId);
-                      toast.addToast({ message: 'Plot beats refreshed', type: 'success' });
+                      addToast({ message: 'Plot beats refreshed', type: 'success' });
                       const refreshed = await api.getMovieAnalysis(movieId);
                       setAnalysis(refreshed);
                     } catch (err) {
-                      toast.addToast({
+                      addToast({
                         message: err instanceof Error ? err.message : 'Failed to refresh plot beats',
                         type: 'error',
                       });
@@ -426,7 +532,10 @@ export function AnalysisPage() {
                   }}
                   title="Re-scrape Wikipedia and regenerate plot beats"
                 >
-                  {refreshingPlot ? 'Refreshing...' : 'Refresh'}
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={refreshingPlot ? 'spin' : ''}>
+                    <path d="M21 12a9 9 0 1 1-2.636-6.364" />
+                    <path d="M21 3v6h-6" />
+                  </svg>
                 </button>
               </div>
               {analysis.plot_beats.length ? (
@@ -434,13 +543,44 @@ export function AnalysisPage() {
                   {analysis.plot_beats.map((beat, idx) => {
                     const isOpen = expandedBeats.has(beat.beat_order);
                     const isLast = idx === analysis.plot_beats.length - 1;
+                    const sortedKeys = beatDensity ? Object.keys(beatDensity).sort((a, b) => Number(a) - Number(b)) : [];
+                    const density =
+                      beatDensity?.[String(beat.beat_order)] ??
+                      (sortedKeys[idx] != null ? beatDensity[sortedKeys[idx]] : null) ??
+                      null;
+                    const hasHeat = beatDensity && Object.keys(beatDensity).length > 0 && density != null;
+                    const d = density ?? 0;
+                    const r = Math.round(255 - 215 * d);
+                    const g = Math.round(255 - 200 * d);
+                    const b = Math.round(235 - 210 * d);
+                    const heatColor = `rgb(${r}, ${g}, ${b})`;
+                    const tooltipText = hasHeat ? `Complaint density: ${Math.round(d * 100)}% — darker = more complaints` : '';
                     return (
-                      <div className={`timeline-node${isLast ? ' timeline-node--last' : ''}`} key={`${beat.movie_id}-${beat.beat_order}`}>
+                      <div
+                        className={`timeline-node${isLast ? ' timeline-node--last' : ''}${hasHeat ? ' timeline-node--heat' : ''}`}
+                        key={`${beat.movie_id}-${beat.beat_order}`}
+                        data-tooltip={tooltipText}
+                      >
                         <div className="timeline-marker">
-                          <div className="timeline-dot" />
+                          <div
+                            className="timeline-dot"
+                            style={hasHeat ? {
+                              background: heatColor,
+                              borderColor: `rgba(${r}, ${g}, ${b}, 0.9)`,
+                              boxShadow: `0 0 12px rgba(${r}, ${g}, ${b}, 0.6)`,
+                            } : undefined}
+                          />
                           {!isLast && <div className="timeline-line" />}
                         </div>
-                        <div className="timeline-content">
+                        <div
+                          className="timeline-content"
+                          style={hasHeat ? {
+                            borderLeft: `4px solid ${heatColor}`,
+                            paddingLeft: '0.6rem',
+                            backgroundColor: `rgba(${r}, ${g}, ${b}, 0.12)`,
+                            borderRadius: '6px',
+                          } : undefined}
+                        >
                           <button className="timeline-toggle" onClick={() => toggleBeat(beat.beat_order)} aria-expanded={isOpen}>
                             <span className="timeline-label">{beat.label}</span>
                             <svg

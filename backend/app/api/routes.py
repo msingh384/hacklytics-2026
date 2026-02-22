@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any
 
 from fastapi import APIRouter, HTTPException, Query, Request
@@ -42,6 +43,7 @@ from app.schemas import (
     WhatIfSuggestion,
     TTSRequest,
 )
+from app.services.beat_density import compute_beat_complaint_density
 from app.services.cluster_graph import build_cluster_graph
 from app.services.container import ServiceContainer
 from app.utils.text import extract_omdb_scores
@@ -145,6 +147,22 @@ async def prepare_movie(request: Request, movie_id: str) -> PipelineStartRespons
     return await services.pipeline.start_from_search(query=movie_id, year=None, selected_imdb_id=movie_id)
 
 
+@router.post("/movies/{movie_id}/rerun-pipeline", response_model=PipelineStartResponse)
+async def rerun_pipeline(request: Request, movie_id: str) -> PipelineStartResponse:
+    """Re-run the full pipeline for a movie (even if already prepared) and save output to pipeline_outputs/{movie_id}/{timestamp}."""
+    services = _services(request)
+    backend_root = Path(__file__).resolve().parent.parent.parent
+    timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+    save_dir = backend_root / "pipeline_outputs" / movie_id / timestamp
+    return await services.pipeline.start_from_search(
+        query=movie_id,
+        year=None,
+        selected_imdb_id=movie_id,
+        save_dir=save_dir,
+        force=True,
+    )
+
+
 @router.post("/movies/{movie_id}/refresh-plot")
 async def refresh_plot_beats(request: Request, movie_id: str) -> dict:
     """Re-scrape Wikipedia plot and regenerate plot beats + expanded plot via Gemini."""
@@ -167,6 +185,22 @@ def get_graph(request: Request, movie_id: str) -> GraphResponse:
     nodes = [GraphNode(data=n["data"]) for n in data["nodes"]]
     edges = [GraphEdge(data=e["data"]) for e in data["edges"]]
     return GraphResponse(nodes=nodes, edges=edges)
+
+
+@router.get("/movies/{movie_id}/beat-complaint-density")
+def beat_complaint_density(request: Request, movie_id: str) -> dict[str, float]:
+    """Map review embeddings to plot beat embeddings; return normalized complaint density per beat (0-1)."""
+    services = _services(request)
+    movie = services.store.get_movie(movie_id)
+    if not movie:
+        raise HTTPException(status_code=404, detail="Movie not found")
+    densities = compute_beat_complaint_density(
+        movie_id,
+        services.store,
+        services.vector_store,
+        services.embedder,
+    )
+    return {str(k): v for k, v in densities.items()}
 
 
 @router.get("/movies/{movie_id}/analysis", response_model=MovieAnalysisResponse)
@@ -201,6 +235,8 @@ def movie_analysis(request: Request, movie_id: str) -> MovieAnalysisResponse:
     examples = [ClusterExample(**example) for example in services.store.get_cluster_examples(movie_id)]
     what_ifs = [WhatIfSuggestion(**item) for item in services.store.get_what_ifs(movie_id)[:3]]
 
+    user_review_count = services.store.count_user_reviews(movie_id)
+    critic_review_count = services.store.count_critic_reviews(movie_id, movie.get("title"))
     user_reviews = services.store.get_user_reviews(movie_id, limit=8)
     critic_reviews = services.store.get_critic_reviews(movie_id, movie.get("title"), limit=8)
     samples: list[ReviewRecord] = []
@@ -235,6 +271,8 @@ def movie_analysis(request: Request, movie_id: str) -> MovieAnalysisResponse:
         cluster_examples=examples,
         what_if_suggestions=what_ifs,
         review_samples=samples,
+        user_review_count=user_review_count,
+        critic_review_count=critic_review_count,
     )
 
 

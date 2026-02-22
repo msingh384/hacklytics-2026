@@ -1,9 +1,17 @@
 from __future__ import annotations
 
+import logging
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s | %(levelname)-8s | %(name)s — %(message)s",
+    datefmt="%H:%M:%S",
+    force=True,
+)
 
 from app.api.routes import router
 from app.config import get_settings

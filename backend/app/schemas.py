@@ -114,6 +114,8 @@ class MovieAnalysisResponse(BaseModel):
     cluster_examples: list[ClusterExample]
     what_if_suggestions: list[WhatIfSuggestion]
     review_samples: list[ReviewRecord]
+    user_review_count: Optional[int] = None
+    critic_review_count: Optional[int] = None
 
 
 class StoryOption(BaseModel):

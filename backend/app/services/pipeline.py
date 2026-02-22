@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import logging
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -9,6 +10,8 @@ from typing import Any
 from uuid import uuid4
 
 from app.integrations.gemini import GeminiClient
+
+logger = logging.getLogger(__name__)
 from app.integrations.imdb_scraper import scrape_imdb_reviews
 from app.integrations.omdb import OmdbClient
 from app.integrations.vector_store import IndexedChunk, VectorStore
@@ -93,6 +96,7 @@ class MoviePipelineService:
         year: str | None,
         selected_imdb_id: str | None,
         save_dir: Path | str | None = None,
+        force: bool = False,
     ) -> PipelineStartResponse:
         movie_id = selected_imdb_id
         candidates: list[MovieCandidate] = []
@@ -131,7 +135,8 @@ class MoviePipelineService:
             return PipelineStartResponse(status="failed", message="No movie selected")
 
         movie = self.store.get_movie(movie_id)
-        if movie and self.store.get_clusters(movie_id) and self.store.get_plot_beats(movie_id) and self.store.get_what_ifs(movie_id):
+        if not force and movie and self.store.get_clusters(movie_id) and self.store.get_plot_beats(movie_id) and self.store.get_what_ifs(movie_id):
+            logger.info("[pipeline] movie_id=%s — already prepared, skipping", movie_id)
             return PipelineStartResponse(status="ready", movie_id=movie_id, message="Movie already prepared.")
 
         job_id = str(uuid4())
@@ -147,6 +152,7 @@ class MoviePipelineService:
             updated_at=datetime.now(timezone.utc),
             save_dir=resolved_save_dir,
         )
+        logger.info("[pipeline] job_id=%s movie_id=%s query=%r — queued", job_id, movie_id, query)
         asyncio.create_task(self._run_job_with_timeout(job_id, movie_id, query=query, year=year))
         return PipelineStartResponse(status="queued", job_id=job_id, movie_id=movie_id, message="Pipeline started")
 
@@ -157,6 +163,7 @@ class MoviePipelineService:
                 timeout=300,
             )
         except asyncio.TimeoutError:
+            logger.warning("[pipeline] job_id=%s movie_id=%s — timed out after 5 minutes", job_id, movie_id)
             self._set_job(
                 job_id,
                 status="failed",
@@ -168,6 +175,9 @@ class MoviePipelineService:
 
     async def _run_job(self, job_id: str, movie_id: str, query: str, year: str | None) -> None:
         try:
+            title = query
+            logger.info("[pipeline] job_id=%s movie_id=%s query=%r — starting", job_id, movie_id, query)
+
             self._set_job(job_id, status="running", stage="fetching_movie", progress=5, message="Loading movie metadata")
             movie = self.store.get_movie(movie_id)
             if not movie:
@@ -175,6 +185,9 @@ class MoviePipelineService:
                 if not omdb_payload:
                     raise RuntimeError("OMDB did not return movie details")
                 movie = self.store.upsert_movie(omdb_payload)
+                logger.info("[pipeline] job_id=%s — OMDB: fetched movie title=%r year=%r", job_id, movie.get("title"), movie.get("year"))
+            else:
+                logger.info("[pipeline] job_id=%s — OMDB: movie already in DB title=%r", job_id, movie.get("title"))
             omdb_out = {k: v for k, v in movie.items() if k != "Response"}
             self._save_step(job_id, "01_omdb", omdb_out)
 
@@ -193,6 +206,7 @@ class MoviePipelineService:
                 ]
                 self.store.insert_user_reviews(movie_id, title, rows)
                 user_count = self.store.count_user_reviews(movie_id)
+                logger.info("[pipeline] job_id=%s — user_reviews: scraped %d, total=%d (target=%d)", job_id, len(scraped), user_count, MIN_REQUIRED_IMDB_REVIEWS)
                 if user_count < MIN_REQUIRED_IMDB_REVIEWS:
                     self._set_job(
                         job_id,
@@ -200,6 +214,8 @@ class MoviePipelineService:
                         progress=24,
                         message=f"Collected {user_count} user reviews (below target {MIN_REQUIRED_IMDB_REVIEWS})",
                     )
+            else:
+                logger.info("[pipeline] job_id=%s — user_reviews: using cached count=%d", job_id, user_count)
             user_rows = self.store.get_user_reviews(movie_id, limit=20)
             user_out = [
                 {"review_id": r.get("review_id", ""), "text_len": len(r.get("movie_review") or ""), "text_snippet": (r.get("movie_review") or "")[:300]}
@@ -209,12 +225,15 @@ class MoviePipelineService:
 
             self._set_job(job_id, stage="critic_reviews", progress=35, message="Loading critic reviews")
             critics = self.store.get_critic_reviews(movie_id, title)
+            logger.info("[pipeline] job_id=%s — critic_reviews: count=%d", job_id, len(critics))
             critic_out = [{"movie_review_len": len(c.get("movie_review") or ""), "title": c.get("movie_title")} for c in critics[:20]]
             self._save_step(job_id, "03_critic_reviews", {"count": len(critics), "samples": critic_out})
 
             self._set_job(job_id, stage="embedding", progress=50, message="Embedding and indexing reviews")
             index_payload = await self.index_embeddings_for_movie(movie_id, title, critics)
             chunks = index_payload.get("chunks", [])
+            indexed = index_payload.get("indexed", 0)
+            logger.info("[pipeline] job_id=%s — embedding: chunks=%d indexed=%d critics_available=%s", job_id, len(chunks), indexed, index_payload.get("critics_available"))
             chunk_out = [{"chunk_id": c["chunk_id"], "text_len": len(c["text"]), "source": c["source"]} for c in chunks[:30]]
             self._save_step(job_id, "04_chunks", {"count": len(chunks), "samples": chunk_out})
             vectors = index_payload.get("vectors", [])
@@ -232,6 +251,7 @@ class MoviePipelineService:
                 chunk_meta,
             )
             self.store.replace_clusters(movie_id, clusters, examples)
+            logger.info("[pipeline] job_id=%s — clustering: clusters=%d examples=%d", job_id, len(clusters), len(examples))
             cluster_out = [{"cluster_id": c["cluster_id"], "label": c["label"], "review_count": c["review_count"]} for c in clusters]
             example_out = [{"example_id": e["example_id"], "review_text_snippet": (e.get("review_text") or "")[:120]} for e in examples[:15]]
             self._save_step(job_id, "06_cluster", {"clusters": cluster_out, "examples_sample": example_out})
@@ -245,23 +265,32 @@ class MoviePipelineService:
                 if fetched:
                     plot_text, page_title = fetched
                     self.store.save_plot_summary(movie_id, plot_text, page_title)
+                    logger.info("[pipeline] job_id=%s — wikipedia: fetched page=%r plot_len=%d", job_id, page_title, len(plot_text or ""))
                 else:
                     plot_text = movie.get("plot")
                     page_title = "omdb_fallback"
                     if plot_text:
                         self.store.save_plot_summary(movie_id, plot_text, "omdb_fallback")
+                    logger.info("[pipeline] job_id=%s — wikipedia: fallback to OMDB plot (wiki not found) plot_len=%d", job_id, len(plot_text or ""))
+            else:
+                logger.info("[pipeline] job_id=%s — wikipedia: using cached page=%r plot_len=%d", job_id, page_title, len(plot_text or ""))
             self._save_step(job_id, "07_wikipedia", {"page_title": page_title or "omdb", "plot_length": len(plot_text or ""), "plot_text": plot_text or ""})
 
             self._set_job(job_id, stage="beats", progress=88, message="Generating plot beats")
             if plot_text:
                 package = await asyncio.to_thread(self.gemini.generate_plot_package, title, plot_text)
                 beats = package.get("beats", [])
+                for b in beats:
+                    if b.get("text") is None or (isinstance(b.get("text"), str) and not (b.get("text") or "").strip()):
+                        b["text"] = b.get("label") or "(No description)"
                 expanded_plot = package.get("expanded_plot")
                 characters = package.get("characters", [])
                 self.store.replace_plot_beats(movie_id, beats, expanded_plot)
                 self.store.replace_characters(movie_id, characters)
+                logger.info("[pipeline] job_id=%s — plot_beats: beats=%d characters=%d expanded_plot_len=%d", job_id, len(beats), len(characters), len(expanded_plot or ""))
             else:
                 package = {"beats": [], "expanded_plot": "", "characters": []}
+                logger.info("[pipeline] job_id=%s — plot_beats: skipped (no plot text)", job_id)
             self._save_step(job_id, "08_plot_beats", package)
 
             self._set_job(job_id, stage="what_if", progress=94, message="Generating what-if suggestions")
@@ -269,6 +298,7 @@ class MoviePipelineService:
             labels = [item.get("label", "") for item in top_clusters]
             base_plot = plot_text or movie.get("plot") or ""
             what_if_texts = await asyncio.to_thread(self.gemini.generate_what_if, title, labels, base_plot)
+            logger.info("[pipeline] job_id=%s — what_if: generated=%d labels=%s", job_id, len(what_if_texts[:3]), labels[:3])
             what_if_rows = []
             for idx, text in enumerate(what_if_texts[:3], start=1):
                 linked = [top_clusters[idx - 1]["cluster_id"]] if idx - 1 < len(top_clusters) else []
@@ -284,7 +314,9 @@ class MoviePipelineService:
             self._save_step(job_id, "09_what_if", {"what_ifs": what_if_texts[:3], "cluster_labels": labels})
 
             self._set_job(job_id, status="ready", stage="ready", progress=100, message="Movie preparation complete")
+            logger.info("[pipeline] job_id=%s movie_id=%s — complete", job_id, movie_id)
         except Exception as exc:  # pragma: no cover
+            logger.exception("[pipeline] job_id=%s movie_id=%s — failed: %s", job_id, movie_id, exc)
             self._set_job(job_id, status="failed", stage="failed", progress=100, error=str(exc), message="Pipeline failed")
 
     async def refresh_plot_beats(self, movie_id: str) -> None:

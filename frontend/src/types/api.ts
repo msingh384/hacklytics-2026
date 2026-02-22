@@ -36,6 +36,9 @@ export type PlotBeat = {
   beat_text: string;
 };
 
+/** beat_order (as string) -> normalized complaint density 0-1 for heat overlay */
+export type BeatComplaintDensity = Record<string, number>;
+
 export type MovieCharacter = {
   movie_id: string;
   character_id: string;
@@ -99,6 +102,8 @@ export type MovieAnalysisResponse = {
   cluster_examples: ClusterExample[];
   what_if_suggestions: WhatIfSuggestion[];
   review_samples: ReviewRecord[];
+  user_review_count?: number | null;
+  critic_review_count?: number | null;
 };
 
 export type StoryOption = {
