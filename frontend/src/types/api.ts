@@ -7,6 +7,7 @@ export type MovieCandidate = {
   imdb_rating?: number | null;
   rotten_tomatoes?: string | null;
   audience_score?: string | null;
+  has_analysis?: boolean | null;
 };
 
 export type PipelineStartResponse = {

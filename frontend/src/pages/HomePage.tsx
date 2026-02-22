@@ -1,17 +1,21 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../api/client';
-import { LoadingProgress } from '../components/LoadingProgress';
 import { MoviePosterCard } from '../components/MoviePosterCard';
-import type { JobStatus, MovieCandidate } from '../types/api';
+import { useToast } from '../contexts/ToastContext';
+import type { MovieCandidate } from '../types/api';
+
+type ActiveJob = { jobId: string; movieId: string; title: string };
 
 export function HomePage() {
   const navigate = useNavigate();
+  const toast = useToast();
   const [movies, setMovies] = useState<MovieCandidate[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [job, setJob] = useState<JobStatus | null>(null);
-  const [activeJobId, setActiveJobId] = useState<string | null>(null);
+  const [activeJobs, setActiveJobs] = useState<ActiveJob[]>([]);
+  const activeJobsRef = useRef<ActiveJob[]>([]);
+  activeJobsRef.current = activeJobs;
 
   useEffect(() => {
     let active = true;
@@ -36,42 +40,67 @@ export function HomePage() {
   }, []);
 
   useEffect(() => {
-    if (!activeJobId) return;
+    if (activeJobs.length === 0) return;
     const timer = window.setInterval(async () => {
-      try {
-        const status = await api.getPipelineJob(activeJobId);
-        setJob(status);
-        if (status.status === 'ready' && status.movie_id) {
-          window.clearInterval(timer);
-          setActiveJobId(null);
-          navigate(`/movie/${status.movie_id}`);
+      const jobs = [...activeJobsRef.current];
+      for (const job of jobs) {
+        try {
+          const status = await api.getPipelineJob(job.jobId);
+          toast.updateToast(`loading-${job.movieId}`, {
+            stage: status.stage,
+            progress: status.progress,
+          });
+          if (status.status === 'ready') {
+            toast.removeToast(`loading-${job.movieId}`);
+            toast.addToast({ message: `Analysis ready: ${job.title}`, type: 'success' });
+            setActiveJobs((prev) => prev.filter((j) => j.jobId !== job.jobId));
+            setMovies((prev) =>
+              prev.map((m) => (m.movie_id === job.movieId ? { ...m, has_analysis: true } : m))
+            );
+          } else if (status.status === 'failed') {
+            toast.removeToast(`loading-${job.movieId}`);
+            toast.addToast({
+              message: `Failed: ${job.title}`,
+              type: 'error',
+            });
+            setActiveJobs((prev) => prev.filter((j) => j.jobId !== job.jobId));
+          }
+        } catch {
+          toast.removeToast(`loading-${job.movieId}`);
+          setActiveJobs((prev) => prev.filter((j) => j.jobId !== job.jobId));
         }
-        if (status.status === 'failed') {
-          window.clearInterval(timer);
-          setActiveJobId(null);
-          setError(status.error ?? 'Movie pipeline failed');
-        }
-      } catch (err) {
-        window.clearInterval(timer);
-        setActiveJobId(null);
-        setError(err instanceof Error ? err.message : 'Could not check pipeline status');
       }
     }, 1800);
 
     return () => window.clearInterval(timer);
-  }, [activeJobId, navigate]);
+  }, [activeJobs.length, toast]);
 
   async function analyzeMovie(movie: MovieCandidate) {
     setError(null);
-    setJob(null);
     try {
       const response = await api.startPipeline(movie.title, movie.movie_id);
       if (response.status === 'ready' && response.movie_id) {
+        toast.addToast({ message: `Analysis ready: ${movie.title}`, type: 'success' });
+        setMovies((prev) =>
+          prev.map((m) =>
+            m.movie_id === movie.movie_id ? { ...m, has_analysis: true } : m
+          )
+        );
         navigate(`/movie/${response.movie_id}`);
         return;
       }
       if (response.status === 'queued' && response.job_id) {
-        setActiveJobId(response.job_id);
+        const job: ActiveJob = {
+          jobId: response.job_id,
+          movieId: movie.movie_id,
+          title: movie.title,
+        };
+        setActiveJobs((prev) => [...prev, job]);
+        toast.addToast({
+          id: `loading-${movie.movie_id}`,
+          message: `Preparing analysis: ${movie.title}`,
+          type: 'loading',
+        });
         return;
       }
       setError(response.message ?? 'Could not start analysis');
@@ -100,7 +129,6 @@ export function HomePage() {
       </p>
 
       {loading ? <p>Loading featured catalog...</p> : null}
-      {job ? <LoadingProgress job={job} /> : null}
       {error ? <p className="error">{error}</p> : null}
 
       {!loading && !movies.length ? (
@@ -118,6 +146,16 @@ export function HomePage() {
                 key={movie.movie_id}
                 movie={movie}
                 onSelect={() => analyzeMovie(movie)}
+                onPosterClick={(m) => {
+                  if (m.has_analysis) {
+                    navigate(`/movie/${m.movie_id}`);
+                  } else {
+                    toast.addToast({
+                      message: 'Analysis required first.',
+                      type: 'info',
+                    });
+                  }
+                }}
                 actionLabel="Analyze"
               />
             ))}

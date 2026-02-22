@@ -15,6 +15,7 @@ class MovieCandidate(BaseModel):
     imdb_rating: Optional[float] = None
     rotten_tomatoes: Optional[str] = None
     audience_score: Optional[str] = None
+    has_analysis: Optional[bool] = None
 
 
 class MovieSearchRequest(BaseModel):

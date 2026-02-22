@@ -48,7 +48,7 @@ def _services(request: Request) -> ServiceContainer:
     return request.app.state.services
 
 
-def _to_candidate(row: dict[str, Any]) -> MovieCandidate:
+def _to_candidate(row: dict[str, Any], has_analysis: bool | None = None) -> MovieCandidate:
     return MovieCandidate(
         movie_id=row.get("movie_id") or row.get("imdbID") or "",
         title=row.get("title") or row.get("Title") or "",
@@ -58,6 +58,7 @@ def _to_candidate(row: dict[str, Any]) -> MovieCandidate:
         imdb_rating=row.get("imdb_rating"),
         rotten_tomatoes=row.get("rotten_tomatoes"),
         audience_score=row.get("audience_score"),
+        has_analysis=has_analysis,
     )
 
 
@@ -77,7 +78,10 @@ def health(request: Request) -> dict[str, Any]:
 def featured_movies(request: Request, limit: int = Query(default=25, ge=1, le=100)) -> list[MovieCandidate]:
     services = _services(request)
     rows = services.store.get_featured_movies(limit=limit)
-    return [_to_candidate(row) for row in rows]
+    return [
+        _to_candidate(row, has_analysis=services.store.movie_has_analysis(row.get("movie_id") or ""))
+        for row in rows
+    ]
 
 
 @router.get("/movies/search", response_model=list[MovieCandidate])
@@ -86,7 +90,8 @@ async def search_movies(request: Request, q: str = Query(min_length=1), year: st
     local_rows = services.store.search_movies(q, limit=25)
     local: dict[str, MovieCandidate] = {}
     for row in local_rows:
-        candidate = _to_candidate(row)
+        movie_id = row.get("movie_id") or ""
+        candidate = _to_candidate(row, has_analysis=services.store.movie_has_analysis(movie_id))
         local[candidate.movie_id] = candidate
 
     remote_candidates: list[MovieCandidate] = []
@@ -95,8 +100,9 @@ async def search_movies(request: Request, q: str = Query(min_length=1), year: st
     except Exception:
         remote_candidates = []
 
+    q_lower = q.strip().lower()
     for item in remote_candidates:
-        if item.movie_id not in local:
+        if item.movie_id not in local and (item.title or "").lower().startswith(q_lower):
             local[item.movie_id] = item
 
     return list(local.values())
