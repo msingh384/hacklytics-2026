@@ -310,6 +310,68 @@ button {
   margin-top: 0.35rem;
 }
 
+.cluster-collapsible {
+  padding: 0;
+  overflow: hidden;
+}
+
+.cluster-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.75rem;
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+  gap: 0.5rem;
+}
+
+.cluster-toggle:hover {
+  background: rgba(228, 228, 222, 0.05);
+}
+
+.cluster-theme {
+  font-size: 1.15rem;
+  margin: 0;
+}
+
+.cluster-header {
+  min-width: 0;
+}
+
+.cluster-preview {
+  font-weight: 400;
+  opacity: 0.6;
+  font-size: 0.95rem;
+}
+
+.cluster-chevron {
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.cluster-chevron--open {
+  transform: rotate(180deg);
+}
+
+.cluster-details {
+  padding: 0 0.75rem 0.75rem;
+  border-top: 1px solid rgba(228, 228, 222, 0.1);
+}
+
+.cluster-details p {
+  margin-top: 0.4rem;
+}
+
+.cluster-quote {
+  font-style: italic;
+  opacity: 0.7;
+  font-size: 0.9rem;
+}
+
 .story-layout {
   max-width: 840px;
   margin: 0 auto;
