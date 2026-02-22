@@ -87,7 +87,7 @@ class DataStore:
         if self.client:
             data = (
                 self.client.table("movies")
-                .select("movie_id,title,year,poster,imdb_rating,rotten_tomatoes,audience_score,genre")
+                .select("movie_id,title,year,poster,imdb_rating,rotten_tomatoes,genre")
                 .ilike("title", f"%{query}%")
                 .limit(limit)
                 .execute()
@@ -105,7 +105,7 @@ class DataStore:
         if self.client:
             rows = (
                 self.client.table("movies")
-                .select("movie_id,title,year,poster,imdb_rating,rotten_tomatoes,audience_score,genre")
+                .select("movie_id,title,year,poster,imdb_rating,rotten_tomatoes,genre")
                 .order("genre")
                 .order("title")
                 .limit(limit)

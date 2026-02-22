@@ -28,9 +28,22 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+# In development, allow common Vite ports so "Failed to fetch" doesn't occur when port differs from 5173
+_cors_origins = settings.cors_origins_list or ["*"]
+if settings.app_env == "development" and _cors_origins == ["http://localhost:5173"]:
+    _cors_origins = [
+        "http://localhost:5173",
+        "http://localhost:5174",
+        "http://localhost:5175",
+        "http://localhost:3000",
+        "http://127.0.0.1:5173",
+        "http://127.0.0.1:5174",
+        "http://127.0.0.1:5175",
+        "http://127.0.0.1:3000",
+    ]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.cors_origins_list or ["*"],
+    allow_origins=_cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
