@@ -23,6 +23,17 @@ source .venv/bin/activate
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000 &
 BACKEND_PID=$!
 
+echo "Waiting for backend to be ready (embedding model loads on first start)..."
+i=0
+while [ $i -lt 30 ]; do
+  if curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/api/health 2>/dev/null | grep -q 200; then
+    echo "Backend ready."
+    break
+  fi
+  sleep 1
+  i=$((i + 1))
+done
+
 echo "Starting frontend (http://localhost:5173)..."
 cd "$ROOT/frontend"
 npm run dev &

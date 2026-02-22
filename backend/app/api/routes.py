@@ -10,6 +10,7 @@ from fastapi.responses import Response
 from app.schemas import (
     EmbeddingRequest,
     EmbeddingResponse,
+    GenerationDetailResponse,
     GenerationResponse,
     JobStatus,
     LeaderboardResponse,
@@ -135,6 +136,17 @@ def pipeline_status(request: Request, job_id: str) -> JobStatus:
 async def prepare_movie(request: Request, movie_id: str) -> PipelineStartResponse:
     services = _services(request)
     return await services.pipeline.start_from_search(query=movie_id, year=None, selected_imdb_id=movie_id)
+
+
+@router.post("/movies/{movie_id}/refresh-plot")
+async def refresh_plot_beats(request: Request, movie_id: str) -> dict:
+    """Re-scrape Wikipedia plot and regenerate plot beats + expanded plot via Gemini."""
+    services = _services(request)
+    try:
+        await services.pipeline.refresh_plot_beats(movie_id)
+        return {"status": "ok", "message": "Plot beats refreshed"}
+    except RuntimeError as e:
+        raise HTTPException(status_code=404, detail=str(e))
 
 
 @router.get("/movies/{movie_id}/analysis", response_model=MovieAnalysisResponse)
@@ -396,6 +408,29 @@ def save_generation(request: Request, payload: SaveGenerationRequest) -> Generat
     )
 
 
+@router.get("/generations/{generation_id}", response_model=GenerationDetailResponse)
+def get_generation(request: Request, generation_id: str) -> GenerationDetailResponse:
+    services = _services(request)
+    row = services.store.get_generation(generation_id)
+    if not row:
+        raise HTTPException(status_code=404, detail="Generation not found")
+    score_payload = row.get("score_payload")
+    if isinstance(score_payload, dict):
+        score_payload = ThemeCoverageScore(**score_payload)
+    created_at = datetime.fromisoformat(str(row["created_at"]).replace("Z", "+00:00"))
+    return GenerationDetailResponse(
+        generation_id=row["generation_id"],
+        movie_id=row["movie_id"],
+        movie_title=row.get("movie_title") or "",
+        ending_text=row["ending_text"],
+        votes=int(row.get("votes", 0)),
+        score_total=int(row.get("score_total", 0)),
+        created_at=created_at,
+        story_payload=row.get("story_payload") or {},
+        score_payload=score_payload,
+    )
+
+
 @router.post("/generations/{generation_id}/vote", response_model=VoteResponse)
 def vote_generation(request: Request, generation_id: str, payload: VoteRequest) -> VoteResponse:
     services = _services(request)
@@ -408,16 +443,6 @@ def leaderboard(request: Request, limit: int = Query(default=50, ge=1, le=100)) 
     services = _services(request)
     items = services.store.leaderboard(limit=limit)
     return LeaderboardResponse(items=items)
-
-
-@router.post("/clusters/taglines")
-async def cluster_taglines(request: Request, payload: dict) -> dict:
-    services = _services(request)
-    clusters = payload.get("clusters", [])
-    if not clusters:
-        return {"taglines": []}
-    taglines = await asyncio.to_thread(services.gemini.generate_cluster_taglines, clusters)
-    return {"taglines": taglines}
 
 
 @router.post("/tts/generate")

@@ -226,12 +226,18 @@ export function RewritePage() {
             </span>
           </div>
 
-          <TypingNarrative
-            key={`${storySessionId}-${stepNumber}-${narrative}`}
-            text={narrative}
-            speedMs={20}
-            onDone={() => setTypingComplete(true)}
-          />
+          {runningStep ? (
+            <div className="typing-panel typing-panel--loading">
+              <p>Generating next scene...</p>
+            </div>
+          ) : (
+            <TypingNarrative
+              key={`${storySessionId}-${stepNumber}-${narrative}`}
+              text={narrative}
+              speedMs={20}
+              onDone={() => setTypingComplete(true)}
+            />
+          )}
 
           {typingComplete && options.length ? (
             <div className="option-grid">

@@ -69,6 +69,11 @@ export const api = {
 
   getMovieAnalysis: (movieId: string) => request<MovieAnalysisResponse>(`/movies/${movieId}/analysis`),
 
+  refreshPlotBeats: (movieId: string) =>
+    request<{ status: string; message: string }>(`/movies/${movieId}/refresh-plot`, {
+      method: 'POST',
+    }),
+
   startStory: (movieId: string, sessionId: string, whatIfId?: string, customWhatIf?: string) =>
     request<StoryStartResponse>('/story/start', {
       method: 'POST',
@@ -125,13 +130,10 @@ export const api = {
       body: JSON.stringify({ session_id: sessionId, value }),
     }),
 
-  leaderboard: () => request<{ items: LeaderboardItem[] }>('/explore/leaderboard'),
+  getGeneration: (generationId: string) =>
+    request<import('../types/api').GenerationDetail>(`/generations/${generationId}`),
 
-  clusterTaglines: (clusters: Array<{ summary: string }>) =>
-    request<{ taglines: string[] }>('/clusters/taglines', {
-      method: 'POST',
-      body: JSON.stringify({ clusters }),
-    }),
+  leaderboard: () => request<{ items: LeaderboardItem[] }>('/explore/leaderboard'),
 
   generateTTS: async (text: string): Promise<string> => {
     const response = await fetch(`${API_BASE}/tts/generate`, {

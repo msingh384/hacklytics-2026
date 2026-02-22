@@ -189,6 +189,9 @@ class MoviePipelineService:
                 self.gemini,
                 7,
             )
+            taglines = await asyncio.to_thread(self.gemini.generate_cluster_taglines, clusters)
+            for idx, cluster in enumerate(clusters):
+                cluster["tagline"] = taglines[idx] if idx < len(taglines) else f"Theme {idx + 1}"
             self.store.replace_clusters(movie_id, clusters, examples)
 
             self._set_job(job_id, stage="plot", progress=78, message="Fetching plot summary")
@@ -232,6 +235,29 @@ class MoviePipelineService:
             self._set_job(job_id, status="ready", stage="ready", progress=100, message="Movie preparation complete")
         except Exception as exc:  # pragma: no cover
             self._set_job(job_id, status="failed", stage="failed", progress=100, error=str(exc), message="Pipeline failed")
+
+    async def refresh_plot_beats(self, movie_id: str) -> None:
+        """Re-scrape Wikipedia plot and regenerate plot beats + expanded plot via Gemini."""
+        movie = self.store.get_movie(movie_id)
+        if not movie:
+            raise RuntimeError("Movie not found")
+        title = movie.get("title") or movie_id
+        plot_summary = self.store.get_plot_summary(movie_id)
+        plot_text: str | None = plot_summary.get("plot_text") if plot_summary else None
+        if not plot_text:
+            fetched = await asyncio.to_thread(self.wiki.fetch_plot, title, movie.get("year"))
+            if fetched:
+                plot_text, page_title = fetched
+                self.store.save_plot_summary(movie_id, plot_text, page_title)
+            else:
+                plot_text = movie.get("plot")
+                if plot_text:
+                    self.store.save_plot_summary(movie_id, plot_text, "omdb_fallback")
+        if plot_text:
+            package = await asyncio.to_thread(self.gemini.generate_plot_package, title, plot_text)
+            beats = package.get("beats", [])
+            expanded_plot = package.get("expanded_plot")
+            self.store.replace_plot_beats(movie_id, beats, expanded_plot)
 
     async def index_embeddings_for_movie(
         self,

@@ -6,13 +6,13 @@ export function AppShell({ children }: PropsWithChildren) {
     <div className="app-root">
       <header className="top-nav">
         <Link className="brand" to="/">
-          DirectorsCut
+          <img src="/DirectorsCutLogo.png" alt="" className="brand-logo" />
+          <span className="brand-text">DirectorsCut</span>
         </Link>
         <nav>
           <NavLink to="/" end>
             Home
           </NavLink>
-          <NavLink to="/search">Search</NavLink>
           <NavLink to="/explore">Explore</NavLink>
         </nav>
       </header>

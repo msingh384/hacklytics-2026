@@ -76,6 +76,20 @@ button {
   text-decoration: none;
   font-size: 1.8rem;
   color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.brand-text {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.brand-logo {
+  height: 3.25rem;
+  width: auto;
+  display: block;
 }
 
 .top-nav nav {
@@ -179,6 +193,36 @@ button {
   gap: 0.2rem;
   font-size: 0.76rem;
   color: var(--surface);
+}
+
+/* MovieScores compact variant (poster overlay) */
+.movie-scores--compact {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.65rem;
+  margin-top: 0.4rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.movie-scores__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.movie-scores__item--imdb {
+  color: #f5c518;
+}
+
+.movie-scores__item--rt {
+  color: var(--text);
+}
+
+.movie-scores__item--meta {
+  color: rgba(228, 228, 222, 0.85);
 }
 
 .action-btn {
@@ -506,6 +550,14 @@ button {
 .whatif-item,
 .beat-item,
 .review-item,
+.leaderboard-item--clickable {
+  cursor: pointer;
+}
+
+.leaderboard-item--clickable:hover {
+  border-color: rgba(228, 228, 222, 0.35);
+}
+
 .leaderboard-item {
   border-radius: var(--radius-sm);
   border: 1px solid rgba(228, 228, 222, 0.15);
@@ -691,8 +743,14 @@ button {
   border-left: 2px solid rgba(228, 228, 222, 0.24);
 }
 
-.cursor {
+.typing-panel--loading p {
+  color: var(--surface);
+  font-style: italic;
+}
+
+.typing-cursor {
   animation: blink 0.8s infinite;
+  margin-left: 1px;
 }
 
 @keyframes blink {

@@ -42,6 +42,7 @@ export type ComplaintCluster = {
   label: string;
   summary: string;
   review_count: number;
+  tagline?: string | null;
 };
 
 export type ClusterExample = {
@@ -140,6 +141,18 @@ export type GenerationResponse = {
   votes: number;
   score_total: number;
   created_at: string;
+};
+
+export type GenerationDetail = {
+  generation_id: string;
+  movie_id: string;
+  movie_title: string;
+  ending_text: string;
+  votes: number;
+  score_total: number;
+  created_at: string;
+  story_payload: Record<string, unknown>;
+  score_payload: ThemeCoverageScore | null;
 };
 
 export type LeaderboardItem = {

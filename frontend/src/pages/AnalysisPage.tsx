@@ -1,13 +1,14 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { api } from '../api/client';
+import { MovieScores } from '../components/MovieScores';
 import { useToast } from '../contexts/ToastContext';
 import type { JobStatus, MovieAnalysisResponse } from '../types/api';
 
 const ANALYSIS_LOADING_ID = 'analysis-loading';
 
 const PLACEHOLDER =
-  'https://dummyimage.com/500x750/1b1b1b/e4e4de.png&text=Poster+Coming+Soon';
+  'https://dummyimage.com/500x750/1b1b1b/e4e4de.png?text=Poster+Coming+Soon';
 
 export function AnalysisPage() {
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ export function AnalysisPage() {
   const [activeJobId, setActiveJobId] = useState<string | null>(null);
   const [expandedClusters, setExpandedClusters] = useState<Set<string>>(new Set());
   const [expandedBeats, setExpandedBeats] = useState<Set<number>>(new Set());
-  const [taglines, setTaglines] = useState<string[]>([]);
+  const [refreshingPlot, setRefreshingPlot] = useState(false);
 
   const toggleCluster = useCallback((clusterId: string) => {
     setExpandedClusters((prev) => {
@@ -74,20 +75,6 @@ export function AnalysisPage() {
       active = false;
     };
   }, [movieId]);
-
-  useEffect(() => {
-    if (!analysis || !analysis.clusters.length) return;
-    let active = true;
-    api
-      .clusterTaglines(analysis.clusters.map((c) => ({ summary: c.summary })))
-      .then((res) => {
-        if (active) setTaglines(res.taglines);
-      })
-      .catch(() => {});
-    return () => {
-      active = false;
-    };
-  }, [analysis]);
 
   useEffect(() => {
     if (!activeJobId) return;
@@ -209,8 +196,8 @@ export function AnalysisPage() {
             <button className="primary-btn" onClick={prepareMovie}>
               Prepare Movie
             </button>
-            <button className="secondary-btn" onClick={() => navigate('/search')}>
-              Go to Search
+            <button className="secondary-btn" onClick={() => navigate('/')}>
+              Back to Home
             </button>
           </div>
         </section>
@@ -233,20 +220,11 @@ export function AnalysisPage() {
                 ))}
               </div>
               <p>{analysis.expanded_plot ?? analysis.plot_summary ?? analysis.movie.plot ?? 'No plot available yet.'}</p>
-              <div className="analysis-stats">
-                <div className="score-card score-card--imdb">
-                  <span className="score-label">IMDb</span>
-                  <span className="score-value">{analysis.movie.imdb_rating ?? '--'}</span>
-                </div>
-                <div className="score-card score-card--rt">
-                  <span className="score-label">🍅</span>
-                  <span className="score-value">{analysis.movie.rotten_tomatoes ?? '--'}</span>
-                </div>
-                <div className="score-card score-card--audience">
-                  <span className="score-label">Meta</span>
-                  <span className="score-value">{analysis.movie.audience_score ?? '--'}</span>
-                </div>
-              </div>
+              <MovieScores
+                imdb_rating={analysis.movie.imdb_rating}
+                rotten_tomatoes={analysis.movie.rotten_tomatoes}
+                audience_score={analysis.movie.audience_score}
+              />
             </div>
           </section>
 
@@ -257,7 +235,7 @@ export function AnalysisPage() {
                 {analysis.clusters.length ? (
                   analysis.clusters.map((cluster, idx) => {
                     const isOpen = expandedClusters.has(cluster.cluster_id);
-                    const tagline = taglines[idx];
+                    const tagline = cluster.tagline;
                     return (
                       <article className="cluster-item cluster-collapsible" key={cluster.cluster_id}>
                         <button
@@ -303,7 +281,33 @@ export function AnalysisPage() {
             </section>
 
             <section>
-              <h2>Plot Beats</h2>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem' }}>
+                <h2 style={{ margin: 0 }}>Plot Beats</h2>
+                <button
+                  className="secondary-btn"
+                  disabled={refreshingPlot}
+                  onClick={async () => {
+                    if (!movieId) return;
+                    setRefreshingPlot(true);
+                    try {
+                      await api.refreshPlotBeats(movieId);
+                      toast.addToast({ message: 'Plot beats refreshed', type: 'success' });
+                      const refreshed = await api.getMovieAnalysis(movieId);
+                      setAnalysis(refreshed);
+                    } catch (err) {
+                      toast.addToast({
+                        message: err instanceof Error ? err.message : 'Failed to refresh plot beats',
+                        type: 'error',
+                      });
+                    } finally {
+                      setRefreshingPlot(false);
+                    }
+                  }}
+                  title="Re-scrape Wikipedia and regenerate plot beats"
+                >
+                  {refreshingPlot ? 'Refreshing...' : 'Refresh'}
+                </button>
+              </div>
               {analysis.plot_beats.length ? (
                 <div className="timeline">
                   {analysis.plot_beats.map((beat, idx) => {

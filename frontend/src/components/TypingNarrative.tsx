@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 type Props = {
   text: string;
@@ -8,6 +8,8 @@ type Props = {
 
 export function TypingNarrative({ text, speedMs = 18, onDone }: Props) {
   const [visible, setVisible] = useState('');
+  const onDoneRef = useRef(onDone);
+  onDoneRef.current = onDone;
 
   useEffect(() => {
     setVisible('');
@@ -20,7 +22,7 @@ export function TypingNarrative({ text, speedMs = 18, onDone }: Props) {
       setVisible(text.slice(0, cursor));
       if (cursor >= text.length) {
         clearInterval(timer);
-        onDone?.();
+        onDoneRef.current?.();
       }
     }, speedMs);
 
@@ -28,14 +30,16 @@ export function TypingNarrative({ text, speedMs = 18, onDone }: Props) {
       active = false;
       clearInterval(timer);
     };
-  }, [text, speedMs, onDone]);
+  }, [text, speedMs]);
 
   return (
     <div className="typing-panel">
-      <p>{visible}</p>
-      <span className="cursor" aria-hidden>
-        |
-      </span>
+      <p>
+        {visible}
+        <span className="typing-cursor" aria-hidden>
+          |
+        </span>
+      </p>
     </div>
   );
 }

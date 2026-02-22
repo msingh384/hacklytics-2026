@@ -1,3 +1,4 @@
+import { MovieScores } from './MovieScores';
 import type { MovieCandidate } from '../types/api';
 
 type Props = {
@@ -8,7 +9,7 @@ type Props = {
 };
 
 const PLACEHOLDER =
-  'https://dummyimage.com/500x750/1b1b1b/e4e4de.png&text=Poster+Coming+Soon';
+  'https://dummyimage.com/500x750/1b1b1b/e4e4de.png?text=Poster+Coming+Soon';
 
 export function MoviePosterCard({ movie, onSelect, onPosterClick, actionLabel = 'Open' }: Props) {
   const poster = movie.poster ?? PLACEHOLDER;
@@ -34,10 +35,12 @@ export function MoviePosterCard({ movie, onSelect, onPosterClick, actionLabel = 
           <h3>{movie.title}</h3>
           <p>{movie.year ?? 'Unknown year'}</p>
         </div>
-        <div className="poster-scores">
-          <span>RT {movie.rotten_tomatoes ?? '--'}</span>
-          <span>Audience {movie.audience_score ?? '--'}</span>
-        </div>
+        <MovieScores
+          variant="compact"
+          imdb_rating={movie.imdb_rating}
+          rotten_tomatoes={movie.rotten_tomatoes}
+          audience_score={movie.audience_score}
+        />
       </div>
       {!analyzed && onSelect ? (
         <button

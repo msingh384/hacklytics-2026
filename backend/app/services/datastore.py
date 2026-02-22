@@ -319,7 +319,7 @@ class DataStore:
         if self.client:
             rows = (
                 self.client.table("complaint_clusters")
-                .select("movie_id,cluster_id,label,summary,review_count")
+                .select("movie_id,cluster_id,label,summary,review_count,tagline")
                 .eq("movie_id", movie_id)
                 .order("review_count", desc=True)
                 .execute()

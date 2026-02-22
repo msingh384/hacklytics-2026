@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { api } from '../api/client';
 import { useSessionId } from '../hooks/useSessionId';
 import type { LeaderboardItem } from '../types/api';
 
 export function ExplorePage() {
+  const navigate = useNavigate();
   const sessionId = useSessionId();
   const [items, setItems] = useState<LeaderboardItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -55,11 +57,15 @@ export function ExplorePage() {
 
       <section className="leaderboard-list">
         {items.map((item) => (
-          <article className="leaderboard-item" key={item.generation_id}>
+          <article
+            className="leaderboard-item leaderboard-item--clickable"
+            key={item.generation_id}
+            onClick={() => navigate(`/ending/${item.movie_id}/${item.generation_id}`)}
+          >
             <h2>{item.movie_title}</h2>
             <p>{item.ending_text}</p>
             <p>Votes: {item.votes} | Score: {item.score_total}</p>
-            <div className="row-actions">
+            <div className="row-actions" onClick={(e) => e.stopPropagation()}>
               <button className="primary-btn" onClick={() => vote(item.generation_id, 1)}>
                 Upvote
               </button>

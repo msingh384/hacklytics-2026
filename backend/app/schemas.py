@@ -66,6 +66,7 @@ class ComplaintCluster(BaseModel):
     label: str
     summary: str
     review_count: int
+    tagline: Optional[str] = None
 
 
 class ClusterExample(BaseModel):
@@ -181,6 +182,19 @@ class GenerationResponse(BaseModel):
     votes: int
     score_total: int
     created_at: datetime
+
+
+class GenerationDetailResponse(BaseModel):
+    """Full generation for viewing saved ending (from Explore)."""
+    generation_id: str
+    movie_id: str
+    movie_title: str
+    ending_text: str
+    votes: int
+    score_total: int
+    created_at: datetime
+    story_payload: dict[str, Any] = {}
+    score_payload: ThemeCoverageScore | None = None
 
 
 class VoteRequest(BaseModel):
