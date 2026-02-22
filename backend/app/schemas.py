@@ -232,3 +232,7 @@ class SearchResult(BaseModel):
 
 class SearchResponse(BaseModel):
     results: list[SearchResult]
+
+
+class TTSRequest(BaseModel):
+    text: str = Field(min_length=1, max_length=5000)
