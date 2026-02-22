@@ -158,6 +158,7 @@ export function RewritePage() {
 
       if (response.is_complete && response.ending) {
         const score = await api.scoreEnding(storySessionId, response.ending);
+        const customWhatIf = (location.state as { customWhatIf?: string } | null)?.customWhatIf;
         navigate(`/ending/${movieId}`, {
           state: {
             ending: response.ending,
@@ -165,7 +166,7 @@ export function RewritePage() {
             storySessionId,
             history: updatedHistory,
             movie: analysis?.movie,
-            whatIf: pickedSuggestion?.text,
+            whatIf: pickedSuggestion?.text ?? customWhatIf,
           },
         });
       }
@@ -188,7 +189,9 @@ export function RewritePage() {
     <div className="page-container">
       <div className="story-layout">
       <h1 className="section-title">Rewrite Flow</h1>
-      {pickedSuggestion ? <p className="section-subtitle">{pickedSuggestion.text}</p> : null}
+      {(pickedSuggestion?.text ?? (location.state as { customWhatIf?: string } | null)?.customWhatIf) ? (
+        <p className="section-subtitle">{pickedSuggestion?.text ?? (location.state as { customWhatIf?: string }).customWhatIf}</p>
+      ) : null}
       {loading ? <p>Loading rewrite context...</p> : null}
       {error ? <p className="error">{error}</p> : null}
 

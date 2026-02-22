@@ -22,7 +22,12 @@ export function AnalysisPage() {
   const [expandedClusters, setExpandedClusters] = useState<Set<string>>(new Set());
   const [expandedBeats, setExpandedBeats] = useState<Set<number>>(new Set());
   const [expandedCharacters, setExpandedCharacters] = useState<Set<string>>(new Set());
+  const [plotExpanded, setPlotExpanded] = useState(false);
   const [refreshingPlot, setRefreshingPlot] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [customWhatIfInput, setCustomWhatIfInput] = useState('');
+
+  const PLOT_PREVIEW_LENGTH = 350;
 
   const toggleCharacter = useCallback((characterId: string) => {
     setExpandedCharacters((prev) => {
@@ -62,10 +67,22 @@ export function AnalysisPage() {
   }, [analysis]);
 
   useEffect(() => {
+    if (!showCreateModal) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setShowCreateModal(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [showCreateModal]);
+
+  useEffect(() => {
     if (!movieId) return;
     let active = true;
     setLoading(true);
     setError(null);
+    setPlotExpanded(false);
+    setShowCreateModal(false);
+    setCustomWhatIfInput('');
 
     api
       .getMovieAnalysis(movieId)
@@ -229,14 +246,92 @@ export function AnalysisPage() {
                   <span className="genre-pill" key={g.trim()}>{g.trim()}</span>
                 ))}
               </div>
-              <p>{analysis.expanded_plot ?? analysis.plot_summary ?? analysis.movie.plot ?? 'No plot available yet.'}</p>
+              <div className="plot-collapsible">
+                {(() => {
+                  const plot = analysis.expanded_plot ?? analysis.plot_summary ?? analysis.movie.plot ?? 'No plot available yet.';
+                  const isLong = plot.length > PLOT_PREVIEW_LENGTH;
+                  const displayText = !plotExpanded && isLong ? `${plot.slice(0, PLOT_PREVIEW_LENGTH).trim()}…` : plot;
+                  return (
+                    <>
+                      <p>{displayText}</p>
+                      {isLong && (
+                        <button
+                          type="button"
+                          className="plot-toggle"
+                          onClick={() => setPlotExpanded((v) => !v)}
+                        >
+                          {plotExpanded ? 'Show less' : 'Read more'}
+                        </button>
+                      )}
+                    </>
+                  );
+                })()}
+              </div>
               <MovieScores
                 imdb_rating={analysis.movie.imdb_rating}
                 rotten_tomatoes={analysis.movie.rotten_tomatoes}
                 audience_score={analysis.movie.audience_score}
               />
+              <div className="hero-cta-row">
+                <button
+                  type="button"
+                  className="primary-btn hero-cta-btn"
+                  disabled={!analysis.what_if_suggestions?.length}
+                  title={!analysis.what_if_suggestions?.length ? 'Prepare the movie first to get data-backed suggestions' : undefined}
+                  onClick={() => {
+                    const first = analysis.what_if_suggestions?.[0];
+                    if (first) navigate(`/rewrite/${movieId}?whatIf=${encodeURIComponent(first.suggestion_id)}`);
+                  }}
+                >
+                  Explore Data-backed alternative
+                </button>
+                <button
+                  type="button"
+                  className="secondary-btn hero-cta-btn"
+                  onClick={() => setShowCreateModal(true)}
+                >
+                  Create your own
+                </button>
+              </div>
             </div>
           </section>
+
+          {showCreateModal ? (
+            <div className="modal-backdrop" onClick={() => setShowCreateModal(false)} role="presentation">
+              <div className="modal create-whatif-modal" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="create-whatif-title">
+                <h2 id="create-whatif-title">Create your own alternate ending</h2>
+                <p className="modal-hint">What do you wish would have happened in the story?</p>
+                <textarea
+                  className="create-whatif-input"
+                  placeholder="e.g. Cobb stays in the dream with Mal forever, or the top never stops spinning..."
+                  value={customWhatIfInput}
+                  onChange={(e) => setCustomWhatIfInput(e.target.value)}
+                  rows={4}
+                  autoFocus
+                />
+                <div className="modal-actions">
+                  <button type="button" className="secondary-btn" onClick={() => setShowCreateModal(false)}>
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    className="primary-btn"
+                    disabled={!customWhatIfInput.trim() || customWhatIfInput.trim().length < 10}
+                    onClick={() => {
+                      const text = customWhatIfInput.trim();
+                      if (text.length >= 10) {
+                        setShowCreateModal(false);
+                        setCustomWhatIfInput('');
+                        navigate(`/rewrite/${movieId}`, { state: { customWhatIf: text } });
+                      }
+                    }}
+                  >
+                    Start Rewrite
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : null}
 
           <section className="analysis-layout">
             <section>

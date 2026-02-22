@@ -844,6 +844,111 @@ button {
   font-family: 'Inter', 'SF Pro Display', -apple-system, system-ui, sans-serif;
 }
 
+.plot-collapsible {
+  margin-top: 0.5rem;
+}
+
+.plot-collapsible p {
+  margin: 0 0 0.4rem;
+  line-height: 1.5;
+}
+
+.plot-toggle {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #c8a96e;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.2rem 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.plot-toggle:hover {
+  color: #e0c080;
+}
+
+.hero-cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+
+.hero-cta-btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+}
+
+.hero-cta-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal {
+  background: var(--surface-dark);
+  border: 1px solid rgba(228, 228, 222, 0.16);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  max-width: 480px;
+  width: 100%;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.5);
+}
+
+.create-whatif-modal h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+  color: var(--text);
+}
+
+.modal-hint {
+  color: rgba(228, 228, 222, 0.7);
+  font-size: 0.9rem;
+  margin: 0 0 0.75rem;
+}
+
+.create-whatif-input {
+  width: 100%;
+  min-height: 100px;
+  padding: 0.75rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(228, 228, 222, 0.2);
+  background: rgba(0, 0, 0, 0.35);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  resize: vertical;
+  margin-bottom: 1rem;
+}
+
+.create-whatif-input::placeholder {
+  color: rgba(228, 228, 222, 0.45);
+}
+
+.create-whatif-input:focus {
+  outline: none;
+  border-color: var(--accent-soft);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+}
+
 .analysis-stats {
   display: flex;
   flex-wrap: wrap;
