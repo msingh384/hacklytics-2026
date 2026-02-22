@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any, Literal, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 class MovieCandidate(BaseModel):
@@ -164,8 +164,13 @@ class StoryCoverageRequest(BaseModel):
 class CoverageCluster(BaseModel):
     cluster_label: str
     addressed: bool
-    evidence_excerpt: str
-    review_reference: str
+    evidence_excerpt: str = ""
+    review_reference: str = ""
+
+    @field_validator("evidence_excerpt", "review_reference", mode="before")
+    @classmethod
+    def coerce_none_to_str(cls, v: object) -> str:
+        return "" if v is None else str(v)
 
 
 class ThemeCoverageScore(BaseModel):

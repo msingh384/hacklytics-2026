@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { api } from '../api/client';
-import { EndingCharts } from '../components/EndingCharts';
+import { EndingScoreSection } from '../components/EndingScoreSection';
 import { useSessionId } from '../hooks/useSessionId';
 import type { GenerationDetail, MovieDetails, ThemeCoverageScore } from '../types/api';
 
@@ -57,16 +57,6 @@ export function EndingPage() {
   const storyPayload = isFromExplore ? (fetchedGeneration?.story_payload ?? {}) : { what_if: state?.whatIf, history: state?.history ?? [] };
   const whatIf = (typeof storyPayload.what_if === 'string' ? storyPayload.what_if : null) ?? state?.whatIf ?? null;
   const history = Array.isArray(storyPayload.history) ? storyPayload.history as Array<{ step: number; narrative: string; choice?: string }> : (state?.history ?? []);
-
-  const scoreItems = useMemo(() => {
-    if (!score) return [];
-    return [
-      { label: 'Total', value: score.score_total },
-      { label: 'Complaint Coverage', value: score.breakdown.complaint_coverage },
-      { label: 'Preference Satisfaction', value: score.breakdown.preference_satisfaction },
-      { label: 'Coherence', value: score.breakdown.coherence },
-    ];
-  }, [score]);
 
   if (!movieId) {
     return (
@@ -137,90 +127,72 @@ export function EndingPage() {
     }
   }
 
+  const hasStory = whatIf || history.length > 0 || ending;
+
   return (
     <div className="page-container">
-      <section className="ending-layout">
-      <h1 className="section-title">Alternate Ending</h1>
-      <p className="section-subtitle">{movieTitle ?? movieId}</p>
+      <article className="ending-page">
+        {/* Hero */}
+        <header className="ending-hero">
+          <div className="ending-hero-text">
+            <h1 className="ending-title">Alternate Ending</h1>
+            <p className="ending-subtitle">{movieTitle ?? movieId}</p>
+          </div>
+          <div className="ending-hero-actions">
+            {!isFromExplore && (
+              <button className="primary-btn" disabled={saving} onClick={saveEnding}>
+                {saving ? 'Saving…' : savedId ? 'Saved' : 'Save Ending'}
+              </button>
+            )}
+            <button className="secondary-btn" onClick={() => navigate('/explore')}>
+              Explore Leaderboard
+            </button>
+          </div>
+        </header>
 
-      {(whatIf || history.length > 0) ? (
-        <section className="panel ending-story-flow">
-          <h2>The Story</h2>
-          {whatIf ? (
-            <p className="ending-whatif">
-              <strong>What if: </strong>
-              {whatIf}
-            </p>
-          ) : null}
-          {history.length > 0 ? (
-            <div className="ending-history">
+        {/* Single story block: what-if → steps → ending */}
+        {hasStory && (
+          <section className="ending-story">
+            {whatIf && (
+              <div className="ending-prompt">
+                <span className="ending-prompt-label">What if</span>
+                <p>{whatIf}</p>
+              </div>
+            )}
+
+            <div className="ending-narrative-flow">
               {history.map((entry, idx) => (
-                <div key={idx} className="ending-history-step">
-                  <p className="ending-narrative">{entry.narrative}</p>
-                  {entry.choice ? (
-                    <p className="ending-choice">&rarr; They chose: &ldquo;{entry.choice}&rdquo;</p>
-                  ) : null}
+                <div key={idx} className="ending-step">
+                  <span className="ending-step-badge">Step {entry.step}</span>
+                  <p className="ending-step-narrative">{entry.narrative}</p>
+                  {entry.choice && (
+                    <p className="ending-step-choice">&rarr; {entry.choice}</p>
+                  )}
                 </div>
               ))}
-            </div>
-          ) : null}
-        </section>
-      ) : null}
-
-      <section className="panel">
-        <h2>Final Ending</h2>
-        <p>{ending}</p>
-      </section>
-
-      {score ? (
-        <>
-          <EndingCharts score={score} history={history} />
-
-          <section className="panel">
-            <h2>Theme Coverage Score</h2>
-            <div className="score-grid" style={{ marginTop: '0.6rem' }}>
-              {scoreItems.map((item) => (
-                <article className="score-card" key={item.label}>
-                  <p>{item.label}</p>
-                  <strong>{item.value}</strong>
-                </article>
-              ))}
+              {ending && (
+                <div className="ending-final">
+                  <h2 className="ending-final-heading">The Ending</h2>
+                  <p className="ending-final-text">{ending}</p>
+                </div>
+              )}
             </div>
           </section>
+        )}
 
-          <section className="panel">
-            <h2>Evidence Panel</h2>
-            <div className="review-list" style={{ marginTop: '0.6rem' }}>
-              {score.per_cluster.map((cluster) => (
-                <article className="review-item" key={`${cluster.cluster_label}-${cluster.review_reference}`}>
-                  <h3>{cluster.cluster_label}</h3>
-                  <p>{cluster.addressed ? 'Addressed' : 'Not addressed yet'}</p>
-                  <p>{cluster.evidence_excerpt}</p>
-                  <small>Ref: {cluster.review_reference}</small>
-                </article>
-              ))}
-            </div>
-          </section>
-        </>
-      ) : null}
+        {/* Single analytics section: score + clusters + evidence */}
+        {score && (
+          <EndingScoreSection score={score} />
+        )}
 
-      <div className="row-actions">
-        {!isFromExplore ? (
-          <button className="primary-btn" disabled={saving} onClick={saveEnding}>
-            {saving ? 'Saving...' : savedId ? 'Saved' : 'Save Ending'}
-          </button>
-        ) : null}
-        <button className="secondary-btn" onClick={() => alert('Coming soon')}>
-          Share (Coming soon)
-        </button>
-        <button className="secondary-btn" onClick={() => navigate('/explore')}>
-          Explore Leaderboard
-        </button>
-      </div>
-
-      {savedId && !isFromExplore ? <p>Saved generation: {savedId}</p> : null}
-      {error ? <p className="error">{error}</p> : null}
-      </section>
+        {/* Footer */}
+        <footer className="ending-footer">
+          {savedId && !isFromExplore && (
+            <span className="ending-saved-id">Saved as {savedId.slice(0, 8)}…</span>
+          )}
+          {error && <span className="error">{error}</span>}
+        </footer>
+      </article>
     </div>
   );
 }

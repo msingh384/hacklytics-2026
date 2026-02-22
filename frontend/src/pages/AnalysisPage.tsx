@@ -24,7 +24,6 @@ export function AnalysisPage() {
   const [activeJobId, setActiveJobId] = useState<string | null>(null);
   const [expandedClusters, setExpandedClusters] = useState<Set<string>>(new Set());
   const [expandedBeats, setExpandedBeats] = useState<Set<number>>(new Set());
-  const [expandedCharacters, setExpandedCharacters] = useState<Set<string>>(new Set());
   const [plotExpanded, setPlotExpanded] = useState(false);
   const [refreshingPlot, setRefreshingPlot] = useState(false);
   const [rerunningPipeline, setRerunningPipeline] = useState(false);
@@ -35,15 +34,6 @@ export function AnalysisPage() {
   const [beatDensity, setBeatDensity] = useState<Record<string, number> | null>(null);
 
   const PLOT_PREVIEW_LENGTH = 350;
-
-  const toggleCharacter = useCallback((characterId: string) => {
-    setExpandedCharacters((prev) => {
-      const next = new Set(prev);
-      if (next.has(characterId)) next.delete(characterId);
-      else next.add(characterId);
-      return next;
-    });
-  }, []);
 
   const toggleCluster = useCallback((clusterId: string) => {
     setExpandedClusters((prev) => {
@@ -626,49 +616,7 @@ export function AnalysisPage() {
           </section>
 
           {analysis.characters?.length ? (
-            <>
-              <CharacterArcChart characters={analysis.characters} />
-              <section className="panel" style={{ marginTop: '1rem' }}>
-                <h2>Characters</h2>
-                <div className="timeline" style={{ marginTop: '0.6rem' }}>
-                {analysis.characters.map((char) => {
-                  const isOpen = expandedCharacters.has(char.character_id);
-                  return (
-                    <div className="timeline-node" key={char.character_id}>
-                      <div className="timeline-marker">
-                        <div className="timeline-dot" />
-                      </div>
-                      <div className="timeline-content">
-                        <button
-                          className="timeline-toggle"
-                          onClick={() => toggleCharacter(char.character_id)}
-                          aria-expanded={isOpen}
-                        >
-                          <span className="timeline-label">
-                            {char.name} <em>({char.role})</em>
-                          </span>
-                          <svg
-                            className={`timeline-chevron${isOpen ? ' timeline-chevron--open' : ''}`}
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <polyline points="6 9 12 15 18 9" />
-                          </svg>
-                        </button>
-                        {isOpen && <p className="timeline-text">{char.analysis}</p>}
-                      </div>
-                    </div>
-                  );
-                })}
-                </div>
-              </section>
-            </>
+            <CharacterArcChart characters={analysis.characters} />
           ) : null}
 
           <section className="panel" style={{ marginTop: '1rem' }}>
