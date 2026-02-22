@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { api } from '../api/client';
 import { TypingNarrative } from '../components/TypingNarrative';
@@ -23,6 +23,50 @@ export function RewritePage() {
   const [typingComplete, setTypingComplete] = useState(false);
   const [runningStep, setRunningStep] = useState(false);
   const [history, setHistory] = useState<Array<{ step: number; narrative: string; choice?: string }>>([]);
+  const [ttsPlaying, setTtsPlaying] = useState(false);
+  const [ttsLoading, setTtsLoading] = useState(false);
+  const ttsAudioRef = useRef<HTMLAudioElement | null>(null);
+  const ttsUrlRef = useRef<string | null>(null);
+
+  const stopTts = useCallback(() => {
+    if (ttsAudioRef.current) {
+      ttsAudioRef.current.pause();
+      ttsAudioRef.current = null;
+    }
+    if (ttsUrlRef.current) {
+      URL.revokeObjectURL(ttsUrlRef.current);
+      ttsUrlRef.current = null;
+    }
+    setTtsPlaying(false);
+  }, []);
+
+  const playTts = useCallback(async () => {
+    if (ttsPlaying) {
+      stopTts();
+      return;
+    }
+    if (!narrative) return;
+    setTtsLoading(true);
+    try {
+      const url = await api.generateTTS(narrative);
+      if (!url) return;
+      stopTts();
+      ttsUrlRef.current = url;
+      const audio = new Audio(url);
+      ttsAudioRef.current = audio;
+      audio.addEventListener('ended', () => setTtsPlaying(false));
+      setTtsPlaying(true);
+      await audio.play();
+    } catch {
+      setTtsPlaying(false);
+    } finally {
+      setTtsLoading(false);
+    }
+  }, [narrative, ttsPlaying, stopTts]);
+
+  useEffect(() => {
+    stopTts();
+  }, [narrative, stopTts]);
 
   const whatIfId = searchParams.get('whatIf');
   const pickedSuggestion = useMemo(() => {
@@ -147,7 +191,39 @@ export function RewritePage() {
         <>
           <div className="story-progress">
             <span>Choice {Math.min(stepNumber, 3)} of 3</span>
-            <span>{runningStep ? 'Generating next scene...' : 'Your story is live'}</span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              {runningStep ? 'Generating next scene...' : 'Your story is live'}
+              {!runningStep && narrative && (
+                <button
+                  onClick={playTts}
+                  disabled={ttsLoading}
+                  title={ttsPlaying ? 'Stop narration' : 'Listen to narration'}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    cursor: ttsLoading ? 'wait' : 'pointer',
+                    padding: '2px',
+                    opacity: ttsLoading ? 0.5 : 1,
+                    lineHeight: 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    color: '#fff',
+                  }}
+                >
+                  {ttsPlaying ? (
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="6" y="6" width="12" height="12" rx="1" />
+                    </svg>
+                  ) : (
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                      <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+                      <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+                    </svg>
+                  )}
+                </button>
+              )}
+            </span>
           </div>
 
           <TypingNarrative

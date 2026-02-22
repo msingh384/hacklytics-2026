@@ -112,4 +112,15 @@ export const api = {
     }),
 
   leaderboard: () => request<{ items: LeaderboardItem[] }>('/explore/leaderboard'),
+
+  generateTTS: async (text: string): Promise<string> => {
+    const response = await fetch(`${API_BASE}/tts/generate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text }),
+    });
+    if (!response.ok) return '';
+    const blob = await response.blob();
+    return URL.createObjectURL(blob);
+  },
 };

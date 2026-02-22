@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from app.config import Settings
+from app.integrations.elevenlabs import ElevenLabsClient
 from app.integrations.gemini import GeminiClient
 from app.integrations.omdb import OmdbClient
 from app.integrations.vector_store import VectorStore
@@ -20,6 +21,7 @@ class ServiceContainer:
     omdb: OmdbClient
     wiki: WikipediaPlotClient
     gemini: GeminiClient
+    elevenlabs: ElevenLabsClient
     embedder: EmbeddingService
     vector_store: VectorStore
     pipeline: MoviePipelineService
@@ -31,6 +33,7 @@ def build_services(settings: Settings) -> ServiceContainer:
     omdb = OmdbClient(settings)
     wiki = WikipediaPlotClient(settings)
     gemini = GeminiClient(settings)
+    elevenlabs = ElevenLabsClient(settings)
     embedder = EmbeddingService(settings)
     vector_store = VectorStore(settings)
     pipeline = MoviePipelineService(
@@ -49,6 +52,7 @@ def build_services(settings: Settings) -> ServiceContainer:
         omdb=omdb,
         wiki=wiki,
         gemini=gemini,
+        elevenlabs=elevenlabs,
         embedder=embedder,
         vector_store=vector_store,
         pipeline=pipeline,

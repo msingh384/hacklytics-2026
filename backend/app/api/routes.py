@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 from typing import Any
 
 from fastapi import APIRouter, HTTPException, Query, Request
+from fastapi.responses import Response
 
 from app.schemas import (
     EmbeddingRequest,
@@ -34,6 +35,7 @@ from app.schemas import (
     ComplaintCluster,
     ClusterExample,
     WhatIfSuggestion,
+    TTSRequest,
 )
 from app.services.container import ServiceContainer
 from app.utils.text import extract_omdb_scores
@@ -396,3 +398,16 @@ def leaderboard(request: Request, limit: int = Query(default=50, ge=1, le=100)) 
     services = _services(request)
     items = services.store.leaderboard(limit=limit)
     return LeaderboardResponse(items=items)
+
+
+@router.post("/tts/generate")
+async def generate_tts(request: Request, payload: TTSRequest) -> Response:
+    services = _services(request)
+    if not services.elevenlabs.enabled:
+        raise HTTPException(status_code=503, detail="ElevenLabs TTS is not configured")
+    audio_bytes = await asyncio.to_thread(services.elevenlabs.generate_speech, payload.text)
+    return Response(
+        content=audio_bytes,
+        media_type="audio/mpeg",
+        headers={"Content-Disposition": "inline", "Cache-Control": "no-cache"},
+    )

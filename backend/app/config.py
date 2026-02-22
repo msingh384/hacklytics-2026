@@ -15,6 +15,9 @@ class Settings(BaseSettings):
 
     omdb_api_key: Optional[str] = None
     gemini_api_key: Optional[str] = None
+    elevenlabs_api_key: Optional[str] = None
+    elevenlabs_voice_id: str = "pNInz6obpgDQGcFmaJgB"  # "Adam" pre-made voice
+    elevenlabs_model_id: str = "eleven_flash_v2_5"
 
     actian_address: str = "127.0.0.1:50051"
     actian_collection: str = "review_chunks"
