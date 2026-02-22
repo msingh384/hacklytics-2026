@@ -12,6 +12,20 @@ import type {
 
 const API_BASE = import.meta.env.VITE_API_BASE ?? 'http://localhost:8000/api';
 
+function messageFromErrorBody(text: string): string {
+  const trimmed = text?.trim();
+  if (!trimmed) return 'API request failed';
+  try {
+    const json = JSON.parse(trimmed) as { detail?: string };
+    const detail = typeof json.detail === 'string' ? json.detail : trimmed;
+    if (/invalid imdb id|incorrect imdb id/i.test(detail))
+      return "Couldn't load movies. Use Search to add a movie, or check the backend is connected to the database.";
+    return detail;
+  } catch {
+    return trimmed;
+  }
+}
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`${API_BASE}${path}`, {
     headers: {
@@ -23,7 +37,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(errorText || 'API request failed');
+    throw new Error(messageFromErrorBody(errorText));
   }
 
   return (await response.json()) as T;

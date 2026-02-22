@@ -84,11 +84,12 @@ class DataStore:
         return row
 
     def search_movies(self, query: str, limit: int = 25) -> list[dict[str, Any]]:
+        """Match movies whose title starts with the query (first-word / prefix match)."""
         if self.client:
             data = (
                 self.client.table("movies")
                 .select("movie_id,title,year,poster,imdb_rating,rotten_tomatoes,audience_score,genre")
-                .ilike("title", f"%{query}%")
+                .ilike("title", f"{query.strip()}%")
                 .limit(limit)
                 .execute()
                 .data
@@ -96,8 +97,12 @@ class DataStore:
             )
             return data
 
-        q = normalize_title(query)
-        rows = [row for row in self.movies.values() if q in normalize_title(row.get("title", ""))]
+        q = normalize_title(query.strip())
+        rows = [
+            row
+            for row in self.movies.values()
+            if normalize_title(row.get("title", "")).startswith(q)
+        ]
         rows.sort(key=lambda item: (item.get("genre") or "", item.get("title") or ""))
         return rows[:limit]
 
@@ -356,6 +361,13 @@ class DataStore:
             )
             return rows
         return self.what_ifs.get(movie_id, [])
+
+    def movie_has_analysis(self, movie_id: str) -> bool:
+        """True if this movie has clusters, plot beats, and what-if suggestions (ready to view)."""
+        clusters = self.get_clusters(movie_id)
+        beats = self.get_plot_beats(movie_id)
+        what_ifs = self.get_what_ifs(movie_id)
+        return bool(clusters and beats and what_ifs)
 
     def save_generation(
         self,

@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { api } from '../api/client';
-import { LoadingProgress } from '../components/LoadingProgress';
+import { useToast } from '../contexts/ToastContext';
 import type { JobStatus, MovieAnalysisResponse } from '../types/api';
+
+const ANALYSIS_LOADING_ID = 'analysis-loading';
 
 const PLACEHOLDER =
   'https://dummyimage.com/500x750/1b1b1b/e4e4de.png&text=Poster+Coming+Soon';
@@ -10,6 +12,7 @@ const PLACEHOLDER =
 export function AnalysisPage() {
   const navigate = useNavigate();
   const { movieId } = useParams();
+  const toast = useToast();
   const [analysis, setAnalysis] = useState<MovieAnalysisResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -88,13 +91,24 @@ export function AnalysisPage() {
 
   useEffect(() => {
     if (!activeJobId) return;
+    toast.addToast({
+      id: ANALYSIS_LOADING_ID,
+      message: 'Preparing analysis…',
+      type: 'loading',
+    });
     const timer = window.setInterval(async () => {
       try {
         const status = await api.getPipelineJob(activeJobId);
         setJob(status);
+        toast.updateToast(ANALYSIS_LOADING_ID, {
+          stage: status.stage,
+          progress: status.progress,
+        });
         if (status.status === 'ready') {
           window.clearInterval(timer);
           setActiveJobId(null);
+          toast.removeToast(ANALYSIS_LOADING_ID);
+          toast.addToast({ message: 'Analysis ready', type: 'success' });
           if (movieId) {
             const refreshed = await api.getMovieAnalysis(movieId);
             setAnalysis(refreshed);
@@ -102,16 +116,23 @@ export function AnalysisPage() {
         }
         if (status.status === 'failed') {
           window.clearInterval(timer);
+          setActiveJobId(null);
+          toast.removeToast(ANALYSIS_LOADING_ID);
           setError(status.error ?? 'Pipeline failed');
         }
       } catch (err) {
         window.clearInterval(timer);
+        setActiveJobId(null);
+        toast.removeToast(ANALYSIS_LOADING_ID);
         setError(err instanceof Error ? err.message : 'Could not poll pipeline status');
       }
     }, 1800);
 
-    return () => window.clearInterval(timer);
-  }, [activeJobId, movieId]);
+    return () => {
+      window.clearInterval(timer);
+      toast.removeToast(ANALYSIS_LOADING_ID);
+    };
+  }, [activeJobId, movieId, toast]);
 
   async function prepareMovie() {
     if (!movieId) return;
@@ -119,6 +140,7 @@ export function AnalysisPage() {
     try {
       const result = await api.prepareMovie(movieId);
       if (result.status === 'ready') {
+        toast.addToast({ message: 'Analysis ready', type: 'success' });
         const refreshed = await api.getMovieAnalysis(movieId);
         setAnalysis(refreshed);
         return;
@@ -136,7 +158,6 @@ export function AnalysisPage() {
   return (
     <div>
       {loading ? <p>Loading analysis...</p> : null}
-      {job ? <LoadingProgress job={job} /> : null}
       {error ? <p className="error">{error}</p> : null}
 
       {!loading && !analysis ? (
