@@ -1,0 +1,85 @@
+{
+  "count": 357,
+  "samples": [
+    {
+      "movie_review_len": 188,
+      "title": "Inception"
+    },
+    {
+      "movie_review_len": 187,
+      "title": "Inception"
+    },
+    {
+      "movie_review_len": 132,
+      "title": "Inception"
+    },
+    {
+      "movie_review_len": 230,
+      "title": "Inception"
+    },
+    {
+      "movie_review_len": 196,
+      "title": "Inception"
+    },
+    {
+      "movie_review_len": 176,
+      "title": "Inception"
+    },
+    {
+      "movie_review_len": 40,
+      "title": "Inception"
+    },
+    {
+      "movie_review_len": 99,
+      "title": "Inception"
+    },
+    {
+      "movie_review_len": 113,
+      "title": "Inception"
+    },
+    {
+      "movie_review_len": 155,
+      "title": "Inception"
+    },
+    {
+      "movie_review_len": 55,
+      "title": "Inception"
+    },
+    {
+      "movie_review_len": 74,
+      "title": "Inception"
+    },
+    {
+      "movie_review_len": 77,
+      "title": "Inception"
+    },
+    {
+      "movie_review_len": 231,
+      "title": "Inception"
+    },
+    {
+      "movie_review_len": 133,
+      "title": "Inception"
+    },
+    {
+      "movie_review_len": 38,
+      "title": "Inception"
+    },
+    {
+      "movie_review_len": 130,
+      "title": "Inception"
+    },
+    {
+      "movie_review_len": 242,
+      "title": "Inception"
+    },
+    {
+      "movie_review_len": 111,
+      "title": "Inception"
+    },
+    {
+      "movie_review_len": 144,
+      "title": "Inception"
+    }
+  ]
+}

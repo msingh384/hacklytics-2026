@@ -36,13 +36,20 @@ export type PlotBeat = {
   beat_text: string;
 };
 
+export type MovieCharacter = {
+  movie_id: string;
+  character_id: string;
+  name: string;
+  role: string;
+  analysis: string;
+};
+
 export type ComplaintCluster = {
   movie_id: string;
   cluster_id: string;
   label: string;
   summary: string;
   review_count: number;
-  tagline?: string | null;
 };
 
 export type ClusterExample = {
@@ -87,6 +94,7 @@ export type MovieAnalysisResponse = {
   plot_summary?: string | null;
   expanded_plot?: string | null;
   plot_beats: PlotBeat[];
+  characters: MovieCharacter[];
   clusters: ComplaintCluster[];
   cluster_examples: ClusterExample[];
   what_if_suggestions: WhatIfSuggestion[];

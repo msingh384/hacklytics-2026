@@ -60,14 +60,20 @@ class PlotBeat(BaseModel):
     beat_text: str
 
 
+class MovieCharacter(BaseModel):
+    movie_id: str
+    character_id: str
+    name: str
+    role: str
+    analysis: str
+
+
 class ComplaintCluster(BaseModel):
     movie_id: str
     cluster_id: str
     label: str
     summary: str
     review_count: int
-    tagline: Optional[str] = None
-
 
 class ClusterExample(BaseModel):
     movie_id: str
@@ -103,6 +109,7 @@ class MovieAnalysisResponse(BaseModel):
     plot_summary: Optional[str] = None
     expanded_plot: Optional[str] = None
     plot_beats: list[PlotBeat]
+    characters: list[MovieCharacter]
     clusters: list[ComplaintCluster]
     cluster_examples: list[ClusterExample]
     what_if_suggestions: list[WhatIfSuggestion]

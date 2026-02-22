@@ -13,6 +13,13 @@ def normalize_title(title: str) -> str:
     return _NON_ALNUM_RE.sub(" ", title.lower()).strip()
 
 
+def normalize_imdb_id(movie_id: str) -> str:
+    """Ensure IMDb ID has tt prefix for consistent DB matching."""
+    cleaned = (movie_id or "").strip().lower()
+    return cleaned if cleaned.startswith("tt") else f"tt{cleaned}"
+
+
+
 def split_into_review_chunks(text: str, max_sentences: int = 3) -> list[str]:
     raw_sentences = [s.strip() for s in _SENTENCE_SPLIT_RE.split(text.strip()) if s.strip()]
     if not raw_sentences:

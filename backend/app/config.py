@@ -15,13 +15,12 @@ class Settings(BaseSettings):
 
     omdb_api_key: Optional[str] = None
     gemini_api_key: Optional[str] = None
+    gemini_use_google_search: bool = False  # Enable Google Search grounding for plot/character analysis
     elevenlabs_api_key: Optional[str] = None
     elevenlabs_voice_id: str = "pNInz6obpgDQGcFmaJgB"  # "Adam" pre-made voice
     elevenlabs_model_id: str = "eleven_flash_v2_5"
 
-    actian_address: str = "127.0.0.1:50051"
-    actian_collection: str = "review_chunks"
-    enable_actian: bool = False
+    use_supabase_vector: bool = True  # Use Supabase pgvector for embeddings (when has_supabase)
 
     wikipedia_user_agent: str = "DirectorsCut/1.0 (contact@example.com)"
     request_timeout_seconds: int = 20
@@ -33,6 +32,7 @@ class Settings(BaseSettings):
         env_file=".env",
         env_file_encoding="utf-8",
         case_sensitive=False,
+        extra="ignore",
     )
 
     @field_validator("cors_origins")

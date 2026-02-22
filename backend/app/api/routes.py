@@ -33,6 +33,7 @@ from app.schemas import (
     VoteRequest,
     VoteResponse,
     PlotBeat,
+    MovieCharacter,
     ComplaintCluster,
     ClusterExample,
     WhatIfSuggestion,
@@ -176,6 +177,7 @@ def movie_analysis(request: Request, movie_id: str) -> MovieAnalysisResponse:
 
     plot_summary = services.store.get_plot_summary(movie_id)
     beats = [PlotBeat(**beat) for beat in services.store.get_plot_beats(movie_id)]
+    characters = [MovieCharacter(**c) for c in services.store.get_characters(movie_id)]
     clusters = [ComplaintCluster(**cluster) for cluster in services.store.get_clusters(movie_id)[:5]]
     examples = [ClusterExample(**example) for example in services.store.get_cluster_examples(movie_id)]
     what_ifs = [WhatIfSuggestion(**item) for item in services.store.get_what_ifs(movie_id)[:3]]
@@ -209,6 +211,7 @@ def movie_analysis(request: Request, movie_id: str) -> MovieAnalysisResponse:
         plot_summary=plot_summary.get("plot_text") if plot_summary else None,
         expanded_plot=movie.get("expanded_plot"),
         plot_beats=beats,
+        characters=characters,
         clusters=clusters,
         cluster_examples=examples,
         what_if_suggestions=what_ifs,

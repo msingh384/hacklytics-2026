@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import asyncio
+import json
 from dataclasses import dataclass
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any
 from uuid import uuid4
 
@@ -12,10 +14,12 @@ from app.integrations.omdb import OmdbClient
 from app.integrations.vector_store import IndexedChunk, VectorStore
 from app.integrations.wikipedia import WikipediaPlotClient
 from app.schemas import JobStatus, MovieCandidate, PipelineStartResponse
-from app.services.clustering import cluster_review_chunks
+from app.services.clustering import cluster_review_chunks_from_vector_store
 from app.services.datastore import DataStore
 from app.services.embedding import EmbeddingService
 from app.utils.text import split_into_review_chunks, stable_id
+
+MIN_REQUIRED_IMDB_REVIEWS = 300
 
 
 @dataclass
@@ -28,6 +32,7 @@ class JobRecord:
     message: str | None
     error: str | None
     updated_at: datetime
+    save_dir: Path | None = None
 
 
 class MoviePipelineService:
@@ -67,6 +72,16 @@ class MoviePipelineService:
             updated_at=record.updated_at,
         )
 
+    def _save_step(self, job_id: str, step_name: str, data: object) -> None:
+        record = self.jobs.get(job_id)
+        if not record or not record.save_dir:
+            return
+        save_dir = Path(record.save_dir)
+        save_dir.mkdir(parents=True, exist_ok=True)
+        path = save_dir / f"{step_name}.json"
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, default=str)
+
     def get_job(self, job_id: str) -> JobStatus | None:
         record = self.jobs.get(job_id)
         return self._as_status(record) if record else None
@@ -77,6 +92,7 @@ class MoviePipelineService:
         query: str,
         year: str | None,
         selected_imdb_id: str | None,
+        save_dir: Path | str | None = None,
     ) -> PipelineStartResponse:
         movie_id = selected_imdb_id
         candidates: list[MovieCandidate] = []
@@ -119,6 +135,7 @@ class MoviePipelineService:
             return PipelineStartResponse(status="ready", movie_id=movie_id, message="Movie already prepared.")
 
         job_id = str(uuid4())
+        resolved_save_dir = Path(save_dir) if save_dir else None
         self.jobs[job_id] = JobRecord(
             job_id=job_id,
             status="queued",
@@ -128,6 +145,7 @@ class MoviePipelineService:
             message="Pipeline queued",
             error=None,
             updated_at=datetime.now(timezone.utc),
+            save_dir=resolved_save_dir,
         )
         asyncio.create_task(self._run_job_with_timeout(job_id, movie_id, query=query, year=year))
         return PipelineStartResponse(status="queued", job_id=job_id, movie_id=movie_id, message="Pipeline started")
@@ -157,12 +175,14 @@ class MoviePipelineService:
                 if not omdb_payload:
                     raise RuntimeError("OMDB did not return movie details")
                 movie = self.store.upsert_movie(omdb_payload)
+            omdb_out = {k: v for k, v in movie.items() if k != "Response"}
+            self._save_step(job_id, "01_omdb", omdb_out)
 
             title = movie.get("title") or query
             self._set_job(job_id, stage="user_reviews", progress=20, message="Checking user reviews")
             user_count = self.store.count_user_reviews(movie_id)
-            if user_count == 0:
-                scraped = await asyncio.to_thread(scrape_imdb_reviews, movie_id, 1200)
+            if user_count < MIN_REQUIRED_IMDB_REVIEWS:
+                scraped = await asyncio.to_thread(scrape_imdb_reviews, movie_id, 1200, MIN_REQUIRED_IMDB_REVIEWS)
                 rows = [
                     {
                         "review_id": item.review_id,
@@ -172,31 +192,54 @@ class MoviePipelineService:
                     for item in scraped
                 ]
                 self.store.insert_user_reviews(movie_id, title, rows)
+                user_count = self.store.count_user_reviews(movie_id)
+                if user_count < MIN_REQUIRED_IMDB_REVIEWS:
+                    self._set_job(
+                        job_id,
+                        stage="user_reviews",
+                        progress=24,
+                        message=f"Collected {user_count} user reviews (below target {MIN_REQUIRED_IMDB_REVIEWS})",
+                    )
+            user_rows = self.store.get_user_reviews(movie_id, limit=20)
+            user_out = [
+                {"review_id": r.get("review_id", ""), "text_len": len(r.get("movie_review") or ""), "text_snippet": (r.get("movie_review") or "")[:300]}
+                for r in user_rows
+            ]
+            self._save_step(job_id, "02_imdb_reviews", {"count": user_count, "samples": user_out})
 
             self._set_job(job_id, stage="critic_reviews", progress=35, message="Loading critic reviews")
             critics = self.store.get_critic_reviews(movie_id, title)
+            critic_out = [{"movie_review_len": len(c.get("movie_review") or ""), "title": c.get("movie_title")} for c in critics[:20]]
+            self._save_step(job_id, "03_critic_reviews", {"count": len(critics), "samples": critic_out})
 
             self._set_job(job_id, stage="embedding", progress=50, message="Embedding and indexing reviews")
             index_payload = await self.index_embeddings_for_movie(movie_id, title, critics)
+            chunks = index_payload.get("chunks", [])
+            chunk_out = [{"chunk_id": c["chunk_id"], "text_len": len(c["text"]), "source": c["source"]} for c in chunks[:30]]
+            self._save_step(job_id, "04_chunks", {"count": len(chunks), "samples": chunk_out})
+            vectors = index_payload.get("vectors", [])
+            self._save_step(job_id, "05_embed", {"count": len(vectors), "dim": len(vectors[0]) if vectors else 0})
 
             self._set_job(job_id, stage="clustering", progress=65, message="Clustering complaints")
+            chunk_meta = {item["chunk_id"]: item for item in index_payload.get("chunks", [])}
             clusters, examples = await asyncio.to_thread(
-                cluster_review_chunks,
+                cluster_review_chunks_from_vector_store,
                 movie_id,
                 title,
-                index_payload["chunks"],
-                index_payload["vectors"],
+                self.vector_store,
                 self.gemini,
                 7,
+                chunk_meta,
             )
-            taglines = await asyncio.to_thread(self.gemini.generate_cluster_taglines, clusters)
-            for idx, cluster in enumerate(clusters):
-                cluster["tagline"] = taglines[idx] if idx < len(taglines) else f"Theme {idx + 1}"
             self.store.replace_clusters(movie_id, clusters, examples)
+            cluster_out = [{"cluster_id": c["cluster_id"], "label": c["label"], "review_count": c["review_count"]} for c in clusters]
+            example_out = [{"example_id": e["example_id"], "review_text_snippet": (e.get("review_text") or "")[:120]} for e in examples[:15]]
+            self._save_step(job_id, "06_cluster", {"clusters": cluster_out, "examples_sample": example_out})
 
             self._set_job(job_id, stage="plot", progress=78, message="Fetching plot summary")
             plot_summary = self.store.get_plot_summary(movie_id)
             plot_text: str | None = plot_summary.get("plot_text") if plot_summary else None
+            page_title: str | None = plot_summary.get("source_page") if plot_summary else None
             if not plot_text:
                 fetched = await asyncio.to_thread(self.wiki.fetch_plot, title, movie.get("year"))
                 if fetched:
@@ -204,15 +247,22 @@ class MoviePipelineService:
                     self.store.save_plot_summary(movie_id, plot_text, page_title)
                 else:
                     plot_text = movie.get("plot")
+                    page_title = "omdb_fallback"
                     if plot_text:
                         self.store.save_plot_summary(movie_id, plot_text, "omdb_fallback")
+            self._save_step(job_id, "07_wikipedia", {"page_title": page_title or "omdb", "plot_length": len(plot_text or ""), "plot_text": plot_text or ""})
 
             self._set_job(job_id, stage="beats", progress=88, message="Generating plot beats")
             if plot_text:
                 package = await asyncio.to_thread(self.gemini.generate_plot_package, title, plot_text)
                 beats = package.get("beats", [])
                 expanded_plot = package.get("expanded_plot")
+                characters = package.get("characters", [])
                 self.store.replace_plot_beats(movie_id, beats, expanded_plot)
+                self.store.replace_characters(movie_id, characters)
+            else:
+                package = {"beats": [], "expanded_plot": "", "characters": []}
+            self._save_step(job_id, "08_plot_beats", package)
 
             self._set_job(job_id, stage="what_if", progress=94, message="Generating what-if suggestions")
             top_clusters = self.store.get_clusters(movie_id)[:3]
@@ -231,6 +281,7 @@ class MoviePipelineService:
                     }
                 )
             self.store.replace_what_ifs(movie_id, what_if_rows)
+            self._save_step(job_id, "09_what_if", {"what_ifs": what_if_texts[:3], "cluster_labels": labels})
 
             self._set_job(job_id, status="ready", stage="ready", progress=100, message="Movie preparation complete")
         except Exception as exc:  # pragma: no cover
@@ -257,7 +308,9 @@ class MoviePipelineService:
             package = await asyncio.to_thread(self.gemini.generate_plot_package, title, plot_text)
             beats = package.get("beats", [])
             expanded_plot = package.get("expanded_plot")
+            characters = package.get("characters", [])
             self.store.replace_plot_beats(movie_id, beats, expanded_plot)
+            self.store.replace_characters(movie_id, characters)
 
     async def index_embeddings_for_movie(
         self,
@@ -265,16 +318,16 @@ class MoviePipelineService:
         movie_title: str,
         critics: list[dict[str, Any]] | None = None,
     ) -> dict[str, Any]:
-        user_reviews = self.store.get_user_reviews(movie_id, limit=600)
+        user_reviews = self.store.get_user_reviews(movie_id, limit=3000)
         critic_reviews = critics if critics is not None else self.store.get_critic_reviews(movie_id, movie_title)
 
         chunks: list[dict[str, Any]] = []
         for source, rows in (("user", user_reviews), ("critic", critic_reviews)):
             for row in rows:
-                text = row.get("movie_review") or row.get("review_content")
-                if not text:
+                full_text = row.get("movie_review") or row.get("review_content")
+                if not full_text:
                     continue
-                for chunk_idx, chunk in enumerate(split_into_review_chunks(text, max_sentences=3), start=1):
+                for chunk_idx, chunk in enumerate(split_into_review_chunks(full_text, max_sentences=3), start=1):
                     chunk_id = stable_id(movie_id, source, row.get("movie_title", ""), str(chunk_idx), chunk[:120])
                     chunks.append(
                         {
@@ -282,6 +335,7 @@ class MoviePipelineService:
                             "movie_id": movie_id,
                             "text": chunk,
                             "source": source,
+                            "full_review_text": full_text,
                         }
                     )
 
@@ -299,6 +353,7 @@ class MoviePipelineService:
             )
             for idx, item in enumerate(chunks)
         ]
+        await asyncio.to_thread(self.vector_store.delete_for_movie, movie_id)
         await asyncio.to_thread(self.vector_store.upsert, indexed_chunks)
 
         return {

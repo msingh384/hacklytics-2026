@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
-from typing import Any
+from typing import Any, Callable
 
 from app.config import Settings
 from app.schemas import LeaderboardItem
-from app.utils.text import extract_omdb_scores, normalize_title, stable_id
+from app.utils.text import extract_omdb_scores, normalize_imdb_id, normalize_title, stable_id
 
 try:
     from supabase import Client, create_client
@@ -28,6 +28,7 @@ class DataStore:
         self.clusters: dict[str, list[dict[str, Any]]] = {}
         self.cluster_examples: dict[str, list[dict[str, Any]]] = {}
         self.what_ifs: dict[str, list[dict[str, Any]]] = {}
+        self.movie_characters: dict[str, list[dict[str, Any]]] = {}
         self.user_reviews: dict[str, list[dict[str, Any]]] = {}
         self.critic_reviews: dict[str, list[dict[str, Any]]] = {}
         self.generations: dict[str, dict[str, Any]] = {}
@@ -51,6 +52,40 @@ class DataStore:
         if not self.client or not rows:
             return
         self.client.table(table).insert(rows).execute()
+
+    def _fetch_paginated_rows(
+        self,
+        build_query: Callable[[], Any],
+        *,
+        limit: int | None,
+        page_size: int = 1000,
+    ) -> list[dict[str, Any]]:
+        if not self.client:
+            return []
+
+        rows: list[dict[str, Any]] = []
+        start = 0
+        target = limit if (limit is not None and limit > 0) else None
+
+        while True:
+            size = page_size
+            if target is not None:
+                remaining = target - len(rows)
+                if remaining <= 0:
+                    break
+                size = min(size, remaining)
+            if size <= 0:
+                break
+
+            end = start + size - 1
+            batch = build_query().range(start, end).execute().data or []
+            rows.extend(batch)
+
+            if len(batch) < size:
+                break
+            start += size
+
+        return rows
 
     def get_movie(self, movie_id: str) -> dict[str, Any] | None:
         if self.client:
@@ -189,35 +224,47 @@ class DataStore:
         self.user_reviews[movie_id] = list(existing.values())
         return len(rows)
 
-    def get_critic_reviews(self, movie_id: str, movie_title: str | None, limit: int = 300) -> list[dict[str, Any]]:
+    def get_critic_reviews(self, movie_id: str, movie_title: str | None, limit: int | None = None) -> list[dict[str, Any]]:
+        """
+        Load critic reviews: match by imdb_id first, then by title ilike.
+        Both result sets are merged and deduped by review text.
+        """
         collected: list[dict[str, Any]] = []
+        norm_id = normalize_imdb_id(movie_id)
+        norm_title = normalize_title(movie_title or "")
         if self.client:
             try:
-                by_id = (
-                    self.client.table("critic_reviews")
-                    .select("imdb_id,title,review_content,rating,critic_name")
-                    .eq("imdb_id", movie_id)
-                    .limit(limit)
-                    .execute()
-                    .data
-                    or []
+                by_id = self._fetch_paginated_rows(
+                    lambda: (
+                        self.client.table("critic_reviews")
+                        .select("imdb_id,title,review_content,rating,critic_name")
+                        .eq("imdb_id", norm_id)
+                    ),
+                    limit=limit,
                 )
                 collected.extend(by_id)
             except Exception:
                 pass
 
-            if movie_title:
+            if movie_title and (not collected):
                 try:
-                    by_title = (
-                        self.client.table("critic_reviews")
-                        .select("imdb_id,title,review_content,rating,critic_name")
-                        .ilike("title", f"%{movie_title}%")
-                        .limit(limit)
-                        .execute()
-                        .data
-                        or []
+                    by_title = self._fetch_paginated_rows(
+                        lambda: (
+                            self.client.table("critic_reviews")
+                            .select("imdb_id,title,review_content,rating,critic_name")
+                            .ilike("title", f"%{movie_title}%")
+                        ),
+                        limit=limit,
                     )
-                    collected.extend(by_title)
+                    for row in by_title:
+                        if norm_title:
+                            candidate_title = normalize_title(row.get("title") or "")
+                            if candidate_title and not (
+                                candidate_title == norm_title
+                                or candidate_title.startswith(f"{norm_title} ")
+                            ):
+                                continue
+                        collected.append(row)
                 except Exception:
                     pass
 
@@ -242,7 +289,7 @@ class DataStore:
 
         rows = list(deduped.values())
         self.critic_reviews[movie_id] = rows
-        return rows[:limit]
+        return rows[:limit] if limit is not None else rows
 
     def save_plot_summary(self, movie_id: str, plot_text: str, source_page: str | None = None) -> None:
         row = {
@@ -319,7 +366,7 @@ class DataStore:
         if self.client:
             rows = (
                 self.client.table("complaint_clusters")
-                .select("movie_id,cluster_id,label,summary,review_count,tagline")
+                .select("movie_id,cluster_id,label,summary,review_count")
                 .eq("movie_id", movie_id)
                 .order("review_count", desc=True)
                 .execute()
@@ -362,12 +409,55 @@ class DataStore:
             return rows
         return self.what_ifs.get(movie_id, [])
 
+    def replace_characters(self, movie_id: str, characters: list[dict[str, Any]]) -> None:
+        if self.client:
+            self.client.table("movie_characters").delete().eq("movie_id", movie_id).execute()
+            if characters:
+                rows = [
+                    {
+                        "character_id": stable_id(movie_id, "char", c.get("name", ""), str(idx)),
+                        "movie_id": movie_id,
+                        "name": c.get("name", ""),
+                        "role": c.get("role", ""),
+                        "analysis": c.get("analysis", ""),
+                    }
+                    for idx, c in enumerate(characters, start=1)
+                ]
+                self._safe_insert("movie_characters", rows)
+        self.movie_characters[movie_id] = characters
+
+    def get_characters(self, movie_id: str) -> list[dict[str, Any]]:
+        if self.client:
+            rows = (
+                self.client.table("movie_characters")
+                .select("movie_id,character_id,name,role,analysis")
+                .eq("movie_id", movie_id)
+                .execute()
+                .data
+                or []
+            )
+            return rows
+        return self.movie_characters.get(movie_id, [])
+
     def movie_has_analysis(self, movie_id: str) -> bool:
         """True if this movie has clusters, plot beats, and what-if suggestions (ready to view)."""
         clusters = self.get_clusters(movie_id)
         beats = self.get_plot_beats(movie_id)
         what_ifs = self.get_what_ifs(movie_id)
         return bool(clusters and beats and what_ifs)
+
+    def clear_analysis_for_movie(self, movie_id: str) -> None:
+        """Remove clusters, plot beats, characters, plot summary, and what-if suggestions for a movie (for re-run)."""
+        if self.client:
+            self.client.table("cluster_examples").delete().eq("movie_id", movie_id).execute()
+            self.client.table("complaint_clusters").delete().eq("movie_id", movie_id).execute()
+            self.client.table("what_if_suggestions").delete().eq("movie_id", movie_id).execute()
+            self.client.table("plot_beats").delete().eq("movie_id", movie_id).execute()
+            self.client.table("movie_characters").delete().eq("movie_id", movie_id).execute()
+            self.client.table("plot_summary").delete().eq("movie_id", movie_id).execute()
+        for cache in (self.clusters, self.cluster_examples, self.plot_beats, self.what_ifs, self.movie_characters):
+            cache.pop(movie_id, None)
+        self.plot_summaries.pop(movie_id, None)
 
     def movies_have_analysis(self, movie_ids: list[str]) -> dict[str, bool]:
         """Batch check: returns dict of movie_id -> has_analysis. Uses 3 queries instead of 3*N."""

@@ -1,15 +1,21 @@
 from __future__ import annotations
 
 import json
+import logging
 import re
 from typing import Any
 
 from app.config import Settings
 
+logger = logging.getLogger(__name__)
+
 try:
     import google.generativeai as genai
 except ImportError:  # pragma: no cover
     genai = None
+
+# Google Search grounding: legacy SDK uses google_search_retrieval which API rejects.
+# Use google-genai package for web search; for now we skip tools.
 
 
 _JSON_RE = re.compile(r"```json\s*(.*?)\s*```", re.DOTALL)
@@ -37,6 +43,7 @@ class GeminiClient:
 
     def _generate_json(self, system_prompt: str, user_prompt: str, fallback: dict[str, Any]) -> dict[str, Any]:
         if not self.enabled or not self.model:
+            logger.debug("Gemini disabled or no model; using fallback")
             return fallback
 
         prompt = (
@@ -45,13 +52,22 @@ class GeminiClient:
             f"{user_prompt}"
         )
 
+        # Skip tools: legacy google-generativeai uses deprecated google_search_retrieval.
+        # Migrate to google-genai for Google Search grounding.
+        tools = None
+
         try:
-            response = self.model.generate_content(prompt)
+            response = self.model.generate_content(prompt, tools=tools)
             raw = response.text if getattr(response, "text", None) else ""
             if not raw:
+                logger.warning("Gemini returned empty response; using fallback")
                 return fallback
-            return self._extract_json(raw)
-        except Exception:
+            logger.debug("Gemini raw response (first 500 chars): %s", (raw[:500] + "...") if len(raw) > 500 else raw)
+            payload = self._extract_json(raw)
+            logger.debug("Gemini parsed payload keys: %s", list(payload.keys()))
+            return payload
+        except Exception as e:
+            logger.exception("Gemini _generate_json failed: %s", e)
             return fallback
 
     def generate_plot_package(self, movie_title: str, plot_text: str) -> dict[str, Any]:
@@ -63,14 +79,21 @@ class GeminiClient:
         fallback = {
             "expanded_plot": plot_text,
             "beats": fallback_beats,
+            "characters": [],
         }
 
         system_prompt = "You are a narrative analyst for movie storytelling."
         user_prompt = (
-            f"Movie: {movie_title}\n"
-            "Create a richer plot expansion and structured beats for downstream story generation.\n"
-            "Schema: {\"expanded_plot\": string, \"beats\": [{\"order\": int, \"label\": string, \"text\": string}]}\n"
-            "Rules: 5-8 beats, labels concise, text factual, no spoilers outside provided plot.\n"
+            f"Movie: {movie_title}\n\n"
+            "Create a richer plot expansion, structured beats, and a character map.\n\n"
+            "Schema:\n"
+            '{"expanded_plot": string, '
+            '"beats": [{"order": int, "label": string, "text": string}], '
+            '"characters": [{"name": string, "role": string, "analysis": string}]}\n\n'
+            "Rules:\n"
+            "- 5-8 beats, labels concise, text factual, no spoilers outside provided plot.\n"
+            "- characters: List all important characters. For each: name (as in film), role (e.g. protagonist, antagonist, supporting), "
+            "and analysis: exactly 5 sentences describing their character, persona, motivations, and arc.\n"
             f"Plot source:\n{plot_text}"
         )
         payload = self._generate_json(system_prompt, user_prompt, fallback)
@@ -78,6 +101,8 @@ class GeminiClient:
         beats = payload.get("beats", [])
         if not isinstance(beats, list) or not beats:
             payload["beats"] = fallback_beats
+        if "characters" not in payload or not isinstance(payload["characters"], list):
+            payload["characters"] = []
         return payload
 
     def label_clusters(self, movie_title: str, cluster_snippets: list[list[str]]) -> list[str]:
@@ -97,31 +122,46 @@ class GeminiClient:
             return fallback["labels"]
         return [str(label) for label in labels]
 
-    def generate_cluster_taglines(self, clusters: list[dict[str, Any]]) -> list[str]:
-        """Generate a 1-3 word tagline for each cluster from its keywords/summary."""
-        descriptions = []
-        for c in clusters:
-            summary = c.get("summary", "")
-            keywords = summary.replace("Recurring concerns:", "").strip() if "Recurring concerns:" in summary else summary
-            descriptions.append(keywords)
-        fallback = {"taglines": [f"Theme {i+1}" for i in range(len(clusters))]}
-
-        system_prompt = "You are a movie critic. You interpret keyword groups and create concise, meaningful labels."
+    def label_clusters_from_full_reviews(
+        self,
+        movie_title: str,
+        cluster_payloads: list[dict[str, Any]],
+    ) -> list[str]:
+        """
+        Generate one complaint label per cluster from the top 3 full review texts.
+        cluster_payloads: [ { "cluster_id", "review_count", "top_reviews": [full, full, full] } ]
+        Returns: [ label1, label2, ... ]
+        """
+        if not cluster_payloads:
+            return []
+        fallback = {"labels": [f"Theme {i+1}" for i in range(len(cluster_payloads))]}
+        system_prompt = (
+            "You are an expert at analyzing movie reviews and identifying audience complaints. "
+            "Given full review texts for each cluster, infer the main complaint theme and return "
+            "one short, specific label (e.g. 'Rushed Ending', 'Weak Villain', 'Plot Holes', 'Confusing Plot'). "
+            "Do NOT use generic labels like 'Theme 1' or 'Recurring Concerns'. Each label must be UNIQUE."
+        )
         user_prompt = (
-            "Below are keyword groups extracted from movie review complaint clusters.\n"
-            "For EACH group, infer what the audience complaint is about and give a 1-3 word label.\n"
-            "Examples: \"Weak Villain\", \"Rushed Ending\", \"Plot Holes\", \"Bad CGI\", \"Slow Pacing\", \"Flat Characters\", \"Forced Romance\"\n"
-            "Do NOT use generic labels like \"Recurring Concerns\" or \"General Issues\".\n"
-            "Each label must be UNIQUE and SPECIFIC.\n"
-            f"Return exactly {len(descriptions)} labels.\n"
-            "Schema: {\"taglines\": [string, ...]}\n\n"
-            + "\n".join(f"Cluster {i+1} keywords: {d}" for i, d in enumerate(descriptions))
+            f"Movie: {movie_title}\n\n"
+            "For each cluster below, read the top 3 full reviews and return one complaint label.\n"
+            "Schema: {\"labels\": [string, ...]}\n\n"
+            + "\n".join(
+                f"Cluster {i+1} (cluster_id={p.get('cluster_id','')[:12]}..., {p.get('review_count',0)} reviews):\n"
+                + "\n---\n".join((p.get("top_reviews") or [])[:3])
+                for i, p in enumerate(cluster_payloads)
+            )
         )
         payload = self._generate_json(system_prompt, user_prompt, fallback)
-        taglines = payload.get("taglines", [])
-        if not isinstance(taglines, list) or len(taglines) != len(clusters):
-            return fallback["taglines"]
-        return [str(t) for t in taglines]
+        labels = payload.get("labels") or payload.get("cluster_labels") or payload.get("clusterLabels") or []
+        if not isinstance(labels, list) or len(labels) != len(cluster_payloads):
+            logger.warning(
+                "label_clusters_from_full_reviews: invalid labels (expected %d, got %s); using fallback",
+                len(cluster_payloads),
+                labels[:5] if isinstance(labels, list) else type(labels),
+            )
+            return fallback["labels"]
+        logger.info("label_clusters_from_full_reviews: labels=%s", labels)
+        return [str(l) for l in labels]
 
     def generate_what_if(self, movie_title: str, cluster_labels: list[str], plot_context: str) -> list[str]:
         fallback = [
