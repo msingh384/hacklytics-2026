@@ -163,9 +163,18 @@ export function AnalysisPage() {
               <p className="section-subtitle">{analysis.movie.genre ?? 'Genre unavailable'}</p>
               <p>{analysis.expanded_plot ?? analysis.plot_summary ?? analysis.movie.plot ?? 'No plot available yet.'}</p>
               <div className="analysis-stats">
-                <span className="stat-pill">IMDb {analysis.movie.imdb_rating ?? '--'}</span>
-                <span className="stat-pill">RT {analysis.movie.rotten_tomatoes ?? '--'}</span>
-                <span className="stat-pill">Audience {analysis.movie.audience_score ?? '--'}</span>
+                <div className="score-card score-card--imdb">
+                  <span className="score-label">IMDb</span>
+                  <span className="score-value">{analysis.movie.imdb_rating ?? '--'}</span>
+                </div>
+                <div className="score-card score-card--rt">
+                  <span className="score-label">🍅</span>
+                  <span className="score-value">{analysis.movie.rotten_tomatoes ?? '--'}</span>
+                </div>
+                <div className="score-card score-card--audience">
+                  <span className="score-label">Meta</span>
+                  <span className="score-value">{analysis.movie.audience_score ?? '--'}</span>
+                </div>
               </div>
             </div>
           </section>
