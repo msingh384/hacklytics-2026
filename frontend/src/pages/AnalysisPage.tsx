@@ -143,7 +143,7 @@ export function AnalysisPage() {
   if (!movieId) return <p className="error">Movie ID missing.</p>;
 
   return (
-    <div>
+    <div className="page-container">
       {loading ? (
         <div className="skeleton-analysis" aria-busy="true" aria-label="Loading analysis">
           <section className="analysis-hero panel">
@@ -211,8 +211,8 @@ export function AnalysisPage() {
               <h1 className="section-title">{analysis.movie.title}</h1>
               <div className="movie-meta">
                 {analysis.movie.year && <span className="meta-tag">{analysis.movie.year}</span>}
-                {analysis.movie.full_omdb?.Rated && <span className="meta-tag meta-tag--rated">{String(analysis.movie.full_omdb.Rated)}</span>}
-                {analysis.movie.full_omdb?.Runtime && <span className="meta-tag">{String(analysis.movie.full_omdb.Runtime)}</span>}
+                {analysis.movie.full_omdb?.Rated != null && <span className="meta-tag meta-tag--rated">{String(analysis.movie.full_omdb.Rated)}</span>}
+                {analysis.movie.full_omdb?.Runtime != null && <span className="meta-tag">{String(analysis.movie.full_omdb.Runtime)}</span>}
               </div>
               <div className="genre-tags">
                 {(analysis.movie.genre ?? 'Genre unavailable').split(',').map((g) => (

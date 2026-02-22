@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../api/client';
+import { HeroCarousel } from '../components/HeroCarousel';
 import { MoviePosterCard } from '../components/MoviePosterCard';
+import { useSearch } from '../contexts/SearchContext';
 import { useToast } from '../contexts/ToastContext';
 import type { MovieCandidate } from '../types/api';
 
@@ -12,10 +14,10 @@ type ActiveJob = { jobId: string; movieId: string; title: string };
 export function HomePage() {
   const navigate = useNavigate();
   const toast = useToast();
+  const { query: searchQuery } = useSearch();
   const [movies, setMovies] = useState<MovieCandidate[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<MovieCandidate[] | null>(null);
   const [searchError, setSearchError] = useState<string | null>(null);
   const [activeJobs, setActiveJobs] = useState<ActiveJob[]>([]);
@@ -167,98 +169,122 @@ export function HomePage() {
   const isFiltering = searchQuery.trim().length > 0;
 
   return (
-    <div>
-      <h1 className="section-title">Rewrite the endings audiences wanted</h1>
-      <p className="section-subtitle">
-        Browse all available movies by genre, then launch data-grounded rewrites from real review complaints.
-      </p>
-
-      <div className="search-row">
-        <input
-          type="search"
-          placeholder="Search movies..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          aria-label="Search movies"
-        />
-      </div>
-
+    <div className="home-layout">
       {loading && !isFiltering ? (
-        <div className="skeleton-home">
-          <div className="skeleton-genre-block">
-            <h2 className="skeleton" aria-hidden />
-            <div className="poster-grid">
-              {Array.from({ length: 12 }).map((_, i) => (
-                <div key={i} className="poster-card skeleton-poster-card" aria-hidden>
-                  <div className="skeleton skeleton-poster" />
-                  <div className="poster-overlay">
-                    <div className="skeleton skeleton-title" style={{ marginBottom: '0.3rem' }} />
-                    <div className="skeleton skeleton-text skeleton-text--sm" />
-                  </div>
-                </div>
-              ))}
+        <div className="skeleton-hero-carousel" aria-hidden>
+          <div className="skeleton-hero-carousel__inner">
+            <div className="skeleton skeleton-hero-poster" />
+            <div className="skeleton-hero-carousel__info">
+              <div className="skeleton skeleton-hero-title" />
+              <div className="skeleton-hero-carousel__meta">
+                <div className="skeleton skeleton-hero-year" />
+                <div className="skeleton skeleton-hero-genre" />
+              </div>
+              <div className="skeleton-hero-carousel__ratings">
+                <div className="skeleton skeleton-hero-rating" />
+                <div className="skeleton skeleton-hero-rating" />
+                <div className="skeleton skeleton-hero-rating" />
+              </div>
+              <div className="skeleton-hero-carousel__synopsis">
+                <div className="skeleton skeleton-plot-line" />
+                <div className="skeleton skeleton-plot-line" />
+                <div className="skeleton skeleton-plot-line" />
+                <div className="skeleton skeleton-plot-line skeleton-plot-line--short" />
+              </div>
+              <div className="skeleton skeleton-hero-cta" />
             </div>
           </div>
         </div>
-      ) : null}
-      {error ? <p className="error">{error}</p> : null}
-      {searchError ? <p className="error">{searchError}</p> : null}
-
-      {isFiltering && displayMovies.length > 0 ? (
-        <div className="poster-grid">
-          {displayMovies.map((movie) => (
-            <MoviePosterCard
-              key={movie.movie_id}
-              movie={movie}
-              onSelect={() => analyzeMovie(movie)}
-              onPosterClick={(m) => {
-                if (m.has_analysis) {
-                  navigate(`/movie/${m.movie_id}`);
-                } else {
-                  toast.addToast({
-                    message: 'Analysis required first.',
-                    type: 'info',
-                  });
-                }
-              }}
-              actionLabel="Analyze"
-            />
-          ))}
-        </div>
-      ) : null}
-
-      {!loading && !error && !isFiltering && !movies.length ? (
-        <div className="empty-state">
-          <p>No movies are cached yet. Use the search bar above to add one through the pipeline.</p>
-        </div>
-      ) : null}
-
-      {!isFiltering &&
-        grouped.map(([genre, items]) => (
-          <section key={genre} className="genre-block">
-            <h2>{genre}</h2>
-            <div className="poster-grid">
-              {items.map((movie) => (
-                <MoviePosterCard
-                  key={movie.movie_id}
-                  movie={movie}
-                  onSelect={() => analyzeMovie(movie)}
-                  onPosterClick={(m) => {
-                    if (m.has_analysis) {
-                      navigate(`/movie/${m.movie_id}`);
-                    } else {
-                      toast.addToast({
-                        message: 'Analysis required first.',
-                        type: 'info',
-                      });
-                    }
-                  }}
-                  actionLabel="Analyze"
-                />
-              ))}
+      ) : (
+        <HeroCarousel movies={movies} onAnalyze={analyzeMovie} />
+      )}
+      <div className="page-container home-content">
+        {loading && !isFiltering ? (
+          <>
+            <div className="skeleton skeleton-section-title" aria-hidden />
+            <div className="skeleton skeleton-section-subtitle" aria-hidden />
+            <div className="skeleton-genre-block">
+              <h2 className="skeleton" aria-hidden />
+              <div className="poster-grid">
+                {Array.from({ length: 12 }).map((_, i) => (
+                  <div key={i} className="poster-card skeleton-poster-card" aria-hidden>
+                    <div className="skeleton skeleton-poster" />
+                    <div className="poster-overlay">
+                      <div className="skeleton skeleton-title" style={{ marginBottom: '0.3rem' }} />
+                      <div className="skeleton skeleton-text skeleton-text--sm" />
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-          </section>
-        ))}
+          </>
+        ) : (
+          <>
+            <h1 className="section-title">Rewrite the endings audiences wanted</h1>
+            <p className="section-subtitle">
+              Browse all available movies by genre, then launch data-grounded rewrites from real review complaints.
+            </p>
+            {error ? <p className="error">{error}</p> : null}
+            {searchError ? <p className="error">{searchError}</p> : null}
+
+            {isFiltering && displayMovies.length > 0 ? (
+              <div className="poster-grid">
+                {displayMovies.map((movie) => (
+                  <MoviePosterCard
+                    key={movie.movie_id}
+                    movie={movie}
+                    onSelect={() => analyzeMovie(movie)}
+                    onPosterClick={(m) => {
+                      if (m.has_analysis) {
+                        navigate(`/movie/${m.movie_id}`);
+                      } else {
+                        toast.addToast({
+                          message: 'Analysis required first.',
+                          type: 'info',
+                        });
+                      }
+                    }}
+                    actionLabel="Analyze"
+                  />
+                ))}
+              </div>
+            ) : null}
+
+            {!loading && !error && !isFiltering && !movies.length ? (
+              <div className="empty-state">
+                <p>No movies are cached yet. Use the search bar in the header to add one through the pipeline.</p>
+              </div>
+            ) : null}
+
+            {!isFiltering &&
+              grouped.map(([genre, items]) => (
+                <section key={genre} className="genre-block">
+                  <h2>{genre}</h2>
+                  <div className="poster-grid">
+                    {items.map((movie) => (
+                      <MoviePosterCard
+                        key={movie.movie_id}
+                        movie={movie}
+                        onSelect={() => analyzeMovie(movie)}
+                        onPosterClick={(m) => {
+                          if (m.has_analysis) {
+                            navigate(`/movie/${m.movie_id}`);
+                          } else {
+                            toast.addToast({
+                              message: 'Analysis required first.',
+                              type: 'info',
+                            });
+                          }
+                        }}
+                        actionLabel="Analyze"
+                      />
+                    ))}
+                  </div>
+                </section>
+              ))}
+          </>
+        )}
+      </div>
     </div>
   );
 }

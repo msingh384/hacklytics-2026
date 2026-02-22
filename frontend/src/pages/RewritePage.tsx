@@ -177,11 +177,16 @@ export function RewritePage() {
   }
 
   if (!movieId) {
-    return <p className="error">Movie ID missing.</p>;
+    return (
+      <div className="page-container">
+        <p className="error">Movie ID missing.</p>
+      </div>
+    );
   }
 
   return (
-    <div className="story-layout">
+    <div className="page-container">
+      <div className="story-layout">
       <h1 className="section-title">Rewrite Flow</h1>
       {pickedSuggestion ? <p className="section-subtitle">{pickedSuggestion.text}</p> : null}
       {loading ? <p>Loading rewrite context...</p> : null}
@@ -256,6 +261,7 @@ export function RewritePage() {
           ) : null}
         </>
       ) : null}
+      </div>
     </div>
   );
 }

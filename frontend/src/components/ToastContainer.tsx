@@ -20,7 +20,7 @@ export function ToastContainer() {
             <p className="toast-message">{toast.message}</p>
             {toast.type === 'loading' && (toast.stage ?? toast.progress != null) && (
               <p className="toast-stage">
-                {toast.stage?.replaceAll('_', ' ') ?? `${toast.progress}%`}
+                {toast.stage?.replace(/_/g, ' ') ?? `${toast.progress}%`}
               </p>
             )}
           </div>

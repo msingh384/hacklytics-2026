@@ -65,42 +65,50 @@ export function EndingPage() {
 
   if (!movieId) {
     return (
-      <section className="panel">
-        <h1>Movie ID missing</h1>
-      </section>
+      <div className="page-container">
+        <section className="panel">
+          <h1>Movie ID missing</h1>
+        </section>
+      </div>
     );
   }
 
   if (isFromExplore) {
     if (loadingGeneration) {
       return (
-        <section className="panel">
-          <p>Loading ending...</p>
-        </section>
+        <div className="page-container">
+          <section className="panel">
+            <p>Loading ending...</p>
+          </section>
+        </div>
       );
     }
     if (error || !fetchedGeneration) {
       return (
-        <section className="panel">
-          <h1>Ending not found</h1>
-          <p>{error ?? 'This ending may have been removed.'}</p>
-          <button className="secondary-btn" onClick={() => navigate('/explore')} style={{ marginTop: '0.8rem' }}>
-            Back to Explore
-          </button>
-        </section>
+        <div className="page-container">
+          <section className="panel">
+            <h1>Ending not found</h1>
+            <p>{error ?? 'This ending may have been removed.'}</p>
+            <button className="secondary-btn" onClick={() => navigate('/explore')} style={{ marginTop: '0.8rem' }}>
+              Back to Explore
+            </button>
+          </section>
+        </div>
       );
     }
   } else if (!state) {
     return (
-      <section className="panel">
-        <h1>Ending data not found</h1>
-        <p>Run a rewrite first so this page has the generated ending context.</p>
-      </section>
+      <div className="page-container">
+        <section className="panel">
+          <h1>Ending data not found</h1>
+          <p>Run a rewrite first so this page has the generated ending context.</p>
+        </section>
+      </div>
     );
   }
 
   async function saveEnding() {
-    if (!state) return;
+    if (!state || !movieId) return;
     setSaving(true);
     setError(null);
     try {
@@ -125,7 +133,8 @@ export function EndingPage() {
   }
 
   return (
-    <section className="ending-layout">
+    <div className="page-container">
+      <section className="ending-layout">
       <h1 className="section-title">Final Alternate Ending</h1>
       <p className="section-subtitle">{movieTitle ?? movieId}</p>
 
@@ -179,6 +188,7 @@ export function EndingPage() {
 
       {savedId && !isFromExplore ? <p>Saved generation: {savedId}</p> : null}
       {error ? <p className="error">{error}</p> : null}
-    </section>
+      </section>
+    </div>
   );
 }

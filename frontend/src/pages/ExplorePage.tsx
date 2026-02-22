@@ -42,7 +42,7 @@ export function ExplorePage() {
   }
 
   return (
-    <div>
+    <div className="page-container">
       <h1 className="section-title">Explore Leaderboard</h1>
       <p className="section-subtitle">Top community endings sorted by votes.</p>
 
