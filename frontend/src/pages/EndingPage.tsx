@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { api } from '../api/client';
+import { EndingCharts } from '../components/EndingCharts';
 import { useSessionId } from '../hooks/useSessionId';
 import type { GenerationDetail, MovieDetails, ThemeCoverageScore } from '../types/api';
 
@@ -173,6 +174,8 @@ export function EndingPage() {
 
       {score ? (
         <>
+          <EndingCharts score={score} history={history} />
+
           <section className="panel">
             <h2>Theme Coverage Score</h2>
             <div className="score-grid" style={{ marginTop: '0.6rem' }}>

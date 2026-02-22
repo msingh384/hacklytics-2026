@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { api } from '../api/client';
+import { CharacterArcChart } from '../components/CharacterArcChart';
 import { KnowledgeGraphPanel } from '../components/KnowledgeGraphPanel';
 import { MovieScores } from '../components/MovieScores';
+import { PlotBeatGraphPanel } from '../components/PlotBeatGraphPanel';
 import { useToast } from '../contexts/ToastContext';
 import type { JobStatus, MovieAnalysisResponse } from '../types/api';
 
@@ -29,6 +31,7 @@ export function AnalysisPage() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [customWhatIfInput, setCustomWhatIfInput] = useState('');
   const [showGraphPanel, setShowGraphPanel] = useState(false);
+  const [showPlotBeatGraphPanel, setShowPlotBeatGraphPanel] = useState(false);
   const [beatDensity, setBeatDensity] = useState<Record<string, number> | null>(null);
 
   const PLOT_PREVIEW_LENGTH = 350;
@@ -138,14 +141,14 @@ export function AnalysisPage() {
     async function poll(): Promise<boolean> {
       if (cancelled) return true;
       try {
-        const status = await api.getPipelineJob(activeJobId);
+        const status = await api.getPipelineJob(activeJobId!);
         if (cancelled) return true;
         setJob(status);
         updateToast(ANALYSIS_LOADING_ID, {
           stage: status.stage,
           progress: status.progress,
         });
-        if (status.status === 'ready') {
+        if (status.status === 'ready' && movieId) {
           removeToast(ANALYSIS_LOADING_ID);
           addToast({ message: 'Analysis ready', type: 'success' });
           const refreshed = await api.getMovieAnalysis(movieId);
@@ -392,6 +395,13 @@ export function AnalysisPage() {
                 >
                   View Knowledge Graph
                 </button>
+                <button
+                  type="button"
+                  className="secondary-btn hero-cta-btn"
+                  onClick={() => setShowPlotBeatGraphPanel(true)}
+                >
+                  Plot Beat Graph
+                </button>
               </div>
             </div>
           </section>
@@ -437,6 +447,13 @@ export function AnalysisPage() {
               movieId={movieId}
               movieTitle={analysis.movie.title}
               onClose={() => setShowGraphPanel(false)}
+            />
+          )}
+          {showPlotBeatGraphPanel && movieId && analysis && (
+            <PlotBeatGraphPanel
+              movieId={movieId}
+              movieTitle={analysis.movie.title}
+              onClose={() => setShowPlotBeatGraphPanel(false)}
             />
           )}
 
@@ -550,7 +567,7 @@ export function AnalysisPage() {
                     const sortedKeys = beatDensity ? Object.keys(beatDensity).sort((a, b) => Number(a) - Number(b)) : [];
                     const density =
                       beatDensity?.[String(beat.beat_order)] ??
-                      (sortedKeys[idx] != null ? beatDensity[sortedKeys[idx]] : null) ??
+                      (sortedKeys[idx] != null && beatDensity ? beatDensity[sortedKeys[idx]] : null) ??
                       null;
                     const hasHeat = beatDensity && Object.keys(beatDensity).length > 0 && density != null;
                     const d = density ?? 0;
@@ -609,9 +626,11 @@ export function AnalysisPage() {
           </section>
 
           {analysis.characters?.length ? (
-            <section className="panel" style={{ marginTop: '1rem' }}>
-              <h2>Characters</h2>
-              <div className="timeline" style={{ marginTop: '0.6rem' }}>
+            <>
+              <CharacterArcChart characters={analysis.characters} />
+              <section className="panel" style={{ marginTop: '1rem' }}>
+                <h2>Characters</h2>
+                <div className="timeline" style={{ marginTop: '0.6rem' }}>
                 {analysis.characters.map((char) => {
                   const isOpen = expandedCharacters.has(char.character_id);
                   return (
@@ -647,8 +666,9 @@ export function AnalysisPage() {
                     </div>
                   );
                 })}
-              </div>
-            </section>
+                </div>
+              </section>
+            </>
           ) : null}
 
           <section className="panel" style={{ marginTop: '1rem' }}>

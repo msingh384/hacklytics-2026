@@ -1855,6 +1855,207 @@ button {
   background: rgba(0, 0, 0, 0.25);
 }
 
+/* Character Arc Chart */
+.character-arc-chart {
+  margin-top: 1rem;
+}
+
+.character-arc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.character-arc-card {
+  padding: 0.8rem;
+  border-radius: var(--radius-sm);
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(228, 228, 222, 0.1);
+}
+
+.character-arc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.character-arc-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.character-arc-role {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  text-transform: capitalize;
+}
+
+.character-arc-bar {
+  height: 6px;
+  background: rgba(228, 228, 222, 0.15);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 0.4rem;
+}
+
+.character-arc-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.character-arc-arc-label {
+  font-size: 0.75rem;
+  opacity: 0.8;
+  margin: 0;
+}
+
+/* Ending Page Charts */
+.ending-charts {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.ending-charts-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1.5rem;
+  align-items: center;
+  margin-top: 0.6rem;
+}
+
+.ending-radar-wrap {
+  min-height: 220px;
+}
+
+.ending-progress-rings {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.ending-progress-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.ending-progress-ring {
+  position: relative;
+  width: 64px;
+  height: 64px;
+}
+
+.ending-progress-svg {
+  transform: rotate(-90deg);
+  width: 100%;
+  height: 100%;
+}
+
+.ending-progress-bg {
+  fill: none;
+  stroke: rgba(228, 228, 222, 0.15);
+  stroke-width: 3;
+}
+
+.ending-progress-fill {
+  fill: none;
+  stroke-width: 3;
+  stroke-linecap: round;
+  transition: stroke-dasharray 0.4s ease;
+}
+
+.ending-progress-value {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.ending-progress-label {
+  font-size: 0.75rem;
+  opacity: 0.85;
+}
+
+.ending-bar-wrap {
+  margin-top: 0.6rem;
+  min-height: 150px;
+}
+
+.ending-story-flow-viz {
+  margin-top: 0.6rem;
+}
+
+.ending-flow-step {
+  position: relative;
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.ending-flow-marker {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(120, 130, 75, 0.4);
+  border: 2px solid #78824b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ending-flow-step-num {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.ending-flow-content {
+  flex: 1;
+  padding-bottom: 0.5rem;
+}
+
+.ending-flow-narrative {
+  margin: 0 0 0.3rem;
+  line-height: 1.5;
+}
+
+.ending-flow-choice {
+  margin: 0;
+  font-size: 0.9rem;
+  opacity: 0.9;
+  font-style: italic;
+}
+
+.ending-flow-choice-label {
+  font-style: normal;
+  font-weight: 600;
+}
+
+.ending-flow-connector {
+  position: absolute;
+  left: 15px;
+  top: 32px;
+  bottom: -0.5rem;
+  width: 2px;
+  background: linear-gradient(to bottom, rgba(120, 130, 75, 0.5), transparent);
+}
+
+@media (max-width: 640px) {
+  .ending-charts-row {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 880px) {
   .analysis-hero {
     grid-template-columns: 1fr;

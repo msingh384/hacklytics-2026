@@ -45,6 +45,7 @@ from app.schemas import (
 )
 from app.services.beat_density import compute_beat_complaint_density
 from app.services.cluster_graph import build_cluster_graph
+from app.services.plot_beat_graph import build_plot_beat_graph
 from app.services.container import ServiceContainer
 from app.utils.text import extract_omdb_scores
 
@@ -182,6 +183,26 @@ def get_graph(request: Request, movie_id: str) -> GraphResponse:
     if not movie:
         raise HTTPException(status_code=404, detail="Movie not found")
     data = build_cluster_graph(services.store, movie_id)
+    nodes = [GraphNode(data=n["data"]) for n in data["nodes"]]
+    edges = [GraphEdge(data=e["data"]) for e in data["edges"]]
+    return GraphResponse(nodes=nodes, edges=edges)
+
+
+@router.get("/movies/{movie_id}/graph/plot-beats", response_model=GraphResponse)
+def get_plot_beat_graph(request: Request, movie_id: str) -> GraphResponse:
+    """Return plot beat graph (beats, characters, clusters, relationships) for Cytoscape.js."""
+    services = _services(request)
+    movie = services.store.get_movie(movie_id)
+    if not movie:
+        raise HTTPException(status_code=404, detail="Movie not found")
+    beat_density = compute_beat_complaint_density(
+        movie_id,
+        services.store,
+        services.vector_store,
+        services.embedder,
+    )
+    beat_density_str = {str(k): v for k, v in beat_density.items()}
+    data = build_plot_beat_graph(services.store, movie_id, beat_density=beat_density_str)
     nodes = [GraphNode(data=n["data"]) for n in data["nodes"]]
     edges = [GraphEdge(data=e["data"]) for e in data["edges"]]
     return GraphResponse(nodes=nodes, edges=edges)

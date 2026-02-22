@@ -85,6 +85,9 @@ export const api = {
   getGraph: (movieId: string) =>
     request<import('../types/api').GraphResponse>(`/movies/${movieId}/graph`),
 
+  getPlotBeatGraph: (movieId: string) =>
+    request<import('../types/api').GraphResponse>(`/movies/${movieId}/graph/plot-beats`),
+
   startStory: (movieId: string, sessionId: string, whatIfId?: string, customWhatIf?: string) =>
     request<StoryStartResponse>('/story/start', {
       method: 'POST',
