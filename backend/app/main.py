@@ -19,6 +19,7 @@ async def lifespan(app: FastAPI):
         yield
     finally:
         services.vector_store.close()
+        services.neo4j_graph.close()
 
 
 settings = get_settings()

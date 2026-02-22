@@ -282,3 +282,47 @@ class GeminiClient:
         if not isinstance(payload, dict) or "breakdown" not in payload:
             return fallback
         return payload
+
+    def extract_entities_relations(
+        self, movie_title: str, chunk_text: str, source: str = "script"
+    ) -> dict[str, Any]:
+        """Extract entities and relations from text for knowledge graph. source: 'script' | 'reviews'."""
+        fallback = {"entities": [], "relations": []}
+        if source == "reviews":
+            system_prompt = (
+                "You extract entities and relationships from movie reviews and ratings. "
+                "Entity types: CHARACTER (people mentioned), LOCATION, OBJECT, EVENT, ORG, "
+                "CONCEPT (aspects like pacing, acting, CGI, plot, ending, dialogue). "
+                "Extract what reviewers praise, criticize, or connect. Return strict JSON only."
+            )
+            user_prompt = (
+                f"Movie: {movie_title}\n\n"
+                "Extract entities (characters, aspects, concepts, places) and relationships "
+                "(praised_for, criticized_for, improves, hurts, related_to, etc.) from this "
+                "review/rating excerpt.\n\n"
+                'Schema: {"entities": [{"name": string, "type": "CHARACTER"|"LOCATION"|"OBJECT"|"EVENT"|"ORG"|"CONCEPT"}], '
+                '"relations": [{"source": string, "target": string, "type": string, "confidence": float}]}\n\n'
+                f"Excerpt:\n{chunk_text[:6000]}"
+            )
+        else:
+            system_prompt = (
+                "You extract named entities and relationships from movie script text. "
+                "Entity types: CHARACTER, LOCATION, OBJECT, EVENT, ORG, CONCEPT. "
+                "Return strict JSON only."
+            )
+            user_prompt = (
+                f"Movie: {movie_title}\n\n"
+                "Extract entities (people, places, things, events, organizations, concepts) and "
+                "relationships between them from this script excerpt.\n\n"
+                'Schema: {"entities": [{"name": string, "type": "CHARACTER"|"LOCATION"|"OBJECT"|"EVENT"|"ORG"|"CONCEPT"}], '
+                '"relations": [{"source": string, "target": string, "type": string, "confidence": float}]}\n\n'
+                f"Script excerpt:\n{chunk_text[:6000]}"
+            )
+        payload = self._generate_json(system_prompt, user_prompt, fallback)
+        entities = payload.get("entities", [])
+        relations = payload.get("relations", [])
+        if not isinstance(entities, list):
+            entities = []
+        if not isinstance(relations, list):
+            relations = []
+        return {"entities": entities, "relations": relations}

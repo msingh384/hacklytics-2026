@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { api } from '../api/client';
+import { KnowledgeGraphPanel } from '../components/KnowledgeGraphPanel';
 import { MovieScores } from '../components/MovieScores';
 import { useToast } from '../contexts/ToastContext';
 import type { JobStatus, MovieAnalysisResponse } from '../types/api';
@@ -26,6 +27,7 @@ export function AnalysisPage() {
   const [refreshingPlot, setRefreshingPlot] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [customWhatIfInput, setCustomWhatIfInput] = useState('');
+  const [showGraphPanel, setShowGraphPanel] = useState(false);
 
   const PLOT_PREVIEW_LENGTH = 350;
 
@@ -83,6 +85,7 @@ export function AnalysisPage() {
     setPlotExpanded(false);
     setShowCreateModal(false);
     setCustomWhatIfInput('');
+    setShowGraphPanel(false);
 
     api
       .getMovieAnalysis(movieId)
@@ -292,6 +295,13 @@ export function AnalysisPage() {
                 >
                   Create your own
                 </button>
+                <button
+                  type="button"
+                  className="secondary-btn hero-cta-btn"
+                  onClick={() => setShowGraphPanel(true)}
+                >
+                  View Knowledge Graph
+                </button>
               </div>
             </div>
           </section>
@@ -332,6 +342,13 @@ export function AnalysisPage() {
               </div>
             </div>
           ) : null}
+          {showGraphPanel && movieId && analysis && (
+            <KnowledgeGraphPanel
+              movieId={movieId}
+              movieTitle={analysis.movie.title}
+              onClose={() => setShowGraphPanel(false)}
+            />
+          )}
 
           <section className="analysis-layout">
             <section>

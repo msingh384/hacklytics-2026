@@ -74,6 +74,9 @@ export const api = {
       method: 'POST',
     }),
 
+  getGraph: (movieId: string) =>
+    request<import('../types/api').GraphResponse>(`/movies/${movieId}/graph`),
+
   startStory: (movieId: string, sessionId: string, whatIfId?: string, customWhatIf?: string) =>
     request<StoryStartResponse>('/story/start', {
       method: 'POST',

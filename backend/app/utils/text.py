@@ -19,6 +19,34 @@ def normalize_imdb_id(movie_id: str) -> str:
     return cleaned if cleaned.startswith("tt") else f"tt{cleaned}"
 
 
+def chunk_script(
+    text: str,
+    min_tokens: int = 400,
+    max_tokens: int = 800,
+    overlap_tokens: int = 100,
+) -> list[str]:
+    """Split script into overlapping chunks (~400-800 tokens). 1 token ≈ 4 chars."""
+    text = text.strip()
+    if not text:
+        return []
+    chars_per_token = 4
+    min_chars = min_tokens * chars_per_token
+    max_chars = max_tokens * chars_per_token
+    overlap_chars = overlap_tokens * chars_per_token
+    step = max_chars - overlap_chars
+    chunks: list[str] = []
+    start = 0
+    while start < len(text):
+        end = start + max_chars
+        chunk = text[start:end]
+        if not chunk.strip():
+            break
+        chunks.append(chunk)
+        if end >= len(text):
+            break
+        start = end - overlap_chars
+    return chunks
+
 
 def split_into_review_chunks(text: str, max_sentences: int = 3) -> list[str]:
     raw_sentences = [s.strip() for s in _SENTENCE_SPLIT_RE.split(text.strip()) if s.strip()]

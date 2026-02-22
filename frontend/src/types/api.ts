@@ -163,6 +163,32 @@ export type GenerationDetail = {
   score_payload: ThemeCoverageScore | null;
 };
 
+export type GraphNodeData = {
+  id: string;
+  label: string;
+  type?: string;
+};
+
+export type GraphEdgeData = {
+  id: string;
+  source: string;
+  target: string;
+  label?: string;
+  chunk_id?: string | null;
+};
+
+export type GraphResponse = {
+  nodes: Array<{ data: GraphNodeData }>;
+  edges: Array<{ data: GraphEdgeData }>;
+};
+
+export type IngestScriptResponse = {
+  chunks: number;
+  entities: number;
+  relations: number;
+  error?: string | null;
+};
+
 export type LeaderboardItem = {
   generation_id: string;
   movie_id: string;
